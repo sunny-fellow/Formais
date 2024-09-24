@@ -30,6 +30,10 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
             <p><label>Produções</label></p>
             <input class="g_input" type="text" placeholder="S: aA" id="productions"> 
             <button class="g-button" type="button" id="add_production">+</button>
+            <p><label>Retirar Produção</label></p>
+            <input class="g_input" type="text" placeholder="S: aA" id="remove_productions">
+            <button class="g-button" type="button" id="remove_production">-</button>
+
             <p><button class="g-button" type="submit" id="submit_form">Finalizar Gramática</button></p>
             </form>
             
@@ -42,7 +46,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
                     <th class="tablecontent_end_symbols">A</th>
                 </tr>
                 <tr id="table_productions">
-                    <td class="tablecontent_productions">aA</td>
+                    <td class="tablecontent_productions">
+                        <p>aA</p>
+                    </td>
                 </tr>
             </table> 
         </div>
@@ -79,6 +85,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
 </div>
 
   <!-- End page content -->
+   <script src="scripts.js"></script>
 </body>
 
 </html>
