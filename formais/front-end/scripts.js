@@ -3,9 +3,11 @@ const variaveis = document.getElementById('variables')
 const terminais = document.getElementById('end_symbols')
 const inicial   = document.getElementById('first_symbol')
 const producao  = document.getElementById('productions')
+const remocao   = document.getElementById('remove_productions')
 
 // Botoes:
 const addProd   = document.getElementById('add_production')
+const popProd   = document.getElementById('remove_production')
 const enviar    = document.getElementById('submit_form')
 
 
@@ -71,6 +73,24 @@ addProd.addEventListener('click', ()=>{
         novaProducao.innerHTML = p  
         producoes[hasVariable].appendChild(novaProducao)
     }
+})
+
+popProd.addEventListener('click', ()=>{
+    input_inicial = {
+        'entrada': remocao.value
+    }
+
+    fetch("http://127.0.0.1:5000/verifyInput", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input_inicial)
+    })
+    .then(response => response.json)
+    .then(data => {
+        console.log(data)
+    })
 })
 
 enviar.addEventListener('click', ()=>{
