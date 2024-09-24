@@ -1,0 +1,50 @@
+button {
+    color: #fff;
+    font-weight: bold;
+    background-color: #a292f5;
+    border: 5px solid #a292f5;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    text-align: center;
+}
+
+.g-main {
+    width: 100%;
+    display: table;
+    margin-top: 2%;
+}
+
+.g-container {
+    float: left;
+}
+
+.g-quadro {
+    margin-left: 128px;
+}
+
+th, td {
+    border-left: 2px solid;
+    border-right: 2px solid;
+}
+
+#info {
+    background: rgb(199, 199, 199);
+}
+
+#add_production {
+    background-color: #da6ec8;
+    border: 3px solid #da6ec8;
+    border-radius: 5px;
+}
+
+#page1 {
+    margin-left: 128px;
+}
+
+#page2 {
+    display: none;
+}
