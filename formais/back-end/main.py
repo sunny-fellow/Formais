@@ -1,6 +1,7 @@
 from flask_cors import CORS
 from flask import Flask, render_template, jsonify, request
 
+
 app = Flask(__name__)
 CORS(app)  # Isso permite CORS para todas as rotas
 
@@ -8,8 +9,11 @@ CORS(app)  # Isso permite CORS para todas as rotas
 def verifyInput():
     # Essa rota eh responsavel por verificar se o input esta no estilo "letra: producao"
     texto = request.get_json()["entrada"]
-    print(texto)
-    return jsonify({"message": "verifyInput"})
+    pattern = r'[a-zA-Z]*: [a-zA-Z0-9]*'
+    if re.fullmatch(pattern, texto):
+        return jsonify({True: "valid pattern"})
+    else:
+        return jsonify({False: "invalid pattern"})
 
 @app.route("/verifyProduction", methods=["POST"])
 def verifyProduction():
