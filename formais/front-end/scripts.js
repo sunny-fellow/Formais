@@ -16,6 +16,18 @@ addProd.addEventListener('click', ()=>{
     const tb_variaveis  = document.querySelectorAll(".tablecontent_end_symbols")
     const producoes     = document.querySelectorAll(".tablecontent_productions")
 
+    fetch("http://127.0.0.1:5000/verifyInput", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({'entrada': producao.value})
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+    })
+
     // Variavel e Producao:
     v = producao.value.split(": ")[0]
     p = producao.value.split(": ")[1]
