@@ -34,6 +34,19 @@ hr {
     margin: 4% 0;
 }
 
+footer {
+    margin-top:32px;
+    text-align: center;
+}
+
+a:link {
+    color:  #7e6eb8
+}
+
+a:visited {
+    color:  #584e7e
+}
+
 .g-main {
     width: 100%;
 }
@@ -63,16 +76,17 @@ hr {
     padding: 2% 2% 2% 2%;
 }
 
+.g-box {
+    background-color: #584e7e;
+}
+
 .page {
     display: flex;
 }
 
-.pg1-elem {
+.pg-elem {
     flex: auto;
-}
-
-.pg2-elem {
-    flex: auto;
+    width: 100%;
 }
 
 #page2 {

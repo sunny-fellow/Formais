@@ -12,6 +12,12 @@ const enviar    = document.getElementById('submit_form')
 
 
 addProd.addEventListener('click', ()=>{
+    txt_ex = document.getElementById("example_table")
+    table  = document.getElementById("production_table")
+
+    txt_ex.setAttribute("display", "none")
+    table.setAttribute("display", "flex")
+
     // Tabela de Producoes:
     const tb_variaveis  = document.querySelectorAll(".tablecontent_end_symbols")
     const producoes     = document.querySelectorAll(".tablecontent_productions")
@@ -162,6 +168,8 @@ popProd.addEventListener('click', ()=>{
 })
 
 enviar.addEventListener('click', ()=>{
+    fetch("")
+
     producoes = {}
     const tb_variaveis = [... document.querySelectorAll(".tablecontent_end_symbols")]
     const producoes_p = [... document.querySelectorAll(".tablecontent_productions")]

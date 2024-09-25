@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
-.mySlides {display: none}
 </style>
 </head>
+
 <body>
     
 <div class="g-main">
@@ -19,7 +19,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
     <!-- !PAGE 1 CONTENT! -->
     <div class="page" id="page1">
     <!-- Sidebar/menu -->
-        <div class="g-container pg1-elem" id="grammarInput">
+        <div class="g-container pg-elem" id="grammarInput">
             <form>
             <p><label>Símbolos Não Terminais</label></p>
             <input class="g_input" type="text" placeholder="S, A, B, ..." id="end_symbols" required>          
@@ -39,10 +39,17 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
             
             <p><button class="g-button" type="submit" id="submit_form"><i class="fa fa-download" style="color: #fff;"></i> Fazer Upload de Arquivo</button></p>
         </div>
-        <div class="g-container g-quadro pg1-elem" id="example_table">
-            <p>PORRA</p>
+
+        <div class="g-container g-quadro pg-elem" id="example_table">
+            <h3>Formatação do arquivo</h3>
+            <div class="g-box">
+                <div class="g-info">
+                    <p>wahooooooooooo</p>
+                </div>
+            </div>
         </div>
-        <div class="g-container g-quadro pg1-elem" id="production_table">
+
+        <div class="g-container g-quadro pg-elem" id="production_table">
             <table>
                 <thead>
                     <tr id="table_end_symbols">
@@ -69,13 +76,13 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
 
     <!-- !PAGE 2 CONTENT! -->
     <div class="page" id="page2">
-        <p class="pg2-elem">aaaaaaaaaaaaaaaaaaaa</p>
+        <p class="pg-elem">aaaaaaaaaaaaaaaaaaaa</p>
     </div>
 </div>
 <hr>
 
 <!-- Contact -->
-<div class="page" id="info">
+<div class="page g-box" id="info">
     <div class="g-container g-info">
 
         <h2>GRUPO</h2>
@@ -105,10 +112,14 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
         <p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
     </div>
 </div>
-<footer style="margin-top:32px; text-align: center">Repositório Github <a href="https://crouton.net">Aqui</a></footer>
+<footer>
+    <button>
+        Repertório Github <a href="https://crouton.net"><i class="fa fa-github" style="font-size: 20px"></i></a>
+    </button>
+</footer>
+<!-- End page content -->
 
-  <!-- End page content -->
-   <script src="scripts.js"></script>
+<script src="scripts.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,3 @@
+ Documentação da função Tree.check_variables
+
+ 
