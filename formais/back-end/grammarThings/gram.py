@@ -1,82 +1,68 @@
+# FAZER
+    # funcao add_to_grammar()
+
 class Grammar:
 
-    def __init__(self, path):
-        self.gramPath = path     # caminho do arquivo que contém a gramática
+    def __init__(self):
+        """
+        Apos instanciar a gramatica, eh necessario escolher a forma de criacao da gramatica.
+        Dadas as possibilidades, escolha entre:
 
-        # símbolos terminais e não terminais
-        self.nonTermSymbols = [] # array de símbolos não-terminais (strings)
-        self.termSymbols = []    # array de símbolos terminais (strings)
-        self.initial = ""        # string que contém um símbolo não-terminal que inicia a gramática
-        self.E = "epsilon"       # constante que indica o fim de produções
+            - archive_to_grammar(path:str) 
+                limpa a gramatica 
+                recebe o caminho do arquivo que contem a gramatica e reescreve esta gramatica
+            - str_to_grammar(info:str)
+                limpa a gramatica
+                recebe a string que contem a gramatica e reescreve esta gramatica
+            - add_to_grammar(key:str, value:str)
+                * Recebe uma string key que deve ter um dentre os valores que se quer adicionar:
+                    + key: ['variaveis', 'terminais', 'producoes'] onde, caso nao receba a key, 
+                    por padrao adiciona nas producoes
+                * E recebe um valor que, dependendo da chave, pode assumir tipos diferentes
+                    + value:
+                        - variaveis: str
+                        - terminais: str
+                        - producoes | None: dict {variavel: producao}
+        """
 
-        self.productions = []    # matriz de produções, onde o indice (primeira coluna) é o não-terminal e a segunda coluna é 
-                                # a string gerada, contendo um terminal e/ou um não terminal
+        # simbolos terminais e nao terminais
+        self.nonTermSymbols = [] # array de simbolos nao-terminais (strings)
+        self.termSymbols = []    # array de simbolos terminais (strings)
+        self.initial = ""        # string que contem um simbolo nao-terminal que inicia a gramatica
+        self.productions = {}    # dicionaio de producoes, onde a chave eh a variavel (nao-terminal) e o valor eh a producao
+        self.E = "epsilon"       # constante que indica o fim de producoes
 
-        # preencher a gramática
-        self.fill_grammar()
+        # para o auxilio na parte de geracao de cadeias, serao necessarias as 
+        # listas de variaveis armadilhas e nao-armadilhas para evitar gerar 
+        # cadeias atraves das variaveis aramdilha
+        self.traps = []
+        self.notTraps = []
 
-        # checar gramática
-        validation = self.check_grammar()
-        if not validation[0]:
-            print(validation[1])
-            # mandar o objeto erro
-            # ...
-            return
+
+
+        # checar gramatica
+        # validation = self.check_grammar()
+        # if not validation[0]:
+        #     print(validation[1])
+        #     # mandar o objeto erro
+        #     # ...
+        #     return
         
         return
 
-    """
-        Responsável por verificar se a gramática é válida (Retorna True se for válida, False caso contrário).
-        Algumas verificações a serem feitas:
-            a. símbolo inicial está contido na lista de não-terminais
-            b. existe alguma produção que resulte em epsilon ou símbolo terminal para que a gramática não seja um loop infinito
-            c. todos as produções podem ser criadas, ou seja, há produções que resultem nessa segunda produção (não ter produções soltas do resto)
-    """
-    def check_grammar(self) -> tuple:
-        if not self.initial in self.nonTermSymbols:
-            return (False, "Simbolo inicial nao esta contido nas variaveis informadas")
-        
-        # como productions é:
-        # [ 
-        #     ["S", "aA"],
-        #     ["A", "epsilon"]
-        # ]
-        
-        hasTerminalSymb = False
-        #verificar se há terminais nas produções
-        for production in self.productions:
-            # se encontrar um 'epsilon', então é possível terminar  uma cadeia de caracteres
-            if production[1] == self.E:
-                hasTerminalSymb = True
-                break
-            
-            # se encontrar um único/apenas símbolo terminal na produção, então é possível ter cadeia val (11)
-            for elem in production[1]:
-                # se encontrar algum símbolo não-terminal
-                if not elem in self.termSymbols:
-                    hasTerminalSymb = False
-                    break
-            
+    def archive_to_grammar(self, path:str):
+        """
+            Preenche as variaveis da classe Grammar com os valores lidos no arquivo cujo caminho eh passado como parametro
+        """
+        #garante que as variaveis estarao vazias
+        self.clean_grammar()
 
-
-
-        if not hasTerminalSymb:
-            return (False, "Nao ha ponto de parada na gramatica")
-
-
-
-        return (True, "Gramatica valida!")
-
-    """
-        Preenche as variaveis da classe Grammar com os valores lidos no arquivo passado como parâmetro do construtor
-    """
-    def fill_grammar(self):
-        file = open(self.gramPath, 'r')
+        file = open(path, 'r')
         if not file:
-            print("Não foi possível abrir o arquivo da gramática!\n");
+            print("Nao foi possivel abrir o arquivo da gramatica!\n");
             return 
 
-        # preenchendo os não-terminais
+        # preenchendo os nao-terminais
         line = file.readline()
         nonTerminalS = line.split(":")[1].split(",")
         for symbol in nonTerminalS:
@@ -96,7 +82,7 @@ class Grammar:
             symbol = symbol.removesuffix("\n")
             self.termSymbols.append(symbol)
         
-        # preenchendo as produções
+        # preenchendo as producoes
         line = file.readline()  # pula a string "producoes"
         line = file.readline()
         while line:
@@ -107,33 +93,136 @@ class Grammar:
     
             line = file.readline()
         return
+
+    def check_grammar(self) -> tuple:
+        """
+            Responsavel por verificar se a gramatica e valida (Retorna True se for valida, False caso contrario).
+            Algumas verificacoes a serem feitas:
+
+                a. simbolo inicial esta contido na lista de nao-terminais
+                b. existe alguma producao que resulte em epsilon ou simbolo terminal para que a gramatica nao seja um loop infinito
+                c. verifica as producoes e guarda quais sao armadilha, se houver armadilhas
+                d. todas as producoes podem ser criadas, ou seja, ha producoes que resultem nessa segunda producao (nao ter producoes soltas do resto)
+        """
+
+        if not self.initial in self.nonTermSymbols:
+            return (False, "Simbolo inicial nao esta contido nas variaveis informadas")
         
+        # como productions e:
+        # [ 
+        #     ["S", "aA"],
+        #     ["A", "epsilon"]
+        # ]
+        
+        hasTerminalSymb = False
+        #verificar se ha terminais nas producoes
+        for production in self.productions:
+            # se encontrar um 'epsilon', entao e possivel terminar uma cadeia de caracteres
+            if production[1] == self.E:
+                hasTerminalSymb = True
+                break
+            
+            # se encontrar um unico/apenas simbolo terminal na producao, entao e possivel ter cadeia val (11)
+            for elem in production[1]:
+                # se encontrar algum simbolo nao-terminal
+                if not elem in self.termSymbols:
+                    hasTerminalSymb = False
+                    break
+            
+        if not hasTerminalSymb:
+            return (False, "Nao ha ponto de parada na gramatica")
+
+
+        return (True, "Gramatica valida!")
+
+    def clean_grammar(self):
+        """
+            Reseta os valores de todas as variaveis da gramatica
+        """
+        self.nonTermSymbols.clear()     
+        self.termSymbols.clear()        
+        self.initial = ""               
+        self.productions.clear()     
+
+        self.traps.clear()
+        self.notTraps.clear()
+        
+    def str_to_grammar(self, content:str):
+        """ 
+            Espera-se uma string content do tipo:
+
+                variaveis:S,A,B
+                inicial:S
+                terminais:a,b,c,d
+                producoes
+                S: aA
+                S: bB
+                A: epsilon
+                B: cS
+                B: dS
+        """
+
+        #garante que as variaveis estarao vazias
+        self.clean_grammar()
+
+        values = content.split('\n')
+        
+        # salva em vars os nao-terminais que foram digitados apos o ':' da primeira linha
+        variables = values[0].split(":")[1].split(",") 
+        for var in variables:
+            #retira o '\n' do fim da string, se houver, e insere na lista de variaveis
+            self.nonTermSymbols.append(var.removesuffix('\n'))
+        
+        # define initial como o nao-terminal escrito apos o ':' da segunda linha
+        self.initial = values[1].split(":")[1].removesuffix('\n')
+
+        # salva em terminals os terminais que foram digitados apos o ':' da terceira linha        
+        terminals = values[2].split(":")[1].split(",") 
+        for term in terminals:
+            # retira o '\n' do fim da string, se houver, e insere na lista de simbolos terminais
+            self.termSymbols.append(term.removesuffix('\n'))
+        
+        # para cada producao escrita apos o nome producoes linha 4 (indice 3), 
+        # adiciona a chave ao dicionario se nao existir e, caso exista, atualiza seus valores
+        for i in range(4, len(values)):
+            prod = values[i].split(": ")
+            # se a chave da producao ja existir:
+                # Adiciona um novo valor (sem quebra de linha so final) a lista dessa chave
+            # se nao
+                # Adiciona a nova chave ao dicionario e o novo valor
+            self.productions.setdefault(prod[0], []).append(prod[1].removesuffix('\n'))
+
+        return
+
+
+    #####################################################
+    #####################################################
+    #####################################################
 
     def show_grammar(self):
-        print("Gramática: \n")
+        print("Gramatica: \n")
 
-        # mostrando os símbolos não-terminais
+        # mostrando os simbolos nao-terminais
         line = ""
         for symbol in self.nonTermSymbols:
             line += symbol
             line += ", "
         line = line.removesuffix(", ")
-        print(f"Símbolos não-terminais: {line}")
+        print(f"Simbolos nao-terminais: {line}")
 
-        # mostrando o símbolo inicial
-        print(f"Símbolo inicial: {self.initial}")
+        # mostrando o simbolo inicial
+        print(f"Simbolo inicial: {self.initial}")
 
-        # mostrando os símbolos terminais
+        # mostrando os simbolos terminais
         line = ""
         for symbol in self.termSymbols:
             line += symbol
             line += ", "
         line = line.removesuffix(", ")
-        print(f"Símbolos terminais: {line}")
+        print(f"Simbolos terminais: {line}")
         print()
 
-        # mostrando as produções
-        print("Produções:")
-        for production in self.productions:
-            print(f"{production[0]}  ->  {production[1]}")
-            # print(f"{production}")
+        # mostrando as producoes
+        print("Producoes:")
+        for var in self.productions.keys():
+            print(f"{var}  ->  {self.productions[var]}")

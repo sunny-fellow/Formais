@@ -10,41 +10,15 @@ CORS(app)  # Isso permite CORS para todas as rotas
 def verifyInput():
     # Essa rota eh responsavel por verificar se o input esta no estilo "letra: producao"
     texto = request.get_json()["entrada"]
-    pattern = r'[a-zA-Z]*: [a-zA-Z0-9]*'
+    pattern = r'[a-zA-Z]: [a-zA-Z0-9]*'
     if re.fullmatch(pattern, texto):
-        return jsonify({True: "valid pattern"})
+        return jsonify({"valid": True})
     else:
-        return jsonify({False: "invalid pattern"})
+        return jsonify({"valid": False})
 
-@app.route("/verifyProduction", methods=["POST"])
-def verifyProduction():
-    # Essa rota deve ser responsavel por retornar se a producao e valida, e adicionar ao back essa producao
-    data = request.get_json()
-    print(data)
-    return jsonify({"message": "verifyProduction"})
 
-@app.route("/removeProduction", methods=["POST"])
-def removeProduction():
-    # Essa rota deve ser responsavel por retornar se a producao ja esta inserida, e remover do back essa producao
-    data = request.get_json()
-    print(data)
-    return jsonify({"message": "removeProduction"})
-
-@app.route("/verifyFormat", methods=["POST"])
-def verifyFormat():
-    data = request.get_json()
-    pattern_variables = r'(A-Z, )*A-Z'
-    pattern_terminal  = r'(a-z, )*a-z'
-    pattern_inicial   = r'A-Z'
-    if not re.fullmatch(pattern_variables, data.variaveis):
-        return jsonify({"valid": False, "message": "formato de variaveis invalido"})
-    elif not re.fullmatch(pattern_terminal, data.terminais):
-        return jsonify({"valid": False, "message": "formato de terminais invalido"})
-    elif not re.fullmatch(pattern_inicial, data.inicial):
-        return jsonify({"valid": False, "message": "formato de inicial invalido"})
-    else:
-        return jsonify({"valid": True, "message": "formato valido"})
     
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -91,10 +65,51 @@ def archive_validation(content:str) -> bool:
     
     return (True, jsonify({"Success": "Tudo formatado corretamente"}))
 
+@app.route('/verifyInputGrammar', methods=['POST'])
+def verifyFormat():
+    data = request.get_json()
+    if not data:
+        return {"valid": False, "message": "No JSON data received"}
+
+    print(data)
+
+    pattern_variables = r'([A-Z],\s)*[A-Z]'
+    pattern_terminal = r'([a-z]+|epsilon)(, ([a-z]+|epsilon))*'
+    pattern_inicial   = r'[A-Z]'
+
+    if not re.fullmatch(pattern_variables, data.get("variaveis", "")):
+        return jsonify({"valid": False, "message": "formato de variaveis invalido"})
+    elif not re.fullmatch(pattern_terminal, data.get("terminais", "")):
+        return jsonify({"valid": False, "message": "formato de terminais invalido"})
+    elif not re.fullmatch(pattern_inicial, data.get("inicial", "")):
+        return jsonify({"valid": False, "message": "formato de inicial invalido"})
+    else:
+        return jsonify({"valid": True, "message": "formato valido"})
+
+def verifyProductions(producoes, variaveis, terminais):
+    pattern = f"[{variaveis}*{terminais}*]*"
+    for prod in producoes.keys():
+        for p in producoes[prod]:
+            if not re.fullmatch(pattern, p):
+                return {"valid": False, "message": f"Producao {prod}: {p} invalida"}
+            
+    return {"valid": True, "message": "Producoes validas"}
+            
+
+@app.route('/receiveInputs', methods=['POST'])
+def receive_inputs():
+    data = request.get_json()
+    print(data)
+
+    # Verifica se as producoes sao validas
+    verify = verifyProductions(data["producoes"], data["variaveis"], data["terminais"])
+    if verify["valid"]:
+        return jsonify(verify)
+    else:
+        print(verify)
+        return jsonify(verify)
         
-
-    return True
-
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -22,9 +22,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
         <div class="g-container pg-elem" id="grammarInput">
             <form>
             <p><label>Símbolos Não Terminais</label></p>
-            <input class="g_input" type="text" placeholder="S, A, B, ..." id="end_symbols" required>          
+            <input class="g_input" type="text" placeholder="S, A, B, ..." id="variables" required>          
             <p><label>Símbolos Terminais</label></p>
-            <input class="g_input" type="text" placeholder="a, b, c, ..." id="variables" required>         
+            <input class="g_input" type="text" placeholder="a, b, c, ..." id="end_symbols" required>         
             <p><label>Símbolo Inicial</label></p>
             <input class="g_input" type="text" placeholder="S" id="first_symbol" required>              
             <p><label>Produções</label></p>
@@ -34,10 +34,10 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
             <input class="g_input" type="text" placeholder="S: aA" id="remove_productions">
             <button class="g-button" type="button" id="remove_production">-</button>
 
-            <p><button class="g-button" type="submit" id="submit_form">Finalizar Gramática</button></p>
+            <p><button class="g-button" type="button" id="submit_form">Finalizar Gramática</button></p>
             </form>
             
-            <p><button class="g-button" type="submit" id="submit_form"><i class="fa fa-download" style="color: #fff;"></i> Fazer Upload de Arquivo</button></p>
+            <p><button class="g-button" type="" id="submit_form"><i class="fa fa-download" style="color: #fff;"></i> Fazer Upload de Arquivo</button></p>
         </div>
 
         <div class="g-container g-quadro pg-elem" id="example_table">
@@ -54,21 +54,16 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
                 <thead>
                     <tr id="table_end_symbols">
                         <th class="tablecontent_end_symbols">A</th>
-                        <th class="tablecontent_end_symbols">B</th>
-                        <th class="tablecontent_end_symbols">C</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr id="table_productions">
-                        <td class="tablecontent_productions">1</td>
-                        <td class="tablecontent_productions">2</td>
-                        <td class="tablecontent_productions">3</td>
+                        <td class="tablecontent_productions">
+                            <p>aA</p>
+                        </td>
+                        
                     </tr>
-                    <tr id="table_productions">
-                        <td class="tablecontent_productions">a</td>
-                        <td class="tablecontent_productions">b</td>
-                        <td class="tablecontent_productions">c</td>
-                    </tr>
+                    
                 </tbody>
             </table>
         </div>

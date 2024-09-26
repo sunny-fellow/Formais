@@ -12,15 +12,11 @@ const enviar    = document.getElementById('submit_form')
 
 
 addProd.addEventListener('click', ()=>{
-    txt_ex = document.getElementById("example_table")
-    table  = document.getElementById("production_table")
-
-    txt_ex.setAttribute("display", "none")
-    table.setAttribute("display", "flex")
+    document.getElementById("grammarInput").removeChild(document.querySelector(".error_message"))
 
     // Tabela de Producoes:
-    const tb_variaveis  = document.querySelectorAll(".tablecontent_end_symbols")
-    const producoes     = document.querySelectorAll(".tablecontent_productions")
+    const tb_variaveis  = [...document.querySelectorAll(".tablecontent_end_symbols")]
+    const producoes     = [...document.querySelectorAll(".table_productions")]
 
     fetch("http://127.0.0.1:5000/verifyInput", {
         method: 'POST',
@@ -31,76 +27,63 @@ addProd.addEventListener('click', ()=>{
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data)
         if (data['valid'] == false){
             // Mensagem de erro
-            msgErro = document.createElement('span')
-            msgErro.innerHTML = "Produção inválida!\nDeve ser informada no formato L: P\nEm que L é uma variável e P é uma produção"
+            msgErro = document.createElement('p')
+            msgErro.innerHTML = "Produção inválida!<br>Deve ser informada no formato L: P*<br>Em que L é uma variável e P* é uma produção"
             msgErro.setAttribute("class", "error_message")
-            producao.nextSibling.after(msgErro)
+            document.getElementById("add_production").after(msgErro)
 
 
         }else{
             // Variavel e Producao:
-            v = producao.value.split(": ")[0]
-            p = producao.value.split(": ")[1]
+            variavel = producao.value.split(": ")[0]
+            prod = producao.value.split(": ")[1]
 
-            // Primeiro, mando pro back verificar se e uma producao valida
-            input = {
-                "variavel": v,
-                "producao": p
+            txt_ex = document.getElementById("example_table")
+            table  = document.getElementById("production_table")
+
+            txt_ex.style.display = "none"; 
+            table.style.display = "flex";
+            // Se for valida, adiciono a tabela de producoes no HTML
+            // Verifica se ja ha a variavel no quadro
+            hasVariable = -1
+            for(let i=0; i<tb_variaveis.length; i++){
+                if(tb_variaveis[i].innerHTML == variavel){
+                    hasVariable = i
+                    console.log("Variavel ja existe no quadro, na posicao: ", hasVariable)
+                    break;
+                }
             }
 
-            fetch("http://127.0.0.1:5000/verifyProduction", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(input)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data['valid'] == false){
-                    alert("Produção inválida!")
-                    return
+            // Se ja nao tiver essa variavel no quadro, insere-a
+            if(hasVariable == -1){
+                novaVariavel = document.createElement('th')
+                novaVariavel.innerHTML = variavel
+                novaVariavel.setAttribute("class", "tablecontent_end_symbols")
+                document.getElementById("table_end_symbols").appendChild(novaVariavel)
 
-                }else{
-                    // Se for valida, adiciono a tabela de producoes no HTML
-                    // Verifica se ja ha a variavel no quadro
-                    hasVariable = -1
-                    for(let i=0; i<tb_variaveis.length; i++){
-                        if(tb_variaveis[i].innerHTML == v){
-                            hasVariable = i
-                        }
-                    }
+                campoProducao = document.createElement('td')
+                campoProducao.setAttribute("class", "tablecontent_productions")
+                document.getElementById("table_productions").appendChild(campoProducao)
 
-                    // Se ja nao tiver essa variavel no quadro, insere-a
-                    if(hasVariable == -1){
-                        novaVariavel = document.createElement('th')
-                        novaVariavel.innerHTML = v
-                        novaVariavel.setAttribute("class", "tablecontent_end_symbols")
-                        document.getElementById("table_end_symbols").appendChild(novaVariavel)
+                novaProducao = document.createElement('p')
+                novaProducao.innerHTML = prod
+                campoProducao.appendChild(novaProducao)
+                
 
-                        campoProducao = document.createElement('td')
-                        campoProducao.setAttribute("class", "tablecontent_productions")
-                        document.getElementById("table_productions").appendChild(campoProducao)
-
-                        novaProducao = document.createElement('p')
-                        novaProducao.innerHTML = p
-                        campoProducao.appendChild(novaProducao)
-                    }else{
-                        // Se ja tiver essa variavel no quadro, insere a producao 
-                        novaProducao = document.createElement('p')
-                        novaProducao.innerHTML = p  
-                        producoes[hasVariable].appendChild(novaProducao)
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error)
-            })
-        }
+            }else{
+                // Se ja tiver essa variavel no quadro, insere a producao 
+                novaProducao = document.createElement('p')
+                novaProducao.innerHTML = prod 
+                aux = [...document.querySelectorAll(".tablecontent_productions")][hasVariable]
+                aux.appendChild(novaProducao)
+            }
+        }     
     })
 })
+
 
 popProd.addEventListener('click', ()=>{
     input_inicial = {
@@ -168,48 +151,71 @@ popProd.addEventListener('click', ()=>{
 })
 
 enviar.addEventListener('click', ()=>{
-    fetch("")
-
+    console.log("Enviando dados para o back-end")
     producoes = {}
     const tb_variaveis = [... document.querySelectorAll(".tablecontent_end_symbols")]
     const producoes_p = [... document.querySelectorAll(".tablecontent_productions")]
 
-    variaveis.value.split(", ").map((variavel) => {
-        variavel != "epsilon" ? producoes[variavel] = [] : null;
-    })
-
-    for (let i=0; i < tb_variaveis.length; i++){
-        variavel = tb_variaveis[i].innerHTML
-        children = [...producoes_p[i].children]
-        for(let j=0; j < children.length; j++){
-            producoes[variavel].push(children[j].innerHTML)
-        }
-    }
-
- 
-    
-    inputs = {
-        "variaveis": variaveis.value.split(", "),
-        "terminal": terminais.value.split(", "),
-        "inicial": inicial.value,
-        "producoes": producoes
-    }
-
-    console.log(inputs)
-
-    fetch("http://127.0.0.1:5000/receiveInputs", {
-        method: 'POST', 
+    fetch("http://127.0.0.1:5000/verifyInputGrammar", {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(inputs)
+        body: JSON.stringify({
+            'variaveis': variaveis.value, 
+            'terminais': terminais.value, 
+            'inicial': inicial.value
+        })
     })
     .then(response => response.json())
     .then(data => {
         console.log(data)
+        if (data['valid'] == false){
+            erro_msg = document.createElement('p')
+            erro_msg.innerHTML = "Erro na formatação!<br>Mensagem de Erro: " + data['message']
+            enviar.after(erro_msg)
+        }else{
+            for (let i=0; i < tb_variaveis.length; i++){
+                producoes[tb_variaveis[i].innerHTML] = []
+                variavel = tb_variaveis[i].innerHTML
+                children = [...producoes_p[i].children]
+                for(let j=0; j < children.length; j++){
+                    producoes[variavel].push(children[j].innerHTML)
+                }
+            }
+            
+            console.log(variaveis.value)
+            inputs = {
+                "variaveis": variaveis.value,
+                "terminais": terminais.value,
+                "inicial": inicial.value,
+                "producoes": producoes
+            }
+        
+            console.log(inputs)
+        
+            fetch("http://127.0.0.1:5000/receiveInputs", {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(inputs)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data['valid'] == false){
+                    erro_msg = document.createElement('p')
+                    erro_msg.innerHTML = "Erro na gramática!<br>Mensagem de Erro: " + data['message']
+                    console.log("Erro na gramática!<br>Mensagem de Erro: " + data['message'])
+                }else{
+                    document.getElementById("page1").style.display = "none"
+                    document.getElementById("page2").style.display = "flex"
+                    console.log(data)
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error)
+            })
+        }
     })
-    .catch(error => {
-        console.error('Erro:', error)
-    })
-    
 })
