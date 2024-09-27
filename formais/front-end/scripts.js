@@ -3,7 +3,6 @@ const variaveis = document.getElementById('variables')
 const terminais = document.getElementById('end_symbols')
 const inicial   = document.getElementById('first_symbol')
 const producao  = document.getElementById('productions')
-const remocao   = document.getElementById('remove_productions')
 
 // Botoes:
 const addProd   = document.getElementById('add_production')
@@ -12,7 +11,9 @@ const enviar    = document.getElementById('submit_form')
 
 
 addProd.addEventListener('click', ()=>{
-    document.getElementById("grammarInput").removeChild(document.querySelector(".error_message"))
+    if (document.querySelector(".error_message")){
+        document.getElementById("grammarInput").removeChild(document.querySelector(".error_message"))
+    }
 
     // Tabela de Producoes:
     const tb_variaveis  = [...document.querySelectorAll(".tablecontent_end_symbols")]
@@ -31,7 +32,7 @@ addProd.addEventListener('click', ()=>{
         if (data['valid'] == false){
             // Mensagem de erro
             msgErro = document.createElement('p')
-            msgErro.innerHTML = "Produção inválida!<br>Deve ser informada no formato L: P*<br>Em que L é uma variável e P* é uma produção"
+            msgErro.innerHTML = "Producao invalida!<br>Deve ser informada no formato L: P*<br>Em que L e uma variavel e P* e uma producao"
             msgErro.setAttribute("class", "error_message")
             document.getElementById("add_production").after(msgErro)
 
@@ -100,7 +101,7 @@ popProd.addEventListener('click', ()=>{
     .then(response => response.json)
     .then(data => {
         if (data['valid'] == false){
-            alert("Produção inválida!")
+            alert("Producao invalida!")
             return
         }else{
             // Variavel e Producao:
@@ -123,7 +124,7 @@ popProd.addEventListener('click', ()=>{
             .then(response => response.json())
             .then(data => {
                 if (data['valid'] == false){
-                    alert("Produção inválida!")
+                    alert("Producao invalida!")
                     return
                 }else{
                     // Como a producao foi removida, removo-a da tabela de producoes
@@ -172,7 +173,7 @@ enviar.addEventListener('click', ()=>{
         console.log(data)
         if (data['valid'] == false){
             erro_msg = document.createElement('p')
-            erro_msg.innerHTML = "Erro na formatação!<br>Mensagem de Erro: " + data['message']
+            erro_msg.innerHTML = "Erro na formatacao!<br>Mensagem de Erro: " + data['message']
             enviar.after(erro_msg)
         }else{
             for (let i=0; i < tb_variaveis.length; i++){
@@ -205,8 +206,8 @@ enviar.addEventListener('click', ()=>{
             .then(data => {
                 if (data['valid'] == false){
                     erro_msg = document.createElement('p')
-                    erro_msg.innerHTML = "Erro na gramática!<br>Mensagem de Erro: " + data['message']
-                    console.log("Erro na gramática!<br>Mensagem de Erro: " + data['message'])
+                    erro_msg.innerHTML = "Erro na gramatica!<br>Mensagem de Erro: " + data['message']
+                    console.log("Erro na gramatica!<br>Mensagem de Erro: " + data['message'])
                 }else{
                     document.getElementById("page1").style.display = "none"
                     document.getElementById("page2").style.display = "flex"

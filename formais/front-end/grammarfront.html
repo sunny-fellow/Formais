@@ -4,22 +4,26 @@
 <title>formais</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="grammarstyle.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="grammarstyle.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 <style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
+body,h1,h2,h3,h4,h5,h6 {font-family: "Jost", Arial, Helvetica, sans-serif}
 </style>
 </head>
 
 <body>
     
 <div class="g-main">
-
+    <header>
+        <h1>Gerador de Cadeias para Gramáticas Livres de Contexto</h1>
+    </header>
     <!-- !PAGE 1 CONTENT! -->
-    <div class="page" id="page1">
+    <div style="background: pink" class="page" id="page1">
     <!-- Sidebar/menu -->
-        <div class="g-container pg-elem" id="grammarInput">
+        <div style="background: red" class="g-container pg-elem" id="grammarInput">
             <form>
             <p><label>Símbolos Não Terminais</label></p>
             <input class="g_input" type="text" placeholder="S, A, B, ..." id="variables" required>          
@@ -40,7 +44,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
             <p><button class="g-button" type="" id="submit_form"><i class="fa fa-download" style="color: #fff;"></i> Fazer Upload de Arquivo</button></p>
         </div>
 
-        <div class="g-container g-quadro pg-elem" id="example_table">
+        <div style="background: red" class="g-container g-quadro pg-elem" id="example_table">
             <h3>Formatação do arquivo</h3>
             <div class="g-box">
                 <div class="g-info">
@@ -53,13 +57,13 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
             <table>
                 <thead>
                     <tr id="table_end_symbols">
-                        <th class="tablecontent_end_symbols">A</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                     <tr id="table_productions">
                         <td class="tablecontent_productions">
-                            <p>aA</p>
+                            
                         </td>
                         
                     </tr>
@@ -76,41 +80,47 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
 </div>
 <hr>
 
-<!-- Contact -->
-<div class="page g-box" id="info">
-    <div class="g-container g-info">
 
-        <h2>GRUPO</h2>
-        <div class="g-member">
-            <img class="g-icon" src="assets/5120x2880-black-solid-color-background.jpg">
-            <div class="g-container">
-                <h3><b>Luis Reis</b></h3>
-                <p>blahblahblahblah</p>
-            </div>
-        </div>
-        <div class="g-member">
-            <img class="g-icon" src="assets/5120x2880-black-solid-color-background.jpg">
-            <div class="g-container">
-                <h3><b>Herick José Freitas</b></h3>
-                <p>blahblahblahblah</p>
-            </div>
-        </div>
-        <div class="g-member">
-            <img class="g-icon" src="assets/5120x2880-black-solid-color-background.jpg">
-            <div class="g-container">
-                <h3><b>Lael Gustavo B R de Lima</b></h3>
-                <p>blahblahblahblah</p>
-            </div>
-        </div>
-    </div>
-    <div class="g-container g-info">
-        <p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
-    </div>
-</div>
 <footer>
-    <button>
-        Repertório Github <a href="https://crouton.net"><i class="fa fa-github" style="font-size: 20px"></i></a>
-    </button>
+    <!-- Contact -->
+    <div class="g-footer">
+        <div class="g-info">
+            <h2>GRUPO</h2>
+
+            <div class="g-member">
+                <img class="g-icon" src="assets/black.png">
+                <div class="g-perfil">
+                    <h3><b>Herick José Freitas</b></h3>
+                    <a href=""><i class="fa fa-github" style="font-size: 20px"></a>
+                 <img class="g-icon" src="assets/black.png">
+                <div class="g-perfil">
+                    <h3><b>Lael Gustavo B R de Lima</b></h3>
+                    <a href=""><i class="fa fa-github" style="font-size: 20px"></a>
+                    <!-- <a href=""><i class="fa fa-linkedin" style="font-size: 20px"></a> -->
+                </div>
+            </div>
+            <div class="g-member">
+                <img class="g-icon" src="assets/black.png">
+                <div class="g-perfil">
+                    <h3><b>Luis Reis</b></h3>
+                    <a href=""><i class="fa fa-github" style="font-size: 20px"></a>
+                    <!-- <a href=""><i class="fa fa-linkedin" style="font-size: 20px"></a> -->
+                </div>
+            </div>
+        </div>
+        <div class="g-info">
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Et, totam exercitationem natus corporis laboriosam dolorem iusto eveniet voluptate, ratione illum possimus autem at vero velit quas. Est adipisci accusamus voluptate!</p>
+        </div>
+    </div>
+    <div>
+        <button>
+            Repertório Github <a href="https://crouton.net"><i class="fa fa-github" style="font-size: 20px"></i></a>
+        </button>
+    </div>                <!-- <a href=""><i class="fa fa-linkedin" style="font-size: 20px"></a> -->
+                </div>
+            </div>
+            <div class="g-member">
+   
 </footer>
 <!-- End page content -->
 

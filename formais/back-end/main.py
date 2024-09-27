@@ -25,6 +25,7 @@ def upload_file():
         return jsonify({"Error": "Nenhum arquivo enviado."})
     
     arquivo = request.files['file']
+    print(arquivo)
     
     if arquivo.filename == '':
         return jsonify({"Error": "Nenhum arquivo selecionado."})

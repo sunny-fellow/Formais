@@ -1,0 +1,227 @@
+:root {
+    --off-white: #EDEDED;
+    --off-brown: #DAD7CD;
+    --light-green: #A3B18A;
+    --green: #588157;
+    --dark-green: #3A5A40;
+    --darkest-green: #344E41;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--off-white);
+    overflow-x: hidden;
+}
+
+/* HEADER */
+
+header{
+    padding: 20px;
+    top: 0;
+    width: 100%;
+    text-align: center;
+
+    background-color: var(--dark-green);
+    border-bottom: 5px var(--darkest-green) solid;
+}
+
+header > h1{
+    font-size: xx-large;
+    font-weight: 500;
+    color: var(--off-brown);
+}
+
+/* PAGE */
+
+.page {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: 85%;
+}
+
+.page > .title{
+    padding: 50px;
+    text-align: center;
+    font-size: large;
+    color: var(--darkest-green);
+}
+
+.page > .title > h2{
+    font-weight: 400;
+}
+
+.page > .content{
+    display: flex;
+    justify-content: space-around;
+}
+
+.page > .content > .form {
+    background-color: var(--off-white);
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    align-items: center;
+}
+
+.page > .content > .form > .form-in{
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.page > .content > .form > .term-inicial{
+    display: flex;
+    max-width: 250px;
+    align-items: center;
+    gap: 19px;
+}
+
+.form-in > label{
+    position: absolute;
+    top: -1px;
+    left: 25px;
+    background-color: var(--off-white); /* Cor do fundo da área ao redor da label */
+    padding: 0 5px;
+    font-size: 14px;
+    color: var(--darkest-green); /* Cor do texto da label */
+}
+
+.page > .content > .form > .form-in > input,  .page > .content > .form > .term-inicial > input {
+    padding: 6px 10px 6px 10px;
+    max-width: 200px;
+    border-radius: 10px;
+    border: 2px var(--green) solid;
+    font-size: medium;
+    outline: none;
+    background-color: var(--off-white);
+} 
+
+.page > .content > .form > .form-in > input:focus,  .page > .content > .form > .term-inicial > input:focus {
+    border: 3px solid var(--light-green);
+} 
+
+.page > .content > .form > .term-inicial {
+    padding: 10px;
+    font-size: 14px;
+    color: var(--darkest-green);
+} 
+
+.page > .content > .form > .term-inicial > input {
+    max-width: 80px;
+    background-color: var(--off-white);
+} 
+
+.form > .form-in > .prod_button{
+    /* background-color: rgba(255, 0, 0, 0.3); */
+    padding: 10px 5px;
+    align-items: center;
+}
+
+.form > .form-in > .prod_button > .btn{
+    /* background-color: rgba(255, 0, 0, 0.3); */
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+.form > .form-in > .prod_button > .btn > button{
+    background-color: var(--dark-green);
+    padding: 5px 10px;
+
+    border-radius: 10px;
+    border: 2px var(--darkest-green) solid;
+    color: var(--off-white);
+    font-weight: bold;
+}
+
+/* GRAMMAR */
+
+.page > .content > .g-hint {
+    position: relative;
+    background-color: var(--off-white);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page > .content > .g-hint > label{
+    position: absolute;
+    top: 9px;
+    left: 150px;
+    padding: 0 5px;
+    font-size: 14px;
+    color: var(--darkest-green);
+    background-color: var(--off-white);
+}
+
+.page > .content > .g-hint > .g-hint-box{
+    border: 2px solid var(--darkest-green);
+    width: 325px;
+    height: 250px;
+    border-radius: 15px;
+}
+
+.page > .content > .g-hint > .g-hint-box > p{
+    padding: 15px;
+    font-size: medium;
+    color: var(--green);
+}
+
+.page > .content > .g-hint > button{
+    margin: 25px;
+    padding: 12px 15px;
+    border-radius: 15px;
+    background-color: var(--green);
+    border: none;
+    color: var(--off-white);
+    font-size: 15px;
+    font-weight: 600;
+
+}
+
+/* FOOTER */
+
+footer {
+    background: var(--green);
+}
+
+footer > .group-info > .group-member {
+    display: flex;
+    padding: 10px 20px;
+}
+
+footer > .group-info > .group-member > .member-profile {
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+}
+
+footer > .group-info > .group-member > .member-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100px;
+    margin-left: 10px;
+
+    font-size: larger;
+    font-weight: 500;
+    color: var(--off-brown);
+}
+footer > .group-info > .group-member > .member-info > .icons > a, 
+footer > .group-info > .group-member > .member-info > .icons > a:visited,
+footer > .group-info > .group-member > .member-info > .icons > a:active {
+    color: var(--darkest-green);
+    font-size: x-large;
+    text-decoration: none;
+}
+
+footer > .group-info > .group-member > .member-info > .icons > a:hover{
+    color: var(--off-brown);
+}

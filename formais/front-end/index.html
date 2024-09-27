@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GLC</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        body,h1,h2,h3,h4,h5,h6 {font-family: "Jost", Arial, Helvetica, sans-serif}
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Gerador de Cadeias para Gramáticas Livres de Contexto</h1>
+    </header>
+    
+    <div class="page" id="grammarPage">
+        <div class="title">
+            <h2>Input da Gramática:</h2>
+        </div>
+            
+        <div class="content">
+            <div class="form">
+                <div class="form-in">
+                    <label for="variables">Não-terminais:</label>
+                    <input class="input" type="text" placeholder="S, A, B, ..." id="variables">
+                </div>
+                
+                <div class="term-inicial">
+                    <label for="first_symbol" >Terminal inicial:</label>
+                    <input class="input" type="text" placeholder="S" maxlength="1" id="first_symbol">
+                </div>
+    
+                <div class="form-in">
+                    <label for="end_symbols" >Terminais:</label>
+                    <input class="input" type="text" placeholder="a, b, c, ..." id="end_symbols">
+                </div>
+    
+                <div class="form-in">
+                    <label for="productions">Produções:</label>
+                    <input class="input" type="text" placeholder="S: aA" id="productions">
+    
+                    <div class="prod_button">
+                        <div class="btn">
+                            <button class="button" type="button" id="add_production">Adicionar</button>
+                            <button class="button" type="button" id="remove_production">Remover</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="g-hint">
+                <label for="grammar-hint">Gramática:</label>
+                <div class="g-hint-box" id="grammar-hint">
+                    <p>S -> aA | bB <br>A -> aA | epsilon <br>B -> bS</p>
+                </div>
+                <button class="submit-grammar-btn" id="submit_form">Produzir Cadeias</button>
+            </div>
+            
+        </div>
+    </div>
+
+
+    <div class="page" id="generationPage">
+        
+    </div>
+    
+    <footer>
+        <div class="group-info">
+            <div class="group-member">
+                <img class="member-profile" src="assets/black.png">
+                <div class="member-info">
+                    <p>Herick J. Freitas</p>
+                    <div class="icons">
+                        <a href="https://crouton.net"><i class="fa fa-github"></i></a>
+                        <a href="https://crouton.net"><i class="fa fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="group-member">
+                <img class="member-profile" src="assets/black.png">
+                <div class="member-info">
+                    <p>Lael Gustavo B. R. Lima</p>
+                    <div class="icons">
+                        <a href="https://crouton.net"><i class="fa fa-github"></i></a>
+                        <a href="https://crouton.net"><i class="fa fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="group-member">
+                <img class="member-profile" src="assets/black.png">
+                <div class="member-info">
+                    <p>Luis Gustavo L. Reis</p>
+                    <div class="icons">
+                        <a href="https://crouton.net"><i class="fa fa-github"></i></a>
+                        <a href="https://crouton.net"><i class="fa fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,13 +1,36 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.jost-f {
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100px;
+  font-style: normal;
+}
+
 body {
-    margin: 2% 2%;
-    background: #24222b;
-    color: #fff;
+    background: #EDEDED;
+    color: #344E41;   
+}
+
+header{
+    background-color: #344E41;
+    padding: 20px;
+    text-align: center;
+    color: #DAD7CD
+}
+
+
+div + div {
+    margin-left: 10px;
 }
 
 button {
     font-weight: bold;
-    background-color: #564497;
-    border: 5px solid #564497;
+    background-color: #344E41;
+    border: 5px solid #344E41;
     border-radius: 10px;
     cursor: pointer;
     color: #fff;
@@ -37,25 +60,32 @@ hr {
 footer {
     margin-top:32px;
     text-align: center;
+    display: grid;
 }
 
 a:link {
-    color:  #7e6eb8
+    color:  #344E41
 }
 
 a:visited {
-    color:  #584e7e
+    color:  #A3B18A
 }
 
 .g-main {
     width: 100%;
 }
 
-.g-container {
+.page {
+    margin: 50px auto 0;
+    display: flex;
+    max-width: 85%;
+}
+
+.page .g-container {
     float: left;
 }
 
-.g-quadro {
+.page .g-quadro {
     margin-left: 2%;
 }
 
@@ -64,37 +94,27 @@ a:visited {
     height: 100px;
     border-radius: 50%;
     margin-right: 32px;
-    float: left;
+    float: lef;
 }
 
-.g-member {
-    display: table;
-    margin-bottom: 8%;
+.page .g-box {
+    background-color: #588157;
+    
 }
 
-.g-info {
-    padding: 2% 2% 2% 2%;
-}
-
-.g-box {
-    background-color: #584e7e;
-}
-
-.page {
-    display: flex;
-}
-
-.pg-elem {
+.page .pg-elem {
     flex: auto;
-    width: 100%;
+    width: auto;
 }
+
+/* FOOTER */
+
+
+
+/* ###################################### */
 
 #page2 {
     display: none;
-}
-
-#info {
-    margin-top: 0;
 }
 
 #table_end_symbols {
@@ -109,9 +129,13 @@ a:visited {
 
 #add_production, #remove_production {
     width: 24px;
-    background-color: #7e6eb8;
-    border: 3px solid #7e6eb8;
+    background-color: #3A5A40;
+    border: 3px solid #3A5A40;
     border-radius: 5px;
+}
+
+#example_table {
+    width: 100%;
 }
 
 #production_table {

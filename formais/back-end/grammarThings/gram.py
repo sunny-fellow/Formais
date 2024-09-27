@@ -1,9 +1,16 @@
 # FAZER
     # funcao add_to_grammar()
 
+from enum import Enum
+
+class Key(Enum):
+    variaveis = 1
+    terminais = 2
+    producoes = 3
+
 class Grammar:
 
-    def __init__(self):
+    def __init__(self, value:str):
         """
         Apos instanciar a gramatica, eh necessario escolher a forma de criacao da gramatica.
         Dadas as possibilidades, escolha entre:
@@ -15,26 +22,26 @@ class Grammar:
                 limpa a gramatica
                 recebe a string que contem a gramatica e reescreve esta gramatica
             - add_to_grammar(key:str, value:str)
-                * Recebe uma string key que deve ter um dentre os valores que se quer adicionar:
-                    + key: ['variaveis', 'terminais', 'producoes'] onde, caso nao receba a key, 
+                * Recebe uma Key que deve ter um dentre os valores que se quer adicionar:
+                    + key: [variaveis = 1, terminais = 2, producoes = 3] onde, caso nao receba a key, 
                     por padrao adiciona nas producoes
                 * E recebe um valor que, dependendo da chave, pode assumir tipos diferentes
                     + value:
-                        - variaveis: str
-                        - terminais: str
-                        - producoes | None: dict {variavel: producao}
+                        - variaveis: str | list[str]
+                        - terminais: str | list[str]
+                        - producoes | None: dict {variavel: producao} 
         """
 
         # simbolos terminais e nao terminais
         self.nonTermSymbols = [] # array de simbolos nao-terminais (strings)
         self.termSymbols = []    # array de simbolos terminais (strings)
         self.initial = ""        # string que contem um simbolo nao-terminal que inicia a gramatica
-        self.productions = {}    # dicionaio de producoes, onde a chave eh a variavel (nao-terminal) e o valor eh a producao
+        self.productions = {}    # dicionaio de producoes, onde a chave eh a variavel (nao-terminal) e o valor eh(sao) a(as) producao(oes)
         self.E = "epsilon"       # constante que indica o fim de producoes
 
         # para o auxilio na parte de geracao de cadeias, serao necessarias as 
         # listas de variaveis armadilhas e nao-armadilhas para evitar gerar 
-        # cadeias atraves das variaveis aramdilha
+        # cadeias derivadando das variaveis aramdilha
         self.traps = []
         self.notTraps = []
 
@@ -49,6 +56,9 @@ class Grammar:
         #     return
         
         return
+
+    def add_to_grammar(self, value:str|list, key:Key = None):
+        return 
 
     def archive_to_grammar(self, path:str):
         """
@@ -92,7 +102,7 @@ class Grammar:
             self.productions.append(production)
     
             line = file.readline()
-        return
+        return self
 
     def check_grammar(self) -> tuple:
         """
@@ -146,6 +156,8 @@ class Grammar:
 
         self.traps.clear()
         self.notTraps.clear()
+
+        return
         
     def str_to_grammar(self, content:str):
         """ 
@@ -192,7 +204,7 @@ class Grammar:
                 # Adiciona a nova chave ao dicionario e o novo valor
             self.productions.setdefault(prod[0], []).append(prod[1].removesuffix('\n'))
 
-        return
+        return self
 
 
     #####################################################
@@ -226,3 +238,6 @@ class Grammar:
         print("Producoes:")
         for var in self.productions.keys():
             print(f"{var}  ->  {self.productions[var]}")
+
+        return
+
