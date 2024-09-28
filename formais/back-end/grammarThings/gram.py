@@ -10,7 +10,7 @@ class Key(Enum):
 
 class Grammar:
 
-    def __init__(self, value:str):
+    def __init__(self):
         """
         Apos instanciar a gramatica, eh necessario escolher a forma de criacao da gramatica.
         Dadas as possibilidades, escolha entre:
@@ -36,7 +36,7 @@ class Grammar:
         self.nonTermSymbols = [] # array de simbolos nao-terminais (strings)
         self.termSymbols = []    # array de simbolos terminais (strings)
         self.initial = ""        # string que contem um simbolo nao-terminal que inicia a gramatica
-        self.productions = {}    # dicionaio de producoes, onde a chave eh a variavel (nao-terminal) e o valor eh(sao) a(as) producao(oes)
+        self.productions = {}    # dicionario de producoes, onde a chave eh a variavel (nao-terminal) e o valor eh(sao) a(as) producao(oes)
         self.E = "epsilon"       # constante que indica o fim de producoes
 
         # para o auxilio na parte de geracao de cadeias, serao necessarias as 
@@ -79,7 +79,7 @@ class Grammar:
             #retirando a quebra de linha (se existir)
             symbol = symbol.removesuffix("\n")
             self.nonTermSymbols.append(symbol)
-
+        
         # preechendo o inicial
         line = file.readline()
         self.initial = line.split(":")[1].removesuffix("\n") # removendo, ao mesmo tempo, a quebra de linha
@@ -99,7 +99,7 @@ class Grammar:
             production = line.split(": ")
             # retirando a quebra de linha
             production[1] = production[1].removesuffix("\n")
-            self.productions.append(production)
+            self.productions.setdefault(production[0], []).append(production[1])
     
             line = file.readline()
         return self
@@ -158,7 +158,55 @@ class Grammar:
         self.notTraps.clear()
 
         return
+    
+
+    def grammar_to_dict(self, grammar = None):
+        if grammar == None:
+            grammar = self
+
+        gram = {}           # dicionario que armazenarah as informacoes da gramatica
+
+        # definindo as variaveis da gramatica
+        for var in grammar.nonTermSymbols:
+            gram.setdefault("variaveis", []).append(var)
+        # definindo o nao-terminal inicial da gramatica   
+        gram.setdefault("inicial", grammar.initial)   
+
+        # definindo os terminais da gramatica
+        for termn in grammar.termSymbols:
+            gram.setdefault("terminais", []).append(termn)
         
+        # definindo as producoes da gramatica
+        gram.setdefault("producoes", grammar.productions)
+
+        return gram
+
+    def grammar_to_str(self, gram = None) -> str:
+        if gram == None:
+            gram = self.grammar_to_dict()   # dicionario com as informações da gramtica
+        else: 
+            gram = self.grammar_to_dict(gram)
+
+        ARROW = "\u2192"                # seta no padrao unicode para facilitar a exibicao das transicoes
+        gram_str = ""
+
+        for var in gram.get("variaveis"):
+            line = f"{var}  {ARROW}  "
+
+            if type(gram.get("producoes").get(var)) == list:
+                for prod in gram.get("producoes").get(var):
+                    line += f"{prod} | "
+            else:
+                line += gram.get("producoes").get(var)
+
+            if var == gram.get("initial"):
+                gram_str = line.removesuffix(" | ") + "\n" + gram_str
+            else:
+                gram_str += line.removesuffix(" | ") + '\n'
+        
+        return gram_str
+
+
     def str_to_grammar(self, content:str):
         """ 
             Espera-se uma string content do tipo:
@@ -186,15 +234,14 @@ class Grammar:
             self.nonTermSymbols.append(var.removesuffix('\n'))
         
         # define initial como o nao-terminal escrito apos o ':' da segunda linha
-        self.initial = values[1].split(":")[1].removesuffix('\n')
+        self.initial = values[1].split(":").removesuffix('\n') # removendo uma possivel quebra de linha
 
-        # salva em terminals os terminais que foram digitados apos o ':' da terceira linha        
-        terminals = values[2].split(":")[1].split(",") 
-        for term in terminals:
-            # retira o '\n' do fim da string, se houver, e insere na lista de simbolos terminais
-            self.termSymbols.append(term.removesuffix('\n'))
-        
-        # para cada producao escrita apos o nome producoes linha 4 (indice 3), 
+        # salva em vars os terminais que foram digitados apos o ':' da terceira linha
+        variables = values[2].split(":")[1].split(",") 
+        for var in variables:
+            #retira o '\n' do fim da string, se houver, e insere na lista de variaveis
+            self.termSymbols.append(var.removesuffix('\n'))
+
         # adiciona a chave ao dicionario se nao existir e, caso exista, atualiza seus valores
         for i in range(4, len(values)):
             prod = values[i].split(": ")
@@ -238,6 +285,9 @@ class Grammar:
         print("Producoes:")
         for var in self.productions.keys():
             print(f"{var}  ->  {self.productions[var]}")
-
+            
         return
 
+g = Grammar()
+g = g.archive_to_grammar("grammar.txt")
+print(g.grammar_to_dict())

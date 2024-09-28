@@ -1,10 +1,12 @@
 from flask_cors import CORS
 from flask import Flask, render_template, jsonify, request
 import re # Importa os metodos de regex
-
+from grammarThings.gram import Grammar
 
 app = Flask(__name__)
 CORS(app)  # Isso permite CORS para todas as rotas
+gram = Grammar()
+
 
 @app.route("/verifyInput", methods=["POST"])
 def verifyInput():
@@ -17,7 +19,22 @@ def verifyInput():
         return jsonify({"valid": False})
 
 
+@app.route("/verifyProduction", methods=["POST"])
+def verifyProduction():
+    data = request.get_json()
+    variaveis = data["variaveis"]
+    terminais = data["terminais"]
+    producao = data["producao"]
+
+    # print(variaveis, terminais, producao)
+    if producao == "epsilon":
+        return jsonify({"valid": True})
+
+    for letter in producao:
+        if not letter in variaveis and not letter in terminais:
+            return jsonify({"valid": False})
     
+    return jsonify({"valid": True})
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -110,7 +127,6 @@ def receive_inputs():
         print(verify)
         return jsonify(verify)
         
-    
 
 if __name__ == '__main__':
     app.run(debug=True)
