@@ -36,52 +36,87 @@ def verifyProduction():
     
     return jsonify({"valid": True})
 
-@app.route('/upload', methods=['POST'])
+@app.route('/uploadFile', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        return jsonify({"Error": "Nenhum arquivo enviado."})
+        return jsonify({'valid': False, 'message': "Nenhum arquivo enviado."})
     
-    arquivo = request.files['file']
-    print(arquivo)
+    archive = request.files['file']
+    print(archive)
     
-    if arquivo.filename == '':
-        return jsonify({"Error": "Nenhum arquivo selecionado."})
-    
-    try:
-        conteudo = arquivo.read().decode('utf-8')
+    content = archive.read().decode("utf-8")
+    validation = archive_validation(content)
 
-        arq_val = archive_validation(conteudo)
-        if arq_val[0]:
-            return jsonify({"Success": conteudo})
-        else:
-            return arq_val[1]
+    if not validation[0]:
+        return jsonify({'valid': False, 'message': validation[1]["Error"]})
     
-    except Exception as e:
-        return jsonify({"Error": f"Ocorreu um erro: {e}"})
+    ret = {
+        "variaveis": content.split("\n")[0].strip().split(":")[1],
+        "inicial": content.split("\n")[1].strip().split(":")[1],
+        "terminais": content.split("\n")[2].strip().split(":")[1],
+        "producoes": getProductions(content)
+    }
 
+    print(ret)
+    return jsonify({'valid': True, 'return': ret})
+
+def getProductions(content:str) -> dict:
+    # Pega as producoes do arquivo
+    prods = {}
+
+    # Insere as variaveis como chaves
+    for var in content.split("\n")[0].split(":")[1].strip().split(","):
+        prods[var] = []
+
+    # Adiciona as producoes que cada variavel possui
+    for i in range(4, len(content.split("\n"))):
+        prod = content.split("\n")[i].strip().split(": ")
+        prods[prod[0]].append(prod[1])
+    
+    return prods
 
 def archive_validation(content:str) -> bool:
     lines = content.split("\n")
-    vars_pattern = r'[a-zA-Z]*:(A-Z, )*(A-Z)'
-    ini_pattern = r'[a-zA-Z]*:(A-Z)'
-    term_pattern = r'[a-zA-Z]*:(a-z, )*(a-z)'
-    prod_pattern = r'(A-Z): [a-zA-Z0-1]*'
-
-    if len(lines) < 5:
-        return (False, jsonify({"Error": "Nao ha informacoes o suficiente para a gramatica"}))
-
-    if not re.fullmatch(vars_pattern, lines[0]):
-        return (False, jsonify({"Error": "Variaveis nao formatadas corretamente"}))
-    elif not re.fullmatch(ini_pattern, lines[1]):
-        return (False, jsonify({"Error": "Variavel inicial nao formatada corretamente"}))
-    elif not re.fullmatch(term_pattern, lines[2]):
-        return (False, jsonify({"Error": "Terminais nao formatadas corretamente"}))
-    else:
-        for i in range(4, len(lines)):
-            if not re.fullmatch(prod_pattern, lines[i]):
-                return (False, jsonify({"Error": f"Producao linha {i+1} formatada incorretamente"}))
+    if len(lines) < 4:
+        return (False, {"Error": "Nao ha informacoes o suficiente para a gramatica"})
     
-    return (True, jsonify({"Success": "Tudo formatado corretamente"}))
+    vars_pattern = r'variaveis:([A-Z],)*[A-Z]'
+    ini_pattern = r'inicial:[A-Z]'
+    term_pattern = r'terminais:([a-z0-9],)*[a-z0-9]'
+    prod_pattern = r'[A-Z]: [a-zA-Z0-9]*'
+
+    # Validacao das variaveis
+    if not re.fullmatch(vars_pattern, lines[0].strip()):
+        for char in lines[0]:
+            print("caracter", char)
+        return (False, {"Error": "Variaveis nao formatadas corretamente"})
+    
+    # Validacao da variavel inicial
+    elif not re.fullmatch(ini_pattern, lines[1].strip()):
+        print(lines[1])
+        return (False, {"Error": "Variavel inicial nao formatada corretamente"})
+    
+    # Validacao dos terminais
+    elif not re.fullmatch(term_pattern, lines[2].strip()):
+        print(lines[2])
+        return (False, {"Error": "Terminais nao formatadas corretamente"})
+    
+    # Validacao das producoes
+    else:
+        for i in range(5, len(lines)):
+            # Verifica se a producao esta formatada corretamente
+            if not re.fullmatch(prod_pattern, lines[i].strip()):
+                return (False, {"Error": f"Producao {lines[i].strip()} formatada incorretamente"})
+            
+            # Verifica se a producao contem simbolos nao aceitos
+            if lines[i].split(": ")[1].strip() == "epsilon":
+                continue
+
+            for letter in lines[i].strip().split(": ")[1]:
+                if not letter in lines[0].split(":")[1] and not letter in lines[2].split(":")[1]:
+                    return (False, {"Error": f"Producao {lines[i].strip()} contem simbolos nao aceitos"})
+    
+    return (True, {"Success": "Tudo formatado corretamente"})
 
 @app.route('/verifyInputGrammar', methods=['POST'])
 def verifyFormat():
