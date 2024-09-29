@@ -7,8 +7,10 @@ const producao  = document.getElementById('productions')
 // Botoes:
 const addProd   = document.getElementById('add_production')
 const popProd   = document.getElementById('remove_production')
+const upFile    = document.getElementById('insert_file')
 const enviar    = document.getElementById('submit_form')
 const limpar    = document.getElementById('clear_form')
+const retornar  = document.getElementById('return_button')
 
 function clearErrors(){
     let messages = [... document.querySelectorAll(".error_message")]
@@ -46,8 +48,8 @@ addProd.addEventListener('click', ()=>{
 
         }else{
             // Variavel e Producao:
-            variavel = producao.value.split(": ")[0]
-            prod = producao.value.split(": ")[1]
+            let variavel = producao.value.split(": ")[0]
+            let prod = producao.value.split(": ")[1]
 
             // Pede pro back verificar se a producao utiliza apenas variaveis e terminais
             fetch("http://127.0.0.1:5000/verifyProduction", {
@@ -68,7 +70,7 @@ addProd.addEventListener('click', ()=>{
                 }
                 else{
                     // Verifica se ja ha a variavel no quadro
-                    lines = [...document.querySelectorAll(".production_line")]
+                    let lines = [...document.querySelectorAll(".production_line")]
                     hasVariable = -1
                     for(let i=0; i < lines.length; i++){
                         if(lines[i].innerHTML[0] == variavel){
@@ -118,15 +120,18 @@ popProd.addEventListener('click', ()=>{
             error_message("Formatação inválida de Produção<br>Deve ser informada no padrão Variável: Produção")
         }else{
             // Variavel e Producao:
-            v = producao.value.split(": ")[0]
-            p = producao.value.split(": ")[1]
+            let v = producao.value.split(": ")[0]
+            let p = producao.value.split(": ")[1]
+            let lines = [...document.querySelectorAll(".production_line")]
 
             for(let i=0; i < lines.length; i++){
-                if(lines[i].innerHTML[0] == variavel){
-                    if(lines[i].innerHTML.includes("| " + prod + " ")){
-                        lines[i].innerHTML.replace("| " + prod + " ", "")
-                    }else if(lines[i].innerHTML.includes(" " + prod + " ")){
-                        lines[i].innerHTML.replace("| " + prod + " ", "")
+                if(lines[i].innerHTML[0] == v){
+                    if(lines[i].innerHTML.includes("| " + p + " ")){
+                        lines[i].innerHTML = lines[i].innerHTML.replace("| " + p + " ", " ")
+                    }else if(lines[i].innerHTML.includes(" " + p + " |")){
+                        lines[i].innerHTML = lines[i].innerHTML.replace(" " + p + " |", "")
+                    }else if(lines[i].innerHTML.includes(" " + p + " ")){
+                        lines[i].parentNode.removeChild(lines[i])         
                     }else{
                         error_message("A variável " + v + " não contém esta produção")
                     }
@@ -134,14 +139,10 @@ popProd.addEventListener('click', ()=>{
                 }
             }
 
-            error_message("Não há produções para esta variável")
+            error_message("Não há produções para a variável " + v)
             
         }
     })
-})
-
-enviar.addEventListener('click', ()=>{
-    
 })
 
 limpar.addEventListener('click', ()=>{
@@ -154,4 +155,70 @@ limpar.addEventListener('click', ()=>{
     producoes.forEach((el) => {
         el.parentNode.removeChild(el);
     })
+})
+
+upFile.addEventListener('change', ()=>{
+    clearErrors()
+    const file = upFile.files[0]
+
+    // Cria um objeto FormData
+    const formData = new FormData();
+    formData.append('file', file); // Adiciona o arquivo ao FormData
+
+
+    fetch("http://127.0.0.1:5000/uploadFile", {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data['valid'] == false){
+            error_message("Arquivo inválido<br>" + data['message'] + "<br>Por favor, tente novamente.")
+        }
+        else{
+            let dict_returned = data['return']
+
+            variaveis.value = dict_returned['variaveis']
+            let variaveisArray = variaveis.value.split(',').map(v => v.trim());
+            variaveis.value = variaveisArray.join(', ');
+
+            terminais.value = dict_returned['terminais']
+            let terminaisArray = terminais.value.split(',').map(v => v.trim());
+            terminais.value = terminaisArray.join(', ');
+            console.log(terminais.value)
+            console.log(dict_returned['terminais'])
+
+            inicial.value = dict_returned['inicial']
+
+            // Limpa a caixa de texto das producoes
+            producoes = [...document.querySelectorAll(".production_line")]
+            producoes.forEach((el) => {
+                el.parentNode.removeChild(el);
+            })
+
+            let ret_producoes = dict_returned['producoes']
+            for (let key in ret_producoes){
+                if (ret_producoes[key].length == 0){
+                    continue;
+                }
+                let line = document.createElement('p')
+                line.setAttribute("class", "production_line")
+                line.innerHTML = key + "  &#8594;  " + ret_producoes[key]
+                line.innerHTML = line.innerHTML.replace(",", " | ")
+                document.getElementById("grammar-hint").appendChild(line)
+            }
+        }
+    })
+})
+
+enviar.addEventListener('click', ()=>{
+    clearErrors()
+    document.getElementById("grammarPage").style.display = "none"
+    document.getElementById("generationPage").style.display = "block"
+})
+
+retornar.addEventListener('click', ()=>{
+    clearErrors()
+    document.getElementById("generationPage").style.display = "none"
+    document.getElementById("grammarPage").style.display = "block"
 })
