@@ -185,8 +185,6 @@ upFile.addEventListener('change', ()=>{
             terminais.value = dict_returned['terminais']
             let terminaisArray = terminais.value.split(',').map(v => v.trim());
             terminais.value = terminaisArray.join(', ');
-            console.log(terminais.value)
-            console.log(dict_returned['terminais'])
 
             inicial.value = dict_returned['inicial']
 
@@ -203,8 +201,8 @@ upFile.addEventListener('change', ()=>{
                 }
                 let line = document.createElement('p')
                 line.setAttribute("class", "production_line")
-                line.innerHTML = key + "  &#8594;  " + ret_producoes[key]
-                line.innerHTML = line.innerHTML.replace(",", " | ")
+                let str = ret_producoes[key].join(" | ")
+                line.innerHTML = key + "  &#8594;  " + str
                 document.getElementById("grammar-hint").appendChild(line)
             }
         }
@@ -213,8 +211,42 @@ upFile.addEventListener('change', ()=>{
 
 enviar.addEventListener('click', ()=>{
     clearErrors()
-    document.getElementById("grammarPage").style.display = "none"
-    document.getElementById("generationPage").style.display = "block"
+
+    let variables = variaveis.value.split(',').map(v => v.trim());
+    let terminals = terminais.value.split(',').map(v => v.trim());
+    let initial = inicial.value
+
+    let lines = [...document.querySelectorAll(".production_line")]
+    let producoes = {}
+
+    lines.forEach((el) => {
+        let variavel = el.innerHTML.split("  ")[0]
+        let producao = el.innerHTML.split("  ")[2].split(" | ")
+        producao = producao.map(p => p.trim())
+        producoes[variavel] = producao
+    })
+
+    fetch("http://127.0.0.1:5000/receiveInputs", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'variaveis': variables,
+            'terminais': terminals,
+            'inicial': initial,
+            'producoes': producoes
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data['valid'] == false){
+            error_message("Erro ao enviar os dados para o servidor<br>" + data['message'])
+        }else{
+            document.getElementById("grammarPage").style.display = "none"
+            document.getElementById("generationPage").style.display = "block"        
+        }
+    })
 })
 
 retornar.addEventListener('click', ()=>{
