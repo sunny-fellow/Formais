@@ -1,12 +1,10 @@
-# FAZER
-    # funcao add_to_grammar()
-
 from enum import Enum
 
 class Key(Enum):
     variaveis = 1
-    terminais = 2
-    producoes = 3
+    inicial = 2
+    terminais = 3
+    producoes = 4
 
 class Grammar:
 
@@ -21,9 +19,9 @@ class Grammar:
             - str_to_grammar(info:str)
                 limpa a gramatica
                 recebe a string que contem a gramatica e reescreve esta gramatica
-            - add_to_grammar(key:str, value:str)
+            - add_to_grammar(value:str|list, key:str = None)
                 * Recebe uma Key que deve ter um dentre os valores que se quer adicionar:
-                    + key: [variaveis = 1, terminais = 2, producoes = 3] onde, caso nao receba a key, 
+                    + key: [variaveis = 1, inicial = 2, terminais = 3, producoes = 4] onde, caso nao receba a key, 
                     por padrao adiciona nas producoes
                 * E recebe um valor que, dependendo da chave, pode assumir tipos diferentes
                     + value:
@@ -57,7 +55,40 @@ class Grammar:
         
         return
 
-    def add_to_grammar(self, value:str|list, key:Key = None):
+    def add_to_grammar(self, value:str|list|dict, key:Key = None):
+        if key == Key.variaveis:
+            if type(value) == list:
+                    for val in value:
+                        self.nonTermSymbols.append(val.removesuffix('\n'))
+            else:
+                self.nonTermSymbols.append(value)
+
+        elif key == Key.inicial:
+            if type(value) == str:
+                self.initial = value
+            else:
+                self.initial = str(value)
+
+        elif key == Key.terminais:
+            if type(value) == list:
+                    for val in value:
+                        self.termSymbols.append(val.removesuffix('\n'))
+            else:
+                self.termSymbols.append(value)
+        
+        elif key == Key.producoes or key == None:
+            if type(value) == dict:
+                    for val in value.keys():
+                        for prod in value.get(val):
+                            self.productions.setdefault(val, []).append(prod)
+            elif type(value) == list:
+                for val in value:
+                    self.productions.setdefault(self.initial, []).append(val)
+            else:
+                self.productions.setdefault(self.initial, []).append(value)
+        else:
+            return jsonify({"Error": "Invalid Key"})
+
         return 
 
     def archive_to_grammar(self, path:str):
@@ -285,9 +316,13 @@ class Grammar:
         print("Producoes:")
         for var in self.productions.keys():
             print(f"{var}  ->  {self.productions[var]}")
-            
+
         return
 
 g = Grammar()
-g = g.archive_to_grammar("grammar.txt")
-print(g.grammar_to_dict())
+# g.add_to_grammar(['S', 'A'], Key.variaveis)
+# g.add_to_grammar('S', Key.inicial) # sobrescreve qualquer inicial que ja exista, se existir
+# g.add_to_grammar(['a'], Key.terminais)
+# g.add_to_grammar({ "S" : ['aA', "epsilon"] , "A": ["a", "epsilon"]}) # se nao passar nenhuma key, ele considera como producao
+# g.add_to_grammar(['a', 'aa']) # ao passar apenas uma lista sem sua chave, ele adiciona todos os valores aas producoes do inicial
+# print(g.grammar_to_str())
