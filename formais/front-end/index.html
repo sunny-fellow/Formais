@@ -92,11 +92,11 @@
             
         </div>
     </div>
-
-
+    
+    
     <div class="page" id="generationPage">
         <div class="content">
-
+            
             <div class="title">
                 <h2>Gerar cadeias para a gramática:</h2>
             </div>
@@ -111,10 +111,12 @@
             <div class="subtitle">
                 <h3>Diagrama de Geração da Cadeia:</h3>
             </div>
-
-            <div class="prod-choice">
-                <form class="form">
-                    <legend>Derivar a variável S em:</legend>
+            
+            <div class="grammar-creation">
+                
+                <div class="prod-choice" style="display: none;">
+                    <form class="form">
+                        <legend>Derivar a variável S em:</legend>
                     <div class="options" id="EDITAR">
                         <div class="prod">
                             <input type="radio" id="production_1" name="production" value="EDITAR" />
@@ -132,18 +134,25 @@
                     <div class="btn">
                         <button type="submit">Gerar</button>
                     </div>
-                </form>
-            </div>
+                    </form>
+                </div>
             
-            <div id="grammar_exibition_box">
-                <label class="fast-gen" for="grammar-hint">Geração Rápida:</label>
-                <label class="manual-gen" for="grammar-hint" style="display: none;">Geração Manual:</label>
-                <div class="g-hint-box" id="grammar-hint">
-                    
-                </div>     
-            </div>
-            
+                <div id="grammar_exibition_box">
+                    <label class="fast-gen" for="grammar-hint">Geração Rápida:</label>
+                    <label class="manual-gen" for="grammar-hint" style="display: none;">Geração Manual:</label>
+                    <div class="g-hint-box" id="grammar-hint">
+                        
+                    </div>     
+                </div>
 
+                <div id="fast_mode_btn">
+                    <button id="BACKEND EDITAR"><i class="fa fa-plus"></i> Nova Cadeia</button>
+                    <button id="BACKEND EDITAR"><i class="fa fa-arrow-left"></i> Cadeia Anterior</button>
+                </div>
+            </div>
+
+            
+            
             <div class="divisor">
                 <label for="divisor">Finalizada a cadeia...</label>
             </div>
