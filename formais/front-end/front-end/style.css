@@ -42,6 +42,10 @@ header > h1{
     /* color: var(--forest-green); */
 }
 
+header > h1::after{
+    content: "Herick eh gayyyy";
+}
+
 /* PAGE */
 
 .page {

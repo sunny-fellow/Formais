@@ -117,51 +117,44 @@
                 <div class="prod-choice" style="display: none;">
                     <form class="form">
                         <legend>Derivar a variável S em:</legend>
-                        <div class="options" id="EDITAR">
-                            <div class="prod">
-                                <input type="radio" id="production_1" name="production" value="EDITAR" />
-                                <label class="prod-lbl" for="production_1">produção 1</label>
-                            </div>
-                            <div class="prod">
-                                <input type="radio" id="production_2" name="production" value="EDITAR" />
-                                <label class="prod-lbl" for="production_2">produção 2 (armadilha)</label>
-                            </div>
-                            <div class="prod">
-                                <input type="radio" id="production_3" name="production" value="EDITAR" />
-                                <label class="prod-lbl" for="production_3">produção 3</label>
-                            </div>
+                    <div class="options" id="EDITAR">
+                        <div class="prod">
+                            <input type="radio" id="production_1" name="production" value="EDITAR" />
+                            <label class="prod-lbl" for="production_1">produção 1</label>
                         </div>
-                        <div class="btn">
-                            <button type="submit">Derivar</button>
+                        <div class="prod">
+                            <input type="radio" id="production_2" name="production" value="EDITAR" />
+                            <label class="prod-lbl" for="production_2">produção 2 (armadilha)</label>
                         </div>
+                        <div class="prod">
+                            <input type="radio" id="production_3" name="production" value="EDITAR" />
+                            <label class="prod-lbl" for="production_3">produção 3</label>
+                        </div>
+                    </div>
+                    <div class="btn">
+                        <button type="submit">Gerar</button>
+                    </div>
                     </form>
                 </div>
-                
-                <div class="prod-fast">
-                    <div id="grammar_exibition_box">
-                        <label class="fast-gen" for="grammar-hint">Geração Rápida:</label>
-                        <label class="manual-gen" for="grammar-hint" style="display: none;">Geração Detalhada:</label>
-                        <div class="g-hint-box" id="grammar-hint">
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  <b>110100</b> (Atual)<br><br></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  11<span>S</span>00  ➞   <b>110100</b></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  <b>110100</b></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  11<span>S</span>00  ➞   11<span>S</span>00  ➞  <b>110100</b></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  <b>110100</b></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  11<span>S</span>00  ➞  11<span>S</span>00  ➞  <b>110100</b></p>
-                        </div>   
-                    </div>
-    
-                    <div id="fast_mode_btn" style="">
-                        <button id="BACKEND EDITAR"><i class="fa fa-arrow-left"></i></button>
-                        <button id="BACKEND EDITAR"><i class="fa fa-plus"></i></button>
-                    </div>
+            
+                <div id="grammar_exibition_box">
+                    <label class="fast-gen" for="grammar-hint">Geração Rápida:</label>
+                    <label class="manual-gen" for="grammar-hint" style="display: none;">Geração Manual:</label>
+                    <div class="g-hint-box" id="grammar-hint">
+                        
+                    </div>     
+                </div>
+
+                <div id="fast_mode_btn">
+                    <button id="BACKEND EDITAR"><i class="fa fa-plus"></i> Nova Cadeia</button>
+                    <button id="BACKEND EDITAR"><i class="fa fa-arrow-left"></i> Cadeia Anterior</button>
                 </div>
             </div>
 
             
             
             <div class="divisor">
-                <label for="divisor">Finalizadas as cadeias...</label>
+                <label for="divisor">Finalizada a cadeia...</label>
             </div>
 
             <div id="posterior-opt">
@@ -255,3 +248,5 @@
     <script src="scripts.js"></script>
 </body>
 </html>
+message.txt
+10 KB

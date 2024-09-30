@@ -19,15 +19,12 @@
 #generationPage > .content {
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 /* ********** CRIAÇÃO DE GRAMÁTICA ************ */
 .page > .content > .grammar-creation {
     display: flex;
-    gap: 20px;
-    align-items: center;
-    width: 90%;
+    justify-content: space-between;
 }
 
 /* ********** BOX DA GRAMÁTICA ************ */
@@ -41,12 +38,7 @@
     color: var(--off-white);
 }
 
-#generationPage > .content > .grammar-creation > .prod-fast {
-    width: 100%;
-}
-
-
-#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box {
+#generationPage > .content > .grammar-creation > #grammar_exibition_box {
     position: relative;
     background-color: var(--deep-forest);
     padding: 20px;
@@ -55,53 +47,43 @@
     align-items: center;
 }
 
-#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > label{
+#generationPage > .content > .grammar-creation > #grammar_exibition_box > label{
     position: absolute;
-    top: 7px;
-    right: auto;
-    padding: 0 8px;
-    font-size: 18px;
+    top: 9px;
+    left: auto;
+    padding: 0 5px;
+    font-size: 14px;
     color: var(--off-white);
     background-color: var(--deep-forest);
 }
 
-#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > .g-hint-box{
+#generationPage > .content > .grammar-creation > #grammar_exibition_box > .g-hint-box{
     border: 2px solid var(--light-green);
-    width: 100%;  
-    height: auto;
-    min-height: 250px;  
+    width: 1200px;
+    height: 250px;
     border-radius: 15px;
-    padding: 25px;
+    padding: 15px;
 }
 
-#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > .g-hint-box > p{
+#generationPage > .content > .grammar-creation > #grammar_exibition_box > .g-hint-box > p{
     line-height: 1.5;
-    font-size: 18px;
+    font-size: medium;
     color: var(--off-gray);
 }
 
-#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > .g-hint-box > p > span{
-    line-height: 1.5;
-    font-size: 18px;
-    color: var(--off-white);
-    font-weight: 600;
-}
-
 /* ********** MODO RÁPIDO ************ */
-.page > .content > .grammar-creation > .prod-fast {
+
+.page > .content > .grammar-creation > #fast_mode_btn {
     display: flex;
     flex-direction: column;
-}
-
-.page > .content > .grammar-creation > .prod-fast > #fast_mode_btn {
-    display: flex;
     justify-content: center;
-    gap: 10px;
+    padding: 40px;
 }
 
-.page > .content > .grammar-creation > .prod-fast > #fast_mode_btn > button {
+.page > .content > .grammar-creation > #fast_mode_btn > button {
+    margin: 25px;
     padding: 10px 20px;
-    width: 50px;
+    width: 200px;
     border-radius: 15px;
     border: none;
     background-color: var(--light-green);
@@ -110,7 +92,7 @@
     font-weight: 600;
 }
 
-.page > .content > .grammar-creation > .prod-fast > #fast_mode_btn > button:hover {
+.page > .content > .grammar-creation > #fast_mode_btn > button:hover {
     transition: 0.2s;
     transform: scale(1.1);
     background-color: var(--off-white);
@@ -121,28 +103,23 @@
 
 .page > .content > .grammar-creation > .prod-choice {
     color: var(--light-green);
-    width: 300px;
-    height: 100%;
+    padding: 40px;
 }
 
 .page > .content > .grammar-creation > .prod-choice > .form > .options {
     display: flex;
     flex-direction: column;
-    justify-content: center;
 }
 
 .page > .content > .grammar-creation > .prod-choice > .form > .options > .prod {
-    display: flex;
-    align-items: center;
+    align-items: left;
+    align-content: center;
     gap: 10px;
-    padding-bottom: 5px;
 }
 
-.page > .content > .grammar-creation > .prod-choice > .form > legend {
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > legend {
     font-weight: 500;
-    font-size: 19px;
-    color: var(--off-white);
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > label {
