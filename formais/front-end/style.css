@@ -140,13 +140,11 @@ header > h1{
 } 
 
 .form > .form-in > .prod_button{
-    /* background-color: rgba(255, 0, 0, 0.3); */
     padding: 10px 5px;
     align-items: center;
 }
 
 .form > .form-in > .prod_button > .btn{
-    /* background-color: rgba(255, 0, 0, 0.3); */
     display: flex;
     justify-content: space-evenly;
 }
@@ -254,7 +252,8 @@ header > h1{
 .page > .content > .g-hint > .g-hint-box{
     border: 2px solid var(--light-green);
     width: 325px;
-    height: 250px;
+    min-height: 250px;
+    height: auto;
     border-radius: 15px;
     padding: 15px;
 }
