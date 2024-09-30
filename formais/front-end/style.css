@@ -1,42 +1,10 @@
-/*
 :root {
-    --off-white: #EDEDED;
-    --off-brown: #DAD7CD;
-    --light-green: #A3B18A;
-    --mid-green: #588157;
-    --dark-green: #3A5A40;
-    --darkest-green: #344E41;
-    }
-    
-:root {
-    --off-white: #212226;
-    --off-brown: #313866;
-    --light-green: #504099;
-    --mid-green: #974ec3;
-    --dark-green: #fe7bbf;
-    --darkest-green: #f8f8f8;
-    
-}
-
-:root {
-    --off-white: #EDEDED;
-    --off-brown: #CAD2C5;
+    --deep-forest: #2F3E46;
+    --forest-green: #354F52;
+    --grass-green: #52796F;
     --light-green: #84A98C;
-    --mid-green: #52796F;
-    --dark-green: #354F52;
-    --darkest-green: #2F3E46;
-
-    --error-color: #2F3E46;
-}
-
-*/
-:root {
-    --off-white: #2F3E46;
-    --off-brown: #354F52;
-    --light-green: #52796F;
-    --mid-green: #84A98C;
-    --dark-green: #CAD2C5;
-    --darkest-green: #EDEDED;
+    --off-gray: #CAD2C5;
+    --off-white: #EDEDED;
 
     --error-color: rgb(252, 101, 101);
 }
@@ -47,8 +15,13 @@
 }
 
 body {
-    background: var(--off-white);
+    background: var(--deep-forest);
     overflow-x: hidden;
+}
+
+button:hover {
+    transition: 0.2s;
+    transform: scale(1.1);
 }
 
 /* HEADER */
@@ -58,15 +31,19 @@ header{
     top: 0;
     width: 100%;
     text-align: center;
-    background-color: var(--mid-green);
-    border-bottom: 5px var(--light-green) solid;
+    background-color: var(--light-green);
+    border-bottom: 5px var(--grass-green) solid;
 }
 
 header > h1{
-    color: var(--darkest-green);
+    color: var(--off-white);
     font-size: xx-large;
     font-weight: 500;
-    /* color: var(--off-brown); */
+    /* color: var(--forest-green); */
+}
+
+header > h1::after{
+    content: "Herick eh gayyyy";
 }
 
 /* PAGE */
@@ -82,7 +59,7 @@ header > h1{
     padding: 50px;
     text-align: center;
     font-size: large;
-    color: var(--darkest-green);
+    color: var(--off-white);
 }
 
 .page > .title > h2{
@@ -95,7 +72,7 @@ header > h1{
 }
 
 .page > .content > .form {
-    background-color: var(--off-white);
+    background-color: var(--deep-forest);
     display: flex;
     flex-direction: column;
     max-width: 400px;
@@ -120,10 +97,10 @@ header > h1{
     position: absolute;
     top: 5px;
     left: 25px;
-    background-color: var(--off-white); /* Cor do fundo da área ao redor da label */
+    background-color: var(--deep-forest); /* Cor do fundo da área ao redor da label */
     padding: 0 5px;
     font-size: 14px;
-    color: var(--darkest-green); /* Cor do texto da label */
+    color: var(--off-white); /* Cor do texto da label */
 }
 
 #insert_file{
@@ -135,35 +112,35 @@ header > h1{
     max-width: 200px;
     height: 30px;
     border-radius: 10px;
-    border: 2px var(--mid-green) solid;
+    border: 2px var(--light-green) solid;
     font-size: medium;
     outline: none;
-    background-color: var(--off-white);
-    color: var(--dark-green);
+    background-color: var(--deep-forest);
+    color: var(--off-gray);
 } 
 .page > .content > .form > .form-in > input::placeholder,  .page > .content > .form > .term-inicial > input::placeholder {
-    color: var(--mid-green);
+    color: var(--light-green);
 } 
 
 .page > .content > .form > .form-in > input:focus,  .page > .content > .form > .term-inicial > input:focus {
-    border: 3px solid var(--dark-green);
+    border: 3px solid var(--off-gray);
 } 
 
 .page > .content > .form > .term-inicial {
     padding: 10px;
     font-size: 14px;
-    color: var(--darkest-green);
+    color: var(--off-white);
 } 
 
 .page > .content > .form > .term-inicial > input {
     max-width: 80px;
-    color: var(--darkest-green);
-    background-color: var(--off-white);
+    color: var(--off-white);
+    background-color: var(--deep-forest);
 } 
 .page > .content > .form > .term-inicial > input::placeholder {
     max-width: 80px;
-    color: var(--mid-green);
-    background-color: var(--off-white);
+    color: var(--light-green);
+    background-color: var(--deep-forest);
 } 
 
 .form > .form-in > .prod_button{
@@ -180,20 +157,20 @@ header > h1{
 
 
 .form > .form-in > .prod_button > .btn > button{
-    background-color: var(--darkest-green);
+    background-color: var(--off-white);
     padding: 5px 10px;
     
     border-radius: 10px;
-    border: 2px var(--darkest-green) solid;
-    color: var(--off-white);
+    border: 2px var(--off-white) solid;
+    color: var(--deep-forest);
     font-weight: bold;
 }
 
 .form > .form-in > .prod_button > .btn > button:hover {
     transition: 0.2s;
     cursor: pointer;
-    background-color: var(--mid-green);
-    border-color: var(--mid-green);
+    background-color: var(--light-green);
+    border-color: var(--light-green);
 }
 
 /* ERROR MESSAGE */
@@ -217,7 +194,7 @@ header > h1{
 
 /* FILE INPUT */
 .page > .content > .form > .ou{
-    color: var(--dark-green);
+    color: var(--off-gray);
     font-size: 20px;
     font-weight: 400;
     margin: 20px 0;
@@ -230,10 +207,10 @@ header > h1{
 }
 
 .page > .content > .form > .file-btns > button {
-    background-color: var(--darkest-green);
+    background-color: var(--off-white);
     padding: 6px 10px;
     border-radius: 10px;
-    color: var(--off-brown);
+    color: var(--forest-green);
     text-decoration: none;
     border: none;
 }
@@ -246,7 +223,7 @@ header > h1{
 
 .page > .content > .form > .file-btns > button > label,
 .page > .content > .form > .file-btns > button > a {
-    color: var(--off-brown);
+    color: var(--forest-green);
     font-size: 15px;
     font-weight: bold;
     text-decoration: none;
@@ -254,14 +231,14 @@ header > h1{
 
 .page > .content > .form > .file-btns > button:hover {
     transition: 0.2s;
-    background-color: var(--mid-green);
+    background-color: var(--light-green);
 }
 
 /* GRAMMAR */
 
 .page > .content > .g-hint {
     position: relative;
-    background-color: var(--off-white);
+    background-color: var(--deep-forest);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -274,31 +251,32 @@ header > h1{
     left: auto;
     padding: 0 5px;
     font-size: 14px;
-    color: var(--darkest-green);
-    background-color: var(--off-white);
+    color: var(--off-white);
+    background-color: var(--deep-forest);
 }
 
 .page > .content > .g-hint > .g-hint-box{
-    border: 2px solid var(--mid-green);
+    border: 2px solid var(--light-green);
     width: 325px;
     height: 250px;
     border-radius: 15px;
     padding: 15px;
 }
 
+
 .page > .content > .g-hint > .g-hint-box > p{
     line-height: 1.5;
     font-size: medium;
-    color: var(--dark-green);
+    color: var(--off-gray);
 }
 
-.page > .content > .g-hint > .grammar-btn > button{
+.page > .content > .g-hint > .grammar-btn > button {
     margin: 25px;
     padding: 12px 15px;
     border-radius: 15px;
-    background-color: var(--mid-green);
+    background-color: var(--light-green);
     border: none;
-    color: var(--off-white);
+    color: var(--deep-forest);
     font-size: 15px;
     font-weight: 600;
 
@@ -307,19 +285,25 @@ header > h1{
 .page > .content > .g-hint > .grammar-btn > button:hover {
     transition: 0.2s;
     cursor: pointer;
-    background-color: var(--darkest-green);
+    background-color: var(--off-white);
+}
+.page > .content{
+    margin-bottom: 80px;
 }
 
 /* FOOTER */
 
 footer {
-    background-color: var(--mid-green);
+    margin: 0;
+    width: 100%;
+    justify-content: center;
+    background-color: var(--light-green);
     padding: 20px 10px;
 }
 
 footer > .project-info {
+    /* background-color: rgba(255, 0, 0, 0.2); */
     display: flex;
-    justify-content: space-evenly; 
     margin: 0 auto;
     max-width: 80%;
 }
@@ -327,39 +311,56 @@ footer > .project-info {
 /* FOOTER > GROUP */
 
 footer > .project-info > .group-info {
+    display: flex;
+    flex-direction: column;
+    /* background-color: rgba(255, 0, 0, 0.3); */
     max-width: 400px;
-    margin-left: 50px;
-    padding-right: 150px;
+    /* margin-left: 100px; */
+    padding-right: 90px;
 }
 
 footer > .project-info > .group-info > .title > h3 {
     font-size: 25px;
     font-weight: 600;
-    color: var(--off-brown);
+    color: var(--forest-green);
     text-align: center;
 }
 
 footer > .project-info > .group-info > .group-member {
+    /* background-color: rgba(255, 0, 0, 0.354); */
     display: flex;
-    padding: 10px 20px;
+    padding: 10px 30px;
+    margin: 5px;
     border-radius: 30px;
 }
 
+footer > .project-info > .group-info > .group-member > .member-info{
+    /* background-color: rgba(255, 0, 0, 0.354); */
+    display: flex;
+    width: 400px;
+}
+
+footer > .project-info > .group-info > .group-member > .member-info > p{
+    /* background-color: rgba(255, 0, 0, 0.354); */
+    display: flex;
+    width: 100%;
+}
+
 footer > .project-info > .group-info > .group-member:hover {
-    transition: 0.2s;
-    background-color: var(--off-brown);
+    transition: 0.5s;
+    background-color: var(--forest-green);
     border-radius: 30px;
 }
 footer > .project-info > .group-info > .group-member:hover > .member-info > p{
     transition: 0.2s;
-    color: var(--dark-green);
+    color: var(--off-gray);
 }
 
 footer > .project-info > .group-info > .group-member:hover > .member-info > .icons > a > i{
-    color: var(--mid-green)
+    color: var(--light-green)
 }
 footer > .project-info > .group-info > .group-member:hover > .member-info > .icons > a > i:hover{
-    color: var(--darkest-green)
+    color: var(--off-white)
 }
 
 footer > .project-info > .group-info > .group-member > .member-profile {
@@ -377,26 +378,27 @@ footer > .project-info > .group-info > .group-member > .member-info {
 
     font-size: larger;
     font-weight: 500;
-    color: var(--off-brown);
+    color: var(--forest-green);
 }
 footer > .project-info > .group-info > .group-member > .member-info > .icons > a, 
 footer > .project-info > .group-info > .group-member > .member-info > .icons > a:visited,
 footer > .project-info > .group-info > .group-member > .member-info > .icons > a:active {
-    color: var(--darkest-green);
+    color: var(--off-white);
     font-size: x-large;
     text-decoration: none;
 }
 
 footer > .project-info > .group-info > .group-member > .member-info > .icons > a:hover{
-    color: var(--off-brown);
+    color: var(--forest-green);
 }
 
 
 /* FOOTER > ABOUT */
 footer > .project-info > .about {
-    color: var(--off-brown);
+    /* background-color: rgba(255, 0, 0, 0.2); */
+    color: var(--forest-green);
     text-align: center;
-    padding: 0 150px;
+    padding: 0 110px;
 }
 
 footer > .project-info > .about > .title >  h2 {
@@ -405,6 +407,7 @@ footer > .project-info > .about > .title >  h2 {
 
 footer > .project-info > .about > .subtitle >  h3 {
     line-height: 2.5;
+    margin-bottom: 15px;
 }
 
 footer > .project-info > .about > .textbody >  p {
@@ -412,8 +415,8 @@ footer > .project-info > .about > .textbody >  p {
 }
 
 footer > .project-info > .about > .repository-btn > button {
-    background-color: var(--off-white);
-    margin-top: 15px;
+    background-color: var(--deep-forest);
+    margin-top: 35px;
     padding: 10px 20px;
     border-radius: 0 0 10px 10px;
     border: none;
@@ -426,27 +429,27 @@ footer > .project-info > .about > .repository-btn > button {
 footer > .project-info > .about > .repository-btn > button > a,
 footer > .project-info > .about > .repository-btn > button > a:visited,
 footer > .project-info > .about > .repository-btn > button > a:active{
-    color: var(--dark-green);
+    color: var(--off-gray);
     text-decoration: none;
     display: flex;
     gap: 5px;
 }
 footer > .project-info > .about > .repository-btn > button > a > i{
     font-size: 22px;
-    color: var(--mid-green);
+    color: var(--light-green);
 }
 
 footer > .project-info > .about > .repository-btn > button:hover{
     transition: 0.2s;
-    background-color: var(--light-green);
-    color: var(--dark-green);
+    background-color: var(--grass-green);
+    color: var(--off-gray);
 }
 
 footer > .project-info > .about > .repository-btn > button:hover > a > i{
     transition: 0.2s;
-    color: var(--darkest-green);
+    color: var(--off-white);
 }
 footer > .project-info > .about > .repository-btn > button:hover > a{
     transition: 0.2s;
-    color: var(--dark-green);
+    color: var(--off-gray);
 }

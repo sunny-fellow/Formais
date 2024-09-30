@@ -4,7 +4,14 @@
     <title>GLC</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GLC</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -18,7 +25,7 @@
         <h1>Gerador de Cadeias para Gramáticas Livres de Contexto</h1>
     </header>
     
-    <div class="page" id="grammarPage">
+    <div class="page" id="grammarPage" style="display: none;">
         <div class="title">
             <h2>Input da Gramática:</h2>
         </div>
@@ -87,22 +94,79 @@
     </div>
 
 
-    <div class="page" id="generationPage" style="display: none">
-        <div id="return_button_box">
-            <button id="return_button"><i class="fa fa-arrow-left"></i> Voltar</button>
-        </div>
+    <div class="page" id="generationPage">
+        <div class="content">
 
-        <div id="grammar_exibition_box">
-            <label for="grammar-hint">Gramática:</label>
-            <div class="g-hint-box" id="grammar-hint">        
-        </div>
+            <div class="title">
+                <h2>Gerar cadeias para a gramática:</h2>
+            </div>
+            
+            <div class="g-hint">
+                <label for="grammar-hint">Gramática:</label>
+                <div class="g-hint-box" id="grammar-hint">
+                    
+                </div>
+            </div>
 
-        <div id="modes_box">
-            <button class="mode_button selected" id="fast_mode"> Modo Rápido     </button>
-            <button class="mode_button" id="detailed_mode">      Modo Detalhado  </button>
+            <div class="subtitle">
+                <h3>Diagrama de Geração da Cadeia:</h3>
+            </div>
+
+            <div class="prod-choice">
+                <form class="form">
+                    <legend>Derivar a variável S em:</legend>
+                    <div class="options" id="EDITAR">
+                        <div class="prod">
+                            <input type="radio" id="production_1" name="production" value="EDITAR" />
+                            <label class="prod-lbl" for="production_1">produção 1</label>
+                        </div>
+                        <div class="prod">
+                            <input type="radio" id="production_2" name="production" value="EDITAR" />
+                            <label class="prod-lbl" for="production_2">produção 2 (armadilha)</label>
+                        </div>
+                        <div class="prod">
+                            <input type="radio" id="production_3" name="production" value="EDITAR" />
+                            <label class="prod-lbl" for="production_3">produção 3</label>
+                        </div>
+                    </div>
+                    <div class="btn">
+                        <button type="submit">Gerar</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="grammar_exibition_box">
+                <label class="fast-gen" for="grammar-hint">Geração Rápida:</label>
+                <label class="manual-gen" for="grammar-hint" style="display: none;">Geração Manual:</label>
+                <div class="g-hint-box" id="grammar-hint">
+                    
+                </div>     
+            </div>
+            
+
+            <div class="divisor">
+                <label for="divisor">Finalizada a cadeia...</label>
+            </div>
+
+            <div id="posterior-opt">
+                <div class="modes">
+                    <div class="title">
+                        Gerar nova cadeia:
+                    </div>
+                    <div id="modes_box">
+                        <button class="mode_button selected" id="fast_mode"> Modo Rápido     </button>
+                        <button class="mode_button" id="detailed_mode">      Modo Detalhado  </button>
+                    </div>
+                </div>
+
+                <div id="return_button_box">
+                    <p>Gerar nova gramática:</p>
+                    <button id="return_button"><i class="fa fa-arrow-left"></i> Voltar</button>
+                </div>
+            </div>
+
         </div>
         
-    
     </div>
     
     <footer>
@@ -144,7 +208,9 @@
                 </div>
                 
             </div>
-            <div style="border-right: 2px var(--off-brown) solid;"></div>
+
+            <div style="border-right: 2px var(--deep-forest) solid;"></div>
+
             <div class="about">
                 <div class="title"><h2>Sobre Nós</h2></div>
                 <div class="subtitle"><h3>Geração de Cadeias para Gramáticas Livres de Contexto</h3></div>
@@ -173,3 +239,5 @@
     <script src="scripts.js"></script>
 </body>
 </html>
+message.txt
+10 KB
