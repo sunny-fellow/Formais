@@ -1,4 +1,5 @@
 from enum import Enum
+from ED.tree import Tree
 
 class Key(Enum):
     variaveis = 1
@@ -13,12 +14,18 @@ class Grammar:
         Apos instanciar a gramatica, eh necessario escolher a forma de criacao da gramatica.
         Dadas as possibilidades, escolha entre:
 
+        GRAMATICA INTEIRA
             - archive_to_grammar(path:str) 
                 limpa a gramatica 
                 recebe o caminho do arquivo que contem a gramatica e reescreve esta gramatica
             - str_to_grammar(info:str)
                 limpa a gramatica
                 recebe a string que contem a gramatica e reescreve esta gramatica
+            - dict_to_grammar(gram:dict)
+                limpa a gramatica
+                recebe um dicionario no modelo gramatica e reescreve esta gramatica
+            
+            ADICIONANDO PARTE POR PARTE:
             - add_to_grammar(value:str|list, key:str = None)
                 * Recebe uma Key que deve ter um dentre os valores que se quer adicionar:
                     + key: [variaveis = 1, inicial = 2, terminais = 3, producoes = 4] onde, caso nao receba a key, 
@@ -31,28 +38,18 @@ class Grammar:
         """
 
         # simbolos terminais e nao terminais
-        self.nonTermSymbols = [] # array de simbolos nao-terminais (strings)
-        self.termSymbols = []    # array de simbolos terminais (strings)
-        self.initial = ""        # string que contem um simbolo nao-terminal que inicia a gramatica
-        self.productions = {}    # dicionario de producoes, onde a chave eh a variavel (nao-terminal) e o valor eh(sao) a(as) producao(oes)
+        self.nonTermSymbols:list = [] # array de simbolos nao-terminais (strings)
+        self.termSymbols:list = []    # array de simbolos terminais (strings)
+        self.initial:str = ""        # string que contem um simbolo nao-terminal que inicia a gramatica
+        self.productions:dict = {}    # dicionario de producoes, onde a chave eh a variavel (nao-terminal) e o valor eh(sao) a(as) producao(oes)
         self.E = "epsilon"       # constante que indica o fim de producoes
 
         # para o auxilio na parte de geracao de cadeias, serao necessarias as 
         # listas de variaveis armadilhas e nao-armadilhas para evitar gerar 
         # cadeias derivadando das variaveis aramdilha
-        self.traps = []
-        self.notTraps = []
+        self.traps:list = []
+        self.notTraps:list = []
 
-
-
-        # checar gramatica
-        # validation = self.check_grammar()
-        # if not validation[0]:
-        #     print(validation[1])
-        #     # mandar o objeto erro
-        #     # ...
-        #     return
-        
         return
 
     def add_to_grammar(self, value:str|list|dict, key:Key = None):
@@ -89,7 +86,7 @@ class Grammar:
         else:
             return jsonify({"Error": "Invalid Key"})
 
-        return 
+        return self.check_grammar()
 
     def archive_to_grammar(self, path:str):
         """
@@ -101,7 +98,7 @@ class Grammar:
         file = open(path, 'r')
         if not file:
             print("Nao foi possivel abrir o arquivo da gramatica!\n");
-            return 
+            return
 
         # preenchendo os nao-terminais
         line = file.readline()
@@ -133,7 +130,7 @@ class Grammar:
             self.productions.setdefault(production[0], []).append(production[1])
     
             line = file.readline()
-        return self
+        return self.check_grammar()
 
     def check_grammar(self) -> tuple:
         """
@@ -141,39 +138,46 @@ class Grammar:
             Algumas verificacoes a serem feitas:
 
                 a. simbolo inicial esta contido na lista de nao-terminais
-                b. existe alguma producao que resulte em epsilon ou simbolo terminal para que a gramatica nao seja um loop infinito
+                b. verifica se todas as variaveis tem apenas 1 simbolo
                 c. verifica as producoes e guarda quais sao armadilha, se houver armadilhas
-                d. todas as producoes podem ser criadas, ou seja, ha producoes que resultem nessa segunda producao (nao ter producoes soltas do resto)
+                d. verifica se alguma producao nao eh armadilha. Se todas forem, o conjunto de cadeias geradas pela gramatica eh vazio 
         """
 
         if not self.initial in self.nonTermSymbols:
             return (False, "Simbolo inicial nao esta contido nas variaveis informadas")
         
-        # como productions e:
-        # [ 
-        #     ["S", "aA"],
-        #     ["A", "epsilon"]
-        # ]
-        
-        hasTerminalSymb = False
-        #verificar se ha terminais nas producoes
-        for production in self.productions:
-            # se encontrar um 'epsilon', entao e possivel terminar uma cadeia de caracteres
-            if production[1] == self.E:
-                hasTerminalSymb = True
+        # no caso do nivel 2 da hierarquia de chompski, as variaveis devem conter apenas um simbolo ser derivado
+        for var in self.nonTermSymbols:
+            if len(var) > 1:
+                return (False, f"A variavel {var} tem mais do que um simbolo")
+            elif len(var) < 1:
+                return (False, f"A variavel {var} tem menos do que um simbolo")
+
+
+        # acessa a classe tree e recebe guarda um dicionario com a lista das variaveis armadilha e nao armadilha
+        # {
+        #     "traps" : ['A', 'C'],
+        #     "notTraps": ['S', 'B']
+        # }
+        t = Tree(self.initial, self.productions.get(self.initial))
+        verification = t.check_variables(self.productions)
+
+        # atualiza esses valores na gramatica
+        self.traps.append(verification.get("traps"))
+        self.notTraps.append(verification.get("notTrap"))
+
+        # verifica se ha pelo menos uma variavel que nao eh armadilha
+        isAllTrap = True
+        for var in self.nonTermSymbols:
+            if not var in self.traps:
+                isAllTrap = False
                 break
-            
-            # se encontrar um unico/apenas simbolo terminal na producao, entao e possivel ter cadeia val (11)
-            for elem in production[1]:
-                # se encontrar algum simbolo nao-terminal
-                if not elem in self.termSymbols:
-                    hasTerminalSymb = False
-                    break
-            
-        if not hasTerminalSymb:
-            return (False, "Nao ha ponto de parada na gramatica")
+        
+        if isAllTrap:
+            # a gramatica eh valida, mas nao gera nenhuma cadeia
+            return (True, "Todas as variaveis sao armadilha")
 
-
+        # caso todos os casos acima nao ocorram, a gramatica eh valida
         return (True, "Gramatica valida!")
 
     def clean_grammar(self):
@@ -190,6 +194,17 @@ class Grammar:
 
         return
     
+    def dict_to_grammar(self, gram:dict):
+        self.clean_grammar()
+
+        self.nonTermSymbols.append(gram.get("variaveis"))
+        self.initial = gram.get("inicial")
+        self.termSymbols = gram.get("terminais")
+        self.productions = gram.get("producoes")
+
+        # adicionar parte de checar armadilhas
+
+        return self.check_grammar()
 
     def grammar_to_dict(self, grammar = None):
         if grammar == None:
@@ -282,9 +297,17 @@ class Grammar:
                 # Adiciona a nova chave ao dicionario e o novo valor
             self.productions.setdefault(prod[0], []).append(prod[1].removesuffix('\n'))
 
-        return self
+        return self.check_grammar()
 
 
+    def setFastMode(self):
+        self.mode = "fast"
+        return
+    
+    def setDetailedMode(self):
+        self.mode = "detailed"
+        return
+    
     #####################################################
     #####################################################
     #####################################################

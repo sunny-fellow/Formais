@@ -10,7 +10,6 @@ const popProd   = document.getElementById('remove_production')
 const upFile    = document.getElementById('insert_file')
 const enviar    = document.getElementById('submit_form')
 const limpar    = document.getElementById('clear_form')
-const retornar  = document.getElementById('return_button')
 
 function clearErrors(){
     let messages = [... document.querySelectorAll(".error_message")]
@@ -84,7 +83,7 @@ addProd.addEventListener('click', ()=>{
                         line = document.createElement('p')
                         line.setAttribute("class", "production_line")
                         line.innerHTML = variavel += "  &#8594;  " + prod + " "
-                        document.getElementById("grammar-hint").appendChild(line)
+                        document.getElementById("grammar-hint-1").appendChild(line)
 
                     }else{
                         if(lines[hasVariable].innerHTML.includes(" " + prod + " ")){
@@ -203,7 +202,7 @@ upFile.addEventListener('change', ()=>{
                 line.setAttribute("class", "production_line")
                 let str = ret_producoes[key].join(" | ")
                 line.innerHTML = key + "  &#8594;  " + str
-                document.getElementById("grammar-hint").appendChild(line)
+                document.getElementById("grammar-hint-1").appendChild(line)
             }
         }
     })
@@ -244,13 +243,23 @@ enviar.addEventListener('click', ()=>{
             error_message("Erro ao enviar os dados para o servidor<br>" + data['message'])
         }else{
             document.getElementById("grammarPage").style.display = "none"
-            document.getElementById("generationPage").style.display = "block"        
+            document.getElementById("generationPage").style.display = "block"
+
+            let grammar_import = document.getElementById("grammar-hint-2")
+            let lines = [...document.querySelectorAll(".production_line")]
+            let exibitions = [...document.querySelectorAll(".exibition_line")]
+
+            exibitions.forEach((el) => {
+                el.parentNode.removeChild(el)
+            })
+
+            lines.forEach((el) => {
+                let line = document.createElement('p')
+                line.innerHTML = el.innerHTML
+                line.setAttribute("class", "exibition_line")
+                grammar_import.appendChild(line)
+            })
+
         }
     })
-})
-
-retornar.addEventListener('click', ()=>{
-    clearErrors()
-    document.getElementById("generationPage").style.display = "none"
-    document.getElementById("grammarPage").style.display = "block"
 })

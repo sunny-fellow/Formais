@@ -12,7 +12,6 @@ class Node:
 class Tree:    
     checked_vars = []
 
-
     def __init__(self, key:str = None, children:dict = None):
         if key != None and children != None:
             self.root = Node(key, children[key])

@@ -1,13 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GLC</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-<!DOCTYPE html>
-<html>
-<head>
-    <title>GLC</title>
+    <title>Gerador de Cadeias</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
@@ -25,7 +19,7 @@
         <h1>Gerador de Cadeias para Gramáticas Livres de Contexto</h1>
     </header>
     
-    <div class="page" id="grammarPage" style="display: none;">
+    <div class="page" id="grammarPage">
         <div class="title">
             <h2>Input da Gramática:</h2>
         </div>
@@ -81,7 +75,7 @@
             
             <div class="g-hint">
                 <label for="grammar-hint">Gramática:</label>
-                <div class="g-hint-box" id="grammar-hint">
+                <div class="g-hint-box" id="grammar-hint-1">
                     
                 </div>
                 <div class="grammar-btn">
@@ -94,7 +88,7 @@
     </div>
     
     
-    <div class="page" id="generationPage">
+    <div class="page" id="generationPage" style="display: none">
         <div class="content">
             
             <div class="title">
@@ -103,8 +97,8 @@
             
             <div class="g-hint">
                 <label for="grammar-hint">Gramática:</label>
-                <div class="g-hint-box" id="grammar-hint">
-                    
+                <div class="g-hint-box" id="grammar-hint-2">
+                    <!-- será adicionado -->
                 </div>
             </div>
 
@@ -114,34 +108,34 @@
             
             <div class="grammar-creation">
                 
-                <div class="prod-choice" style="display: none;">
+                <div class="prod-choice" style="display: none;" id="prod_choice">
                     <form class="form">
-                        <legend>Derivar a variável S em:</legend>
-                        <div class="options" id="EDITAR">
-                            <div class="prod">
+                        <legend id="choice_title">Derivar a variável S em:</legend>
+                        <div class="options" id="options_box">
+                            <!-- <div class="prod">
                                 <input type="radio" id="production_1" name="production" value="EDITAR" />
                                 <label class="prod-lbl" for="production_1">produção 1</label>
                             </div>
                             <div class="prod">
                                 <input type="radio" id="production_2" name="production" value="EDITAR" />
-                                <label class="prod-lbl" for="production_2">produção 2 (armadilha)</label>
+                                <label class="prod-lbl trap" for="production_2">produção 2</label>
                             </div>
                             <div class="prod">
                                 <input type="radio" id="production_3" name="production" value="EDITAR" />
                                 <label class="prod-lbl" for="production_3">produção 3</label>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="btn">
-                            <button type="submit">Derivar</button>
+                            <button type="submit" id="derivate">Derivar</button>
                         </div>
                     </form>
                 </div>
                 
                 <div class="prod-fast">
                     <div id="grammar_exibition_box">
-                        <label class="fast-gen" for="grammar-hint">Geração Rápida:</label>
-                        <label class="manual-gen" for="grammar-hint" style="display: none;">Geração Detalhada:</label>
-                        <div class="g-hint-box" id="grammar-hint">
+                        <label class="fast-gen" for="grammar-results" id="label_mode">Geração Rápida:</label>
+                        <!-- <label class="manual-gen" for="grammar-results" style="display: none;">Geração Detalhada:</label> -->
+                        <div class="g-hint-box" id="grammar-results">
                             <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  <b>110100</b> (Atual)<br><br></p>
                             <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  11<span>S</span>00  ➞   <b>110100</b></p>
                             <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  <b>110100</b></p>
@@ -151,9 +145,10 @@
                         </div>   
                     </div>
     
-                    <div id="fast_mode_btn" style="">
-                        <button id="BACKEND EDITAR"><i class="fa fa-arrow-left"></i></button>
-                        <button id="BACKEND EDITAR"><i class="fa fa-plus"></i></button>
+                    <div id="fast_mode_btn">
+                        <button id="button_return"><i class="fa fa-arrow-left"></i></button>
+                        <button id="button_plus"><i class="fa fa-plus"></i></button>
+                        <button id="button_reload"><i class="fa fa-rotate-left"></i></button>
                     </div>
                 </div>
             </div>
@@ -171,7 +166,7 @@
                     </div>
                     <div id="modes_box">
                         <button class="mode_button selected" id="fast_mode"> Modo Rápido     </button>
-                        <button class="mode_button" id="detailed_mode">      Modo Detalhado  </button>
+                        <button class="mode_button unselected" id="detailed_mode">      Modo Detalhado  </button>
                     </div>
                 </div>
 
@@ -252,6 +247,7 @@
     </footer>
 
     <!-- SCRIPT -->
-    <script src="scripts.js"></script>
+    <script src="scriptspg1.js"></script>
+    <script src="scriptspg2.js"></script>
 </body>
 </html>

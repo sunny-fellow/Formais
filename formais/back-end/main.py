@@ -1,11 +1,11 @@
 from flask_cors import CORS
 from flask import Flask, render_template, jsonify, request
 import re # Importa os metodos de regex
-from grammarThings.gram import Grammar
+# from grammarThings.gram import Grammar
 
 app = Flask(__name__)
 CORS(app)  # Isso permite CORS para todas as rotas
-gram = Grammar()
+# gram = Grammar()
 
 
 @app.route("/verifyInput", methods=["POST"])
@@ -127,9 +127,9 @@ def receive_inputs():
 
     validation = verifyFormat(data)
     if not validation["valid"]:
-        return validation
+        return jsonify(validation)
     
-    gram.set_grammar(data)
+    gram.dict_to_grammar(data)
     return jsonify({"valid": True, "message": "Gramática recebida com sucesso"})
         
 def verifyFormat(data):
@@ -140,18 +140,86 @@ def verifyFormat(data):
     pattern_terminal = r'([a-z]+|epsilon)(, ([a-z]+|epsilon))*'
     pattern_inicial   = r'[A-Z]'
 
-    variaveis = str(data["variaveis"]).replace(",", ", ")
-    terminais = str(data["terminais"]).replace(",", ", ")
+    variaveis = ', '.join(data["variaveis"])
+    terminais = ', '.join(data["terminais"])
 
+    print("variaveis:", variaveis, "terminais:", terminais)
 
     if not re.fullmatch(pattern_variables, variaveis):
-        return jsonify({"valid": False, "message": "formato de variaveis invalido"})
+        return {"valid": False, "message": "formato de variaveis invalido ou não preenchido"}
     elif not re.fullmatch(pattern_terminal, terminais):
-        return jsonify({"valid": False, "message": "formato de terminais invalido"})
+        return {"valid": False, "message": "formato de terminais invalido ou não preenchido"}
     elif not re.fullmatch(pattern_inicial, data["inicial"]):
-        return jsonify({"valid": False, "message": "formato de inicial invalido"})
+        return {"valid": False, "message": "formato de inicial invalido ou não preenchido"}
     else:
-        return jsonify({"valid": True, "message": "formato valido"})
+        return {"valid": True, "message": "formato valido"}
 
+
+@app.route('/setFastMode')
+def setFastMode():
+    # gram.setFastMode()
+    return jsonify({"valid": True, "message": "Modo rápido ativado"})
+
+@app.route('/setDetailedMode')
+def setDetailedMode():
+    # gram.setDetailedMode()
+    return jsonify({"valid": True, "initial": gram.getInitial()})
+
+@app.route('/getProductionsOf', method=['POST'])
+def getProductionsOf():
+    data = request.get_json()
+    """
+        Espero que retorne um dict do tipo:
+        {
+            "productions": [],
+            "traps": [],
+        }
+
+        Exemplo de entrada:
+        {
+            "variavel": "A"
+        }
+
+        Saída:
+        {
+            "productions": ["aB", "aC", "aD"],
+            "traps": ["aD"]                     Se D for uma trap, B e C não
+        }
+    """
+    return jsonify(gram.getDerivations(data["variable"]))
+
+@app.route('/derivate', method=['POST'])
+def derivate():
+    data = request.get_json()
+    """
+        Espero que retorne um dict do tipo:
+        {
+            "variable": "",     Variável que foi derivada
+            "result": "",       String resultado da derivação
+            "finished": bool,   Se a derivação foi finalizada
+            "isTrap": bool      Se a derivação caiu em um trap
+            "toDerivate": ""    Próxima variável a ser derivada
+        }
+
+        Exemplo de entrada:
+        {
+            "cadeia": abcA,
+            "variavel": A,
+            "opcao": epsilon
+        }
+
+        Saída:
+        {
+            "variable": "A",
+            "result": "abc",
+            "finished": True,
+            "isTrap": False,
+            "toDerivate": ""
+        }
+    """
+    return jsonify(gram.derivate(data["cadeia"], data["variavel"], data["opcao"]))
+
+
+# Roda o servidor
 if __name__ == '__main__':
     app.run(debug=True)

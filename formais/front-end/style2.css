@@ -149,6 +149,16 @@
     font-weight: 500;
 }
 
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > .trap {
+    color: var(--error-color);
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > .trap::after {
+    content: " ↺";
+    color: var(--error-color);
+    font-weight: 550;
+}
+
 .page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > input {
     appearance: none;
     width: 14px;
@@ -232,13 +242,22 @@
     width: 250px;
 }
 
+
+.page > .content > #posterior-opt > .modes > #modes_box > .unselected {
+    background-color: var(--light-green);
+    color: var(--deep-forest);
+}
+
+.page > .content > #posterior-opt > .modes > #modes_box > .selected {
+    background-color: var(--grass-green);
+    color: var(--off-white);
+}
+
 .page > .content > #posterior-opt > .modes > #modes_box > #fast_mode{
     /* margin: 25px; */
     padding: 12px 15px;
     border-radius: 15px 0 0 15px;
     border: none;
-    background-color: var(--grass-green);
-    color: var(--off-white);
     font-size: 15px;
     font-weight: 600;
     width: 50%;
@@ -249,8 +268,6 @@
     padding: 12px 15px;
     border-radius: 0 15px 15px 0;
     border: none;
-    background-color: var(--light-green);
-    color: var(--deep-forest);
     font-size: 15px;
     font-weight: 600;
     width: 50%;
