@@ -6,7 +6,7 @@ class Node:
         self.next:Node = None
 
 
-class Stack:
+class ChainStack:
     def __init__(self, chain:str):
         self.top:Node = None
         self.push(chain, True)

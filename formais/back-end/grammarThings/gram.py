@@ -1,5 +1,6 @@
 from enum import Enum
-from ED.tree import Tree
+from .dataStructures.tree import GramTree
+
 
 class Key(Enum):
     variaveis = 1
@@ -132,7 +133,7 @@ class Grammar:
             line = file.readline()
         return self.check_grammar()
 
-    def check_grammar(self) -> tuple:
+    def check_grammar(self) -> dict:
         """
             Responsavel por verificar se a gramatica e valida (Retorna True se for valida, False caso contrario).
             Algumas verificacoes a serem feitas:
@@ -144,14 +145,14 @@ class Grammar:
         """
 
         if not self.initial in self.nonTermSymbols:
-            return (False, "Simbolo inicial nao esta contido nas variaveis informadas")
+            return {"valid": False, "message": "Simbolo inicial nao esta contido nas variaveis informadas", "allTrap": False}
         
         # no caso do nivel 2 da hierarquia de chompski, as variaveis devem conter apenas um simbolo ser derivado
         for var in self.nonTermSymbols:
             if len(var) > 1:
-                return (False, f"A variavel {var} tem mais do que um simbolo")
+                return {"valid": False, "message": f"A variavel {var} tem mais do que um simbolo", "allTrap": False}
             elif len(var) < 1:
-                return (False, f"A variavel {var} tem menos do que um simbolo")
+                return {"valid": False, "message": f"A variavel {var} tem menos do que um simbolo", "allTrap": False}
 
 
         # acessa a classe tree e recebe guarda um dicionario com a lista das variaveis armadilha e nao armadilha
@@ -159,45 +160,40 @@ class Grammar:
         #     "traps" : ['A', 'C'],
         #     "notTraps": ['S', 'B']
         # }
-        t = Tree(self.initial, self.productions.get(self.initial))
+        t = GramTree(self.initial, self.productions.get(self.initial))
         verification = t.check_variables(self.productions)
 
         # atualiza esses valores na gramatica
-        self.traps.append(verification.get("traps"))
-        self.notTraps.append(verification.get("notTrap"))
+        self.traps = (verification.get("traps"))
+        self.notTraps = (verification.get("notTrap"))
 
-        # verifica se ha pelo menos uma variavel que nao eh armadilha
-        isAllTrap = True
-        for var in self.nonTermSymbols:
-            if not var in self.traps:
-                isAllTrap = False
-                break
+       
         
-        if isAllTrap:
+        if self.initial in self.traps:
             # a gramatica eh valida, mas nao gera nenhuma cadeia
-            return (True, "Todas as variaveis sao armadilha")
+            return {"valid": True, "message": "Variavel inicial eh armadilha. Logo, esta gramatica nao gera cadeia nenhuma", "allTrap": True}
 
         # caso todos os casos acima nao ocorram, a gramatica eh valida
-        return (True, "Gramatica valida!")
+        return {"valid": True, "message": "Gramatica valida!", "allTrap": False}
 
     def clean_grammar(self):
         """
             Reseta os valores de todas as variaveis da gramatica
         """
-        self.nonTermSymbols.clear()     
-        self.termSymbols.clear()        
+        self.nonTermSymbols = []   
+        self.termSymbols = []       
         self.initial = ""               
         self.productions.clear()     
 
-        self.traps.clear()
-        self.notTraps.clear()
+        self.traps = []
+        self.notTraps = []
 
         return
     
     def dict_to_grammar(self, gram:dict):
         self.clean_grammar()
 
-        self.nonTermSymbols.append(gram.get("variaveis"))
+        self.nonTermSymbols = gram["variaveis"]
         self.initial = gram.get("inicial")
         self.termSymbols = gram.get("terminais")
         self.productions = gram.get("producoes")

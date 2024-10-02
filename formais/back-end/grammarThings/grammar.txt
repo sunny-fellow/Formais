@@ -6,6 +6,7 @@ S: aA
 S: bB
 S: cC
 A: epsilon
+A: aS
 B: cS
 B: dS
 C: epsilon

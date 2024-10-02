@@ -50,6 +50,7 @@ addProd.addEventListener('click', ()=>{
             let variavel = producao.value.split(": ")[0]
             let prod = producao.value.split(": ")[1]
 
+
             // Pede pro back verificar se a producao utiliza apenas variaveis e terminais
             fetch("http://127.0.0.1:5000/verifyProduction", {
                 method: 'POST',
@@ -80,19 +81,46 @@ addProd.addEventListener('click', ()=>{
 
                     // Se nao tiver essa variavel no quadro, insere-a
                     if(hasVariable == -1){
-                        line = document.createElement('p')
+                        let line = document.createElement('p')
                         line.setAttribute("class", "production_line")
-                        line.innerHTML = variavel += "  &#8594;  " + prod + " "
+                        line.innerHTML = variavel + "  &#8594;  " + prod + " "
                         document.getElementById("grammar-hint-1").appendChild(line)
 
                     }else{
                         if(lines[hasVariable].innerHTML.includes(" " + prod + " ")){
                             error_message("Esta produção já foi adicionada")
                         }else{
-                            lines[hasVariable].innerHTML += "| " + prod + " "
+                            lines[hasVariable].innerHTML += " | " + prod + " "
                         }
                     }
+
+
+                    if(inicial.value.length == 1 && inicial.value == variavel){
+                        console.log("entreii")
+                        let lines = [...document.querySelectorAll(".production_line")]
+                        let recomposicao = []
+                        lines.forEach((el)=>{
+                            if (el.innerHTML[0] == variavel){
+                                recomposicao.push(el)
+                                el.parentNode.removeChild(el)
+                                return;
+                            }
+                        })
+    
+                        lines =  [...document.querySelectorAll(".production_line")]
+                        lines.forEach((el)=>{
+                            recomposicao.push(el)
+                            el.parentNode.removeChild(el)
+                        })
+    
+    
+                        let campo = document.getElementById("grammar-hint-1")
+                        recomposicao.forEach((el)=>{
+                            campo.appendChild(el)
+                        })
+                    }
                 }
+
             })
         }     
     })

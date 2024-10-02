@@ -1,5 +1,5 @@
 from gram import Grammar
-from ED.stack import Stack
+from .dataStructures.stack import Stack
 
 
 """
@@ -68,7 +68,7 @@ Algoritmo para gerar cadeias
             {}
 """
 
-class Generator:
+class ChainGenerator:
     def __init__(self, g:Grammar):
         self.grammar = g
         self.stack = Stack(g.initial)

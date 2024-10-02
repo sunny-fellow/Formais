@@ -1,11 +1,11 @@
 from flask_cors import CORS
 from flask import Flask, render_template, jsonify, request
 import re # Importa os metodos de regex
-# from grammarThings.gram import Grammar
+from grammarThings.gram import Grammar
 
 app = Flask(__name__)
 CORS(app)  # Isso permite CORS para todas as rotas
-# gram = Grammar()
+gram = Grammar()
 
 
 @app.route("/verifyInput", methods=["POST"])
@@ -90,17 +90,17 @@ def archive_validation(content:str) -> bool:
     if not re.fullmatch(vars_pattern, lines[0].strip()):
         for char in lines[0]:
             print("caracter", char)
-        return (False, {"Error": "Variaveis nao formatadas corretamente"})
+        return (False, {"Error": "Variaveis não formatadas corretamente"})
     
     # Validacao da variavel inicial
     elif not re.fullmatch(ini_pattern, lines[1].strip()):
         print(lines[1])
-        return (False, {"Error": "Variavel inicial nao formatada corretamente"})
+        return (False, {"Error": "Variavel inicial não formatada corretamente"})
     
     # Validacao dos terminais
     elif not re.fullmatch(term_pattern, lines[2].strip()):
         print(lines[2])
-        return (False, {"Error": "Terminais nao formatadas corretamente"})
+        return (False, {"Error": "Terminais não formatados corretamente"})
     
     # Validacao das producoes
     else:
@@ -137,7 +137,7 @@ def verifyFormat(data):
         return {"valid": False, "message": "No JSON data received"}
 
     pattern_variables = r'([A-Z],\s)*[A-Z]'
-    pattern_terminal = r'([a-z]+|epsilon)(, ([a-z]+|epsilon))*'
+    pattern_terminal = r'([a-z0-9]+|epsilon)(, ([a-z0-9]+|epsilon))*'
     pattern_inicial   = r'[A-Z]'
 
     variaveis = ', '.join(data["variaveis"])
@@ -146,11 +146,13 @@ def verifyFormat(data):
     print("variaveis:", variaveis, "terminais:", terminais)
 
     if not re.fullmatch(pattern_variables, variaveis):
-        return {"valid": False, "message": "formato de variaveis invalido ou não preenchido"}
+        return {"valid": False, "message": "Formato de variaveis invalido ou não preenchido"}
     elif not re.fullmatch(pattern_terminal, terminais):
-        return {"valid": False, "message": "formato de terminais invalido ou não preenchido"}
+        return {"valid": False, "message": "Formato de terminais invalido ou não preenchido"}
     elif not re.fullmatch(pattern_inicial, data["inicial"]):
-        return {"valid": False, "message": "formato de inicial invalido ou não preenchido"}
+        return {"valid": False, "message": "Formato de inicial invalido ou não preenchido"}
+    elif not data['inicial'] in variaveis:
+        return {'valid': False, 'message': "Símbolo inicial  [ " + data["inicial"] + " ]  não presente nas variáveis"}
     else:
         return {"valid": True, "message": "formato valido"}
 
@@ -160,64 +162,98 @@ def setFastMode():
     # gram.setFastMode()
     return jsonify({"valid": True, "message": "Modo rápido ativado"})
 
+
 @app.route('/setDetailedMode')
 def setDetailedMode():
-    # gram.setDetailedMode()
-    return jsonify({"valid": True, "initial": gram.getInitial()})
+    return jsonify({"valid": True, "initial": gram.initial})
 
-@app.route('/getProductionsOf', method=['POST'])
+
+@app.route('/getProductionsOf', methods=['POST'])
 def getProductionsOf():
     data = request.get_json()
-    """
-        Espero que retorne um dict do tipo:
-        {
-            "productions": [],
-            "traps": [],
-        }
+    print("Solicitou producoes para a variavel: " + data['variavel'])
 
-        Exemplo de entrada:
-        {
-            "variavel": "A"
-        }
+    # salva as producoes para a variavel recebida como parametro
+    prods = gram.productions[data['variavel']]
+    traps = []
+    
+    # para cada producao nessa lista de producoes
+    for prod in prods:
 
-        Saída:
-        {
-            "productions": ["aB", "aC", "aD"],
-            "traps": ["aD"]                     Se D for uma trap, B e C não
-        }
-    """
-    return jsonify(gram.getDerivations(data["variable"]))
+        # verificando cada varaivel armadilha
+        for trap in gram.traps:
+            # se se houver pelo menos uma trap na producao em questao, adiciona essa producao a lista de producoes trap
+            if trap in prod:
+                traps.append(prod)
+                break
 
-@app.route('/derivate', method=['POST'])
+    return jsonify({"productions": prods, "traps": traps})
+    
+
+@app.route('/derivate', methods=['POST'])
 def derivate():
     data = request.get_json()
-    """
-        Espero que retorne um dict do tipo:
-        {
-            "variable": "",     Variável que foi derivada
-            "result": "",       String resultado da derivação
-            "finished": bool,   Se a derivação foi finalizada
-            "isTrap": bool      Se a derivação caiu em um trap
-            "toDerivate": ""    Próxima variável a ser derivada
-        }
 
-        Exemplo de entrada:
-        {
-            "cadeia": abcA,
-            "variavel": A,
-            "opcao": epsilon
-        }
+    print(data)
 
-        Saída:
-        {
-            "variable": "A",
-            "result": "abc",
-            "finished": True,
-            "isTrap": False,
-            "toDerivate": ""
-        }
-    """
-    return jsonify(gram.derivate(data["cadeia"], data["variavel"], data["opcao"]))
+    chain = data["cadeia"]
+    var = data["variavel"]
+    opt = data["opcao"]
+
+    if opt != gram.E:
+        # percorrendo os caracteres da cadeia a derivar  
+        for i in range(len(chain)):
+            # se o caractere for igual ao simbolo 
+            if chain[i] == var:
+                # no caso da variavel nao estar no fim da cadeia
+                if i < len(chain)-1:
+                    chain = chain[0:i-1] + opt + chain[i+1:len(chain)]
+                    print(chain)
+                else:
+                    chain = chain[0:i] + opt
+                
+                break
+    else:
+        chain = chain.replace(var, "")
+
+    finished = True
+    isTrap = False
+    toDerivate = ''
+    
+    if opt != gram.E:
+        for c in chain:
+            print(f"{chain}: {c}")
+            if c in gram.nonTermSymbols:
+                finished = False
+                toDerivate = c
+                break
+            
+        for c in chain:
+            if c in gram.traps:
+                isTrap = True
+                break
+        
+        
+    
+    return jsonify({"variable": var,
+            "result": chain,
+            "finished": finished,
+            "isTrap": isTrap,
+            "toDerivate": toDerivate})
+
+
+@app.route('/getVariableToDerivate', methods=['POST'])
+def getVariablesToDerivate():
+    data = request.get_json()
+    print(data)
+
+    prod = data['producao']
+
+    for c in prod:
+        if c in gram.nonTermSymbols:
+            return jsonify({'variable': c})
+    
+    return jsonify({'variable': None})
 
 
 # Roda o servidor

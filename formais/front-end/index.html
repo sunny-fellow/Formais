@@ -109,7 +109,7 @@
             <div class="grammar-creation">
                 
                 <div class="prod-choice" style="display: none;" id="prod_choice">
-                    <form class="form">
+                    <div class="form">
                         <legend id="choice_title">Derivar a variável S em:</legend>
                         <div class="options" id="options_box">
                             <!-- <div class="prod">
@@ -128,21 +128,14 @@
                         <div class="btn">
                             <button type="submit" id="derivate">Derivar</button>
                         </div>
-                    </form>
+                    </div>
+                
                 </div>
                 
                 <div class="prod-fast">
                     <div id="grammar_exibition_box">
                         <label class="fast-gen" for="grammar-results" id="label_mode">Geração Rápida:</label>
-                        <!-- <label class="manual-gen" for="grammar-results" style="display: none;">Geração Detalhada:</label> -->
-                        <div class="g-hint-box" id="grammar-results">
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  <b>110100</b> (Atual)<br><br></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  11<span>S</span>00  ➞   <b>110100</b></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  <b>110100</b></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  11<span>S</span>00  ➞   11<span>S</span>00  ➞  <b>110100</b></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  <b>110100</b></p>
-                            <p><span>S</span>  ➞  1<span>S</span>0  ➞  11<span>S</span>00  ➞  110<span>S</span>100  ➞  11<span>S</span>00  ➞  11<span>S</span>00  ➞  <b>110100</b></p>
-                        </div>   
+                        <div class="g-hint-box" id="grammar-results"></div>
                     </div>
     
                     <div id="fast_mode_btn">

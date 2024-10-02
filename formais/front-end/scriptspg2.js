@@ -13,8 +13,7 @@ const fast_buttons  = document.getElementById('fast_mode_btn')
 const label_mode    = document.getElementById('label_mode') 
 const grammar_results = document.getElementById('grammar-results')
 
-let mode = "fast"
-
+mode = "fast"
 
 function setOptionsFor(variable){
     fetch("http://127.0.0.1:5000/getProductionsOf", {
@@ -46,6 +45,7 @@ function setOptionsFor(variable){
             input_option.setAttribute("type", "radio")
             input_option.setAttribute("name", "production")
             input_option.setAttribute("id", "prod_" + el)
+            input_option.setAttribute("value", el)
 
             // Cria a label
             let label_option = document.createElement('label')
@@ -62,14 +62,74 @@ function setOptionsFor(variable){
 
             // Adiciona a div na div de opcoes
             document.getElementById("options_box").appendChild(div_option)
+            document.getElementById("options_box").style.display = "block"
         })
     })
 }
 
-retornar.addEventListener('click', ()=>{
 
-    document.getElementById("generationPage").style.display = "none"
-    document.getElementById("grammarPage").style.display = "block"
+retornar.addEventListener('click', ()=>{
+    let nextPage = document.getElementById('grammarPage')
+    let thisPage = document.getElementById('generationPage')
+
+    thisPage.style.display = 'none'
+    nextPage.style.display = 'flex'
+
+})
+
+
+recarrega.addEventListener('click', ()=>{
+    if(mode == "detailed"){
+        detailed_mode.click()
+    }else{
+        fast_mode.click()
+    }
+})
+
+retornaProd.addEventListener('click', ()=>{
+    let firstElement = null
+    let secondElement = null
+
+    // Objetivo: voltar a producao para a penultima, e mandar para o back, para
+    // que ele informe qual a variavel que deveria ser derivada.
+    
+    // tenta pegar os dois primeiros paragrafos
+    try{
+        firstElement = grammar_results.firstChild
+        secondElement = firstElement.nextSibling
+        // caso o primeiro seja null e nao seja possivel procurar o proximo irmao, significa que esta na primeira producao
+        // assim, o que se precisa fazer eh apenas resetar o modo detalhado
+    }catch(e){
+        detailed_mode.click()
+        return;
+    }
+
+    // caso ele consiga ler o primeiro elemento, mas o segundo eh nulo, entao ha apenas uma producao na "pilha"
+    // dessa forma, precisa-se apenas resetar o modo detalhado tambem
+    if(secondElement == null){
+        detailed_mode.click()
+        return;
+    }
+    
+    // remove o primeiro elemento da "pilha"
+    firstElement.parentNode.removeChild(firstElement)
+    secondElement.innerHTML += "<br><br>"
+
+    last_prod_arr = secondElement.innerHTML.split(" ")
+    last_prod     = last_prod_arr[last_prod_arr.length - 1]
+    
+
+    fetch("http://127.0.0.1:5000/getVariableToDerivate", {
+        'method': 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        'body': JSON.stringify({'producao': last_prod})
+    })
+    .then(response => response.json())
+    .then(data => {
+        setOptionsFor(data['variable'])
+    })
 })
 
 fast_mode.addEventListener('click', ()=>{
@@ -99,29 +159,57 @@ detailed_mode.addEventListener('click', ()=>{
     .then(response => response.json())
     .then(data => {
         
+        // Formata os estilos dos botoes, conforme qual estiver selecionado
         if(detailed_mode.classList.contains("unselected")){
             detailed_mode.classList.remove("unselected")
             detailed_mode.classList.add("selected")
             fast_mode.classList.remove("selected")
             fast_mode.classList.add("unselected")
         }
+
+
+        // Ativa a caixa de Selecoes
         prod_choice.style.display = "block"
-        label_mode.innerHTML = "Geração Detalhada:"
-        document.getElementById("button_plus").style.display = "none"
         setOptionsFor(data['initial'])
-        mode = "detailed"
+
+        // Formata o titulo adequado a caixa de producoes
+        label_mode.innerHTML = "Geração Detalhada:"
+
+        // Remove o botao de adicionar
+        document.getElementById("button_plus").style.display = "none"
         
+        // Retira as producoes que ja estiverem na caixa
+        children = [... grammar_results.children]
+        children.forEach((el)=>{
+            el.parentNode.removeChild(el)
+        })
+        
+        mode = "detailed"
     })
 })
 
 derivar.addEventListener('click', ()=>{
-    // Captura qual radio foi selecionado
-    resposta_usuario = document.querySelector('input[name="production"]:checked').value
-    if(grammar_results.lastChild != null){
-        let penultimate_line    = grammar_results.lastChild.innerHTML
-        let penultimate_string  = penultimate_line.split("  &#8594;  ")[penultimate_line.split("  &#8594;  ").length - 1]
+    //Captura qual radio foi selecionado
+    let resposta_usuario = null
+
+    try{
+        resposta_usuario = document.querySelector('input[name="production"]:checked').value
+    }catch(e){
+        alert("É necessário escolher pelo menos uma produção para prosseguir com a derivação da cadeia")
+        console.log(e)
+        return;
+    }
+    
+
+    let last_word = ""
+    if(grammar_results.firstChild != null){
+        let penultimate_line    = grammar_results.firstChild.innerHTML
+        let penultimate_string  = penultimate_line.split("  &#8594;  ")
+        last_word = penultimate_string[penultimate_string.length - 1]
+        last_word = last_word.split("<b>")[1]
+        last_word = last_word.split("</b>")[0]
     }else{
-        let penultimate_string = document.getElementById("choice_title").innerHTML.split(" ")[4]
+        last_word = document.getElementById("choice_title").innerHTML.split(" ")[3]
     }
 
     fetch("http://127.0.0.1:5000/derivate", {
@@ -130,18 +218,22 @@ derivar.addEventListener('click', ()=>{
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            'cadeia': penultimate_string,
-            'variavel': document.getElementById("choice_title").innerHTML.split(" ")[4],
+            'cadeia': last_word,
+            'variavel': document.getElementById("choice_title").innerHTML.split(" ")[3],
             'opcao': resposta_usuario,
         })
     })
     .then(response => response.json())
     .then(data => {
+        let penultimate_line = last_word
         // Caso tenha linhas anteriores, remove o <br><br>
         if(grammar_results.firstChild != null){
-            let penultimate_line = grammar_results.firstChild.innerHTML
-            penultimate_line = penultimate_line.substring(0, penultimate_line.length - 9)
+            penultimate_line = grammar_results.firstChild.innerHTML
+
+            penultimate_line = penultimate_line.substring(0, penultimate_line.length - 8) // Tira os <br>
             grammar_results.firstChild.innerHTML = penultimate_line
+            penultimate_line = penultimate_line.replace("<b>", "")
+            penultimate_line = penultimate_line.replace("</b>", "")
         }
 
 
@@ -149,22 +241,55 @@ derivar.addEventListener('click', ()=>{
             document.getElementById("options_box").style.display = "none"
             
             let first_line = document.createElement('p')
-            first_line.innerHTML = penultimate_line + "  &#8594;  <b>" + data['result'] + "</b>  (FIM)<br><br>"
-            grammar_results.insertBefore(grammar_results.firstChild, first_line)
+            let result = document.createElement('b')
+            result.innerHTML = data["result"]
+            const arrow = "  &#8594;  "
+            first_line.innerHTML = penultimate_line
+            first_line.innerHTML += arrow
+            first_line.append(result)
+            first_line.innerHTML += "<br>FIM<br><br>"
+
+            if(grammar_results.firstChild!=null){
+                grammar_results.insertBefore(first_line, grammar_results.firstChild)          
+            }else{
+                grammar_results.appendChild(first_line)
+            }
             document.getElementById("prod_choice").style.display = "none"
             
         }else{
             let new_line = document.createElement('p')
-            new_line.innerHTML = penultimate_line + "  &#8594;  <b>" + data['result'] + "</b><br><br>"
-            grammar_results.insertBefore(grammar_results.firstChild, new_line)
+
+            const arrow = "  &#8594;  "
+            let result = document.createElement('b')
+            result.innerHTML = data['result']
+
+            new_line.innerHTML = penultimate_line
+            new_line.innerHTML += arrow
+            new_line.append(result)
+            new_line.innerHTML += "</b><br><br>"
+
+            if(grammar_results.firstChild!=null){
+                grammar_results.insertBefore(new_line, grammar_results.firstChild)          
+            }else{
+                grammar_results.appendChild(new_line)
+            }
             
             setOptionsFor(data['toDerivate'])
         }
 
         if(data['isTrap'] == true){
-            document.getElementById("prod_choice").style.display = "none"
-            document.createElement('p')
-            let last_line = "<b>A cadeia " + data['result'] + " é uma armadilha, não é possível uma derivação conclusiva.</b>"
+            if (grammar_results) {
+                let last_line = document.createElement('p');
+                let result = data['result'] || "resultado desconhecido";
+                last_line.innerHTML = `<b>A cadeia ${result} é uma armadilha, não é possível uma derivação conclusiva.</b>`;
+                
+                // Inserindo o novo parágrafo no início ou no final, dependendo do estado atual do elemento
+                if (grammar_results.firstChild) {
+                    grammar_results.insertBefore(last_line, grammar_results.firstChild);
+                } else {
+                    grammar_results.appendChild(last_line);
+                }
+            }
         }
     })
 })
