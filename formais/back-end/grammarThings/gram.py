@@ -154,6 +154,8 @@ class Grammar:
             elif len(var) < 1:
                 return {"valid": False, "message": f"A variavel {var} tem menos do que um simbolo", "allTrap": False}
 
+        if len(self.productions.keys()) == 0:
+            return {"valid": False, "message": f"A gramática não possui nenhuma produção", "allTrap": False}
 
         # acessa a classe tree e recebe guarda um dicionario com a lista das variaveis armadilha e nao armadilha
         # {

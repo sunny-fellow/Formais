@@ -178,6 +178,14 @@
     background-color: var(--light-green);
 }
 
+.page > .content > .grammar-creation > .prod-fast > #chain_msg {
+    text-align: center;
+    font-weight: 400;
+    font-size: 19px;
+    color: var(--off-white);
+    margin-bottom: 10px;
+}
+
 .page > .content > .grammar-creation > .prod-choice > .form > .btn > button {
     margin: 25px;
     padding: 10px 20px;

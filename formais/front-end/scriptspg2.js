@@ -67,14 +67,21 @@ function setOptionsFor(variable){
     })
 }
 
+function message(content, time){
+    let msg = document.getElementById("chain_msg")
+    msg.innerHTML = content
+    msg.style.display = "block"
+
+    console.log("Entrou na funcao message")
+    setTimeout(()=>{
+        console.log("Esperando o tempo")
+        msg.style.display = "none"
+    }, time)
+}
 
 retornar.addEventListener('click', ()=>{
-    let nextPage = document.getElementById('grammarPage')
-    let thisPage = document.getElementById('generationPage')
-
-    thisPage.style.display = 'none'
-    nextPage.style.display = 'flex'
-
+    location.reload()
+    fetch("http://127.0.0.1:5000/cleanGrammar")
 })
 
 
@@ -138,6 +145,7 @@ fast_mode.addEventListener('click', ()=>{
     .then(response => response.json())
     .then(data => {
         
+        retornaProd.style.display = "none"
         if(fast_mode.classList.contains("unselected")){
             fast_mode.classList.remove("unselected")
             fast_mode.classList.add("selected")
@@ -145,11 +153,16 @@ fast_mode.addEventListener('click', ()=>{
             detailed_mode.classList.add("unselected")
         }
 
-        prod_choice.style.display = "none"
-        label_mode.innerHTML = "Geração Rápida:"
-        document.getElementById("button_plus").style.display = "inline"
         mode = "fast"
-        
+        prod_choice.style.display = "none"
+        if(data["allTrap"]){
+            message("A gramática apresentada não pode gerar produções válidas", 10000)
+        }else{
+
+            label_mode.innerHTML = "Geração Rápida:"
+            geraNova.style.display = "inline"
+
+        }
     })
 })
 
@@ -167,24 +180,28 @@ detailed_mode.addEventListener('click', ()=>{
             fast_mode.classList.add("unselected")
         }
 
-
-        // Ativa a caixa de Selecoes
-        prod_choice.style.display = "block"
-        setOptionsFor(data['initial'])
-
-        // Formata o titulo adequado a caixa de producoes
-        label_mode.innerHTML = "Geração Detalhada:"
-
-        // Remove o botao de adicionar
-        document.getElementById("button_plus").style.display = "none"
-        
+        mode = "detailed"
         // Retira as producoes que ja estiverem na caixa
         children = [... grammar_results.children]
         children.forEach((el)=>{
             el.parentNode.removeChild(el)
         })
-        
-        mode = "detailed"
+        if(data["allTrap"]){
+            message("A gramática apresentada não pode gerar produções válidas", 10000)
+        }else{
+            // Ativa a caixa de Selecoes
+            prod_choice.style.display = "block"
+            setOptionsFor(data['initial'])
+    
+            // Formata o titulo adequado a caixa de producoes
+            label_mode.innerHTML = "Geração Detalhada:"
+    
+            // Remove o botao de adicionar
+            geraNova.style.display = "none"
+            
+            // Torna o botao de retornar a producao visivel
+            retornaProd.style.display = "inline"
+        }
     })
 })
 
@@ -247,7 +264,9 @@ derivar.addEventListener('click', ()=>{
             first_line.innerHTML = penultimate_line
             first_line.innerHTML += arrow
             first_line.append(result)
-            first_line.innerHTML += "<br>FIM<br><br>"
+            first_line.innerHTML += "<br><br>"
+
+            message("FIM - Cadeia Encerrada", 4000)
 
             if(grammar_results.firstChild!=null){
                 grammar_results.insertBefore(first_line, grammar_results.firstChild)          
@@ -281,7 +300,7 @@ derivar.addEventListener('click', ()=>{
             if (grammar_results) {
                 let last_line = document.createElement('p');
                 let result = data['result'] || "resultado desconhecido";
-                last_line.innerHTML = `<b>A cadeia ${result} é uma armadilha, não é possível uma derivação conclusiva.</b>`;
+                message(`<b>A cadeia ${result} é uma armadilha, não é possível uma derivação conclusiva.</b>`, 10000)
                 
                 // Inserindo o novo parágrafo no início ou no final, dependendo do estado atual do elemento
                 if (grammar_results.firstChild) {

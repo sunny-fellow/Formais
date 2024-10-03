@@ -212,7 +212,11 @@ header > h1{
 .page > .content > .form > .file-btns > .input-file{
     padding: 8px 15px;
     border-radius: 10px;
-    
+}
+
+.page > .content > .form > .file-btns > .input-file:hover,
+.page > .content > .form > .file-btns > .input-file:hover > label:hover{
+    cursor: pointer;
 }
 
 .page > .content > .form > .file-btns > button > label,
@@ -221,6 +225,8 @@ header > h1{
     font-size: 15px;
     font-weight: bold;
     text-decoration: none;
+    width: 100%;
+    height: 100%;
 }
 
 .page > .content > .form > .file-btns > button:hover {

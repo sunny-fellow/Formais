@@ -11,6 +11,7 @@ const upFile    = document.getElementById('insert_file')
 const enviar    = document.getElementById('submit_form')
 const limpar    = document.getElementById('clear_form')
 
+
 function clearErrors(){
     let messages = [... document.querySelectorAll(".error_message")]
     messages.forEach((el) =>{
@@ -39,7 +40,6 @@ addProd.addEventListener('click', ()=>{
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data)
         if (data['valid'] == false){
             // Mensagem de erro
             error_message("Formatação inválida de Produção<br>Deve ser informada no padrão Variável: Produção")
@@ -96,7 +96,6 @@ addProd.addEventListener('click', ()=>{
 
 
                     if(inicial.value.length == 1 && inicial.value == variavel){
-                        console.log("entreii")
                         let lines = [...document.querySelectorAll(".production_line")]
                         let recomposicao = []
                         lines.forEach((el)=>{
@@ -141,7 +140,7 @@ popProd.addEventListener('click', ()=>{
         },
         body: JSON.stringify(input_inicial)
     })
-    .then(response => response.json)
+    .then(response => response.json())
     .then(data => {
         if (data['valid'] == false){
             error_message("Formatação inválida de Produção<br>Deve ser informada no padrão Variável: Produção")
@@ -203,35 +202,52 @@ upFile.addEventListener('change', ()=>{
             error_message("Arquivo inválido<br>" + data['message'] + "<br>Por favor, tente novamente.")
         }
         else{
-            let dict_returned = data['return']
+            try{
+                let dict_returned = data['return']
 
-            variaveis.value = dict_returned['variaveis']
-            let variaveisArray = variaveis.value.split(',').map(v => v.trim());
-            variaveis.value = variaveisArray.join(', ');
-
-            terminais.value = dict_returned['terminais']
-            let terminaisArray = terminais.value.split(',').map(v => v.trim());
-            terminais.value = terminaisArray.join(', ');
-
-            inicial.value = dict_returned['inicial']
-
-            // Limpa a caixa de texto das producoes
-            producoes = [...document.querySelectorAll(".production_line")]
-            producoes.forEach((el) => {
-                el.parentNode.removeChild(el);
-            })
-
-            let ret_producoes = dict_returned['producoes']
-            for (let key in ret_producoes){
-                if (ret_producoes[key].length == 0){
-                    continue;
+                variaveis.value = dict_returned['variaveis']
+                if(variaveis.value){
+                    try{
+                        let variaveisArray = variaveis.value.split(',').map(v => v.trim());
+                        variaveis.value = variaveisArray.join(', ');
+                    }catch(e){
+                    }
                 }
-                let line = document.createElement('p')
-                line.setAttribute("class", "production_line")
-                let str = ret_producoes[key].join(" | ")
-                line.innerHTML = key + "  &#8594;  " + str
-                document.getElementById("grammar-hint-1").appendChild(line)
+                
+                terminais.value = dict_returned['terminais']
+                if(terminais.value){
+                    try{
+                        let terminaisArray = terminais.value.split(',').map(v => v.trim());
+                        terminais.value = terminaisArray.join(', ');
+                    }catch(e){
+                    }
+                }
+
+                inicial.value = dict_returned['inicial']
+
+                // Limpa a caixa de texto das producoes
+                producoes = [...document.querySelectorAll(".production_line")]
+                if(producoes){
+                    producoes.forEach((el) => {
+                        el.parentNode.removeChild(el);
+                    })
+                }
+            
+
+                let ret_producoes = dict_returned['producoes']
+                for (let key in ret_producoes){
+                    if (ret_producoes[key].length == 0){
+                        continue;
+                    }
+                    let line = document.createElement('p')
+                    line.setAttribute("class", "production_line")
+                    let str = ret_producoes[key].join(" | ")
+                    line.innerHTML = key + "  &#8594;  " + str
+                    document.getElementById("grammar-hint-1").appendChild(line)
+                }
+            }catch(e){
             }
+            
         }
     })
 })
@@ -244,6 +260,12 @@ enviar.addEventListener('click', ()=>{
     let initial = inicial.value
 
     let lines = [...document.querySelectorAll(".production_line")]
+
+    if (lines.length === 0) {
+        error_message("Nenhuma produção foi adicionada.");
+        return;
+    }
+
     let producoes = {}
 
     lines.forEach((el) => {
@@ -277,9 +299,13 @@ enviar.addEventListener('click', ()=>{
             let lines = [...document.querySelectorAll(".production_line")]
             let exibitions = [...document.querySelectorAll(".exibition_line")]
 
-            exibitions.forEach((el) => {
-                el.parentNode.removeChild(el)
-            })
+            if(exibitions){
+                exibitions.forEach((el) => {
+                    el.parentNode.removeChild(el)
+                })
+            }
+
+            document.getElementById("fast_mode").click()
 
             lines.forEach((el) => {
                 let line = document.createElement('p')

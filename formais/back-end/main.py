@@ -130,7 +130,7 @@ def receive_inputs():
         return jsonify(validation)
     
     gram.dict_to_grammar(data)
-    return jsonify({"valid": True, "message": "Gramática recebida com sucesso"})
+    return jsonify({"valid": True, "message": "Gramática recebida com sucesso", "allTrap": gram.check_grammar()["allTrap"]})
         
 def verifyFormat(data):
     if not data:
@@ -160,12 +160,12 @@ def verifyFormat(data):
 @app.route('/setFastMode')
 def setFastMode():
     # gram.setFastMode()
-    return jsonify({"valid": True, "message": "Modo rápido ativado"})
+    return jsonify({"valid": True, "message": "Modo rápido ativado", "allTrap": gram.check_grammar()["allTrap"]})
 
 
 @app.route('/setDetailedMode')
 def setDetailedMode():
-    return jsonify({"valid": True, "initial": gram.initial})
+    return jsonify({"valid": True, "initial": gram.initial, "allTrap": gram.check_grammar()["allTrap"]})
 
 
 @app.route('/getProductionsOf', methods=['POST'])
@@ -241,6 +241,9 @@ def derivate():
             "isTrap": isTrap,
             "toDerivate": toDerivate})
 
+@app.route('/cleanGrammar')
+def cleanGrammar():
+    gram.clean_grammar()
 
 @app.route('/getVariableToDerivate', methods=['POST'])
 def getVariablesToDerivate():
