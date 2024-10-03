@@ -146,12 +146,12 @@ class Tree:
 
 
 # tree = Tree("S", {"S": ["aA", "bB"]})
-tree = Tree()
-tree.print_tree()
-print("\n------------------------------------\n")
-print(tree.check_variables({"S": ["aA", "bB", "cC"],
-                            "A": ["epsilon"],
-                            "B": ["DA", "CB", "B", "AB", "ABA"],
-                            "C": ["DC", "AB"],
-                            "D" :["D", "C"]}))
-print("\n------------------------------------\n")
+# tree = Tree()
+# tree.print_tree()
+# print("\n------------------------------------\n")
+# print(tree.check_variables({"S": ["aA", "bB", "cC"],
+#                             "A": ["epsilon"],
+#                             "B": ["DA", "CB", "B", "AB", "ABA"],
+#                             "C": ["DC", "AB"],
+#                             "D" :["D", "C"]}))
+# print("\n------------------------------------\n")

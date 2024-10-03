@@ -4,6 +4,15 @@ from .dataStructures.stack import Stack
 
 """
 Algoritmo para gerar cadeias
+    Baseado em profundidade, no caso, quantidade de recursões.
+    A cada profundidade, gera uma fila das produções geradas e atualiza a lista
+    de cadeias geradas.
+    Usará os seguintes métodos:
+        - bool isTerminal(cadeia) -> verifica se a cadeia contem apenas simbolos terminais
+        - derivar(cadeia) -> recebe uma cadeia e deriva sua primeira variavel
+        
+
+
     - Necessario: 
         Uma pilha para guardar o caminho, a subcadeia atual e uma gramatica completa
 

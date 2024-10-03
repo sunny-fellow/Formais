@@ -47,7 +47,7 @@ class Grammar:
 
         # para o auxilio na parte de geracao de cadeias, serao necessarias as 
         # listas de variaveis armadilhas e nao-armadilhas para evitar gerar 
-        # cadeias derivadando das variaveis aramdilha
+        # cadeias derivando das variaveis aramdilha
         self.traps:list = []
         self.notTraps:list = []
 
