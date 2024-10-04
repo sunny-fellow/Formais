@@ -1,4 +1,4 @@
-from ...grammarThings.gram import Grammar
+from grammarThings.gram import Grammar
 from queue import Queue
 """
     gram : {
@@ -71,6 +71,15 @@ class Tree:
         return {"hasVar": False, "isTrap": False, "variable": ""}
     
 
+    # S: A , B 
+    # A: epsilon
+    # B: b, epsilon
+    # prof1: [["S", "A"], ["S", "B"]]
+    # prof2: [["S", "A", "epsilon"], ["S", "B", "b"], ["S", "B", "epsilon"]]
+
+    
+    # Versao Lael
+    # OBS: NAO TA FUNCIONANDO COMO ALI NO EXEMPLO ACIMA
     def getChainList(self) -> list:
         chainList = []
         for child in self.children:
@@ -81,3 +90,23 @@ class Tree:
                 chainList.append(chain.insert(0, self.data))
 
         return chainList
+    
+    """
+        Depois vou precisar que tenha uma funcao que transforme essas filas em suas progressoes de substituicao
+        Exemplo:
+
+        S -> aA | epsilon
+        A -> bB | c
+        B -> epsilon
+
+        Seja a fila de producoes:
+            ["S", "aA", "bB", "epsilon"]
+        Retorne:
+            ["S", "aA", "abB", "ab"]
+
+        Seja a fila de producoes:
+            ["S", "aA", "c"]
+        Retorne:
+            ["S", "aA", "ac"]
+    
+    """

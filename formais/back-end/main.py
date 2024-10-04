@@ -2,10 +2,13 @@ from flask_cors import CORS
 from flask import Flask, render_template, jsonify, request
 import re # Importa os metodos de regex
 from grammarThings.gram import Grammar
+from grammarThings.dataStructures.chainTree import Tree
+
 
 app = Flask(__name__)
 CORS(app)  # Isso permite CORS para todas as rotas
 gram = Grammar()
+chainTree = None
 
 
 @app.route("/verifyInput", methods=["POST"])
@@ -194,7 +197,7 @@ def getProductionsOf():
 def derivate():
     data = request.get_json()
 
-    print(data)
+    print("\n\n" + str(data) + "\n\n")	
 
     chain = data["cadeia"]
     var = data["variavel"]
@@ -257,6 +260,63 @@ def getVariablesToDerivate():
             return jsonify({'variable': c})
     
     return jsonify({'variable': None})
+
+
+# Variaveis utilizadas para a funcao getFastChain:
+chainTree:Tree = None
+depth = 1
+alreadysent = []
+retorno = []
+
+@app.route('/generateFastChain')
+def getFastChain():
+    global chainTree, depth, alreadysent, retorno
+
+    # Se ja tiver algo a espera de ser enviado, envia, tirando-a da fila
+    if len(retorno) > 0:
+        print("Enviando cadeia: ", retorno[0])
+        return jsonify({"chain": retorno.pop(0)})
+    
+    # Se nao tiver nada a espera de ser enviado, cria a arvore
+    else:
+        chainTree = Tree(gram.initial, gram, depth)
+        
+        # Pega a lista de cadeias
+        retorno = chainTree.getChainList()
+        print("Retorno: ", retorno)
+        depth += 1
+
+        canContinue = False
+        # Para cada sequencia de producoes, verifica se a cadeia gerada eh valida, ou seja, se nao contem variaveis
+        for elem in retorno:
+            for car in elem[len(elem)-1]:
+                if car in gram.nonTermSymbols:
+                    canContinue = True
+                    retorno.remove(elem)
+                    break
+        
+        # Agora, a retorno contem sequencias de producoes que geram cadeias validas, mas precisamos verificar se ja nao enviamos essas cadeias
+        for elem in retorno:
+            if elem in alreadysent:
+                retorno.remove(elem)
+            else:
+                alreadysent.append(elem)
+
+        # Se ainda houver algo a ser enviado, envia
+        if len(retorno) > 0:
+            print("Enviando cadeia: ", retorno[0])
+            return jsonify({"chain": retorno.pop(0)})
+        
+        # Se nao houver mais nada a ser enviado, volta a tentar gerar
+        elif canContinue:
+            return getFastChain()
+        
+        # Se nao houver mais nada a ser enviado e nao houver mais nada a ser gerado, retorna uma mensagem de erro
+        else:
+            print("Nao ha mais cadeias a serem geradas")
+            return jsonify({"chain": []})
+
+    
 
 
 # Roda o servidor

@@ -72,9 +72,7 @@ function message(content, time){
     msg.innerHTML = content
     msg.style.display = "block"
 
-    console.log("Entrou na funcao message")
     setTimeout(()=>{
-        console.log("Esperando o tempo")
         msg.style.display = "none"
     }, time)
 }
@@ -156,12 +154,13 @@ fast_mode.addEventListener('click', ()=>{
         mode = "fast"
         prod_choice.style.display = "none"
         if(data["allTrap"]){
+            alert("A gramática apresentada não pode gerar produções válidas")
             message("A gramática apresentada não pode gerar produções válidas", 10000)
         }else{
-
             label_mode.innerHTML = "Geração Rápida:"
             geraNova.style.display = "inline"
 
+            geraNova.click()
         }
     })
 })
@@ -310,5 +309,27 @@ derivar.addEventListener('click', ()=>{
                 }
             }
         }
+    })
+})
+
+geraNova.addEventListener('click', ()=>{
+    fetch("http://127.0.0.1:5000/generateFastChain")
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        let derivations = data['chain']
+        
+
+        str = derivations[0]
+        for (let s of derivations){
+            str += "  &#8594;  " + s
+        }
+
+        let new_line = document.createElement('p')
+        new_line.innerHTML = str
+        new_line.setAttribute("class", "production_line")
+        grammar_results.appendChild(new_line)
+        message("Nova cadeia gerada", 4000)
+
     })
 })
