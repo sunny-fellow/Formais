@@ -288,10 +288,13 @@ def getFastChain():
 
         canContinue = False
         # Para cada sequencia de producoes, verifica se a cadeia gerada eh valida, ou seja, se nao contem variaveis
+        print("NonTermSymbols: ", gram.nonTermSymbols)
         for elem in retorno:
+            print("Analisando: ", elem)
             for car in elem[len(elem)-1]:
                 if car in gram.nonTermSymbols:
                     canContinue = True
+                    print("Removendo: ", elem)
                     retorno.remove(elem)
                     break
         

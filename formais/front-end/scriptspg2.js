@@ -318,7 +318,10 @@ geraNova.addEventListener('click', ()=>{
     .then(data => {
         console.log(data)
         let derivations = data['chain']
-        
+        if(derivations.length == 0){
+            message("A gramática apresentada não tem mais produções válidas", 10000)
+            return;
+        }
 
         str = derivations[0]
         for (let s of derivations){

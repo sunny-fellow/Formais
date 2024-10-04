@@ -80,33 +80,30 @@ class Tree:
     
     # Versao Lael
     # OBS: NAO TA FUNCIONANDO COMO ALI NO EXEMPLO ACIMA
+    # def getChainList(self) -> list:
+    #     chainList = []
+    #     for child in self.children:
+    #         if not child.children:
+    #             continue
+    #         childChains = child.getChainList()
+    #         for chain in childChains:
+    #             chainList.append(chain.insert(0, self.data))
+
+    #     return chainList
+
     def getChainList(self) -> list:
         chainList = []
         for child in self.children:
-            if not child.children:
-                continue
-            childChains = child.getChainList()
-            for chain in childChains:
-                chainList.append(chain.insert(0, self.data))
-
+            chainList.append(self.chainListAux(child))
+            chainList[-1].insert(0, self.data)
         return chainList
-    
-    """
-        Depois vou precisar que tenha uma funcao que transforme essas filas em suas progressoes de substituicao
-        Exemplo:
 
-        S -> aA | epsilon
-        A -> bB | c
-        B -> epsilon
-
-        Seja a fila de producoes:
-            ["S", "aA", "bB", "epsilon"]
-        Retorne:
-            ["S", "aA", "abB", "ab"]
-
-        Seja a fila de producoes:
-            ["S", "aA", "c"]
-        Retorne:
-            ["S", "aA", "ac"]
-    
-    """
+    def chainListAux(self, node):
+        if not node.children:
+            return [node.data]
+        
+        returns = []
+        for child in node.children:
+            returns.append([node.data] + self.chainListAux(child))
+        
+        return returns
