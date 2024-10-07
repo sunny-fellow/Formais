@@ -246,7 +246,19 @@ def derivate():
 
 @app.route('/cleanGrammar')
 def cleanGrammar():
+    cleanChainTree()
     gram.clean_grammar()
+    return jsonify({"valid": True, "message": "Gramática limpa"})
+
+@app.route('/cleanChainTree')
+def cleanChainTree():
+    global chainTree, depth, alreadysent, queue
+    chainTree = None
+    depth = 1
+    alreadysent.clear()
+    queue.clear()
+    return jsonify({"valid": True, "message": "Árvore de cadeias limpa"})
+
 
 @app.route('/getVariableToDerivate', methods=['POST'])
 def getVariablesToDerivate():
@@ -266,16 +278,16 @@ def getVariablesToDerivate():
 chainTree:Tree = None
 depth = 1
 alreadysent = []
-retorno = []
+queue = []
 
 @app.route('/generateFastChain')
 def getFastChain():
-    global chainTree, depth, alreadysent, retorno
+    global chainTree, depth, alreadysent, queue
 
     # Se ja tiver algo a espera de ser enviado, envia, tirando-a da fila
-    if len(retorno) > 0:
-        print("Enviando cadeia: ", retorno[0])
-        return jsonify({"chain": retorno.pop(0)})
+    if len(queue) > 0:
+        print("Enviando cadeia: ", queue[0])
+        return jsonify({"chain": queue.pop(0)})
     
     # Se nao tiver nada a espera de ser enviado, cria a arvore
     else:
@@ -283,42 +295,57 @@ def getFastChain():
         
         # Pega a lista de cadeias
         retorno = chainTree.getChainList()
-        print("Retorno: ", retorno)
         depth += 1
 
         canContinue = False
         # Para cada sequencia de producoes, verifica se a cadeia gerada eh valida, ou seja, se nao contem variaveis
         print("NonTermSymbols: ", gram.nonTermSymbols)
-        for elem in retorno:
-            print("Analisando: ", elem)
+        print("Retorno: ", retorno) 
+
+        if type(retorno[0]) == str:
+            print("Primeiro Caso: ", retorno)
+            return jsonify({"chain": retorno})
+
+        queue = retorno
+
+        for elem in queue[:]:
             for car in elem[len(elem)-1]:
                 if car in gram.nonTermSymbols:
                     canContinue = True
-                    print("Removendo: ", elem)
-                    retorno.remove(elem)
+                    queue.remove(elem)
                     break
         
-        # Agora, a retorno contem sequencias de producoes que geram cadeias validas, mas precisamos verificar se ja nao enviamos essas cadeias
-        for elem in retorno:
+        # Agora, a queue contem sequencias de producoes que geram cadeias validas, mas precisamos verificar se ja nao enviamos essas cadeias
+        for elem in queue[:]:
             if elem in alreadysent:
-                retorno.remove(elem)
+                queue.remove(elem)
             else:
                 alreadysent.append(elem)
 
+
         # Se ainda houver algo a ser enviado, envia
-        if len(retorno) > 0:
-            print("Enviando cadeia: ", retorno[0])
-            return jsonify({"chain": retorno.pop(0)})
-        
+        if len(queue) > 1:
+            return jsonify({"chain": queue.pop(0)})
         # Se nao houver mais nada a ser enviado, volta a tentar gerar
         elif canContinue:
             return getFastChain()
-        
         # Se nao houver mais nada a ser enviado e nao houver mais nada a ser gerado, retorna uma mensagem de erro
         else:
             print("Nao ha mais cadeias a serem geradas")
             return jsonify({"chain": []})
 
+    
+app.route('/generateByDepth')
+def generateByDepth():
+    depth = request.args.get('depth')
+    
+    chainTree = Tree(gram.initial, gram, int(depth))
+    retorno = chainTree.getChainList()
+
+    if type(retorno[0]) == str:
+        retorno = [retorno]
+
+    return jsonify({"chain": retorno})
     
 
 

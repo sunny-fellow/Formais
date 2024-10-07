@@ -172,6 +172,7 @@ popProd.addEventListener('click', ()=>{
 })
 
 limpar.addEventListener('click', ()=>{
+    fetch("http://127.0.0.1:5000/cleanGrammar")
     clearErrors()
     variaveis.value = ""
     terminais.value = "" 
@@ -185,6 +186,7 @@ limpar.addEventListener('click', ()=>{
 
 upFile.addEventListener('change', ()=>{
     clearErrors()
+    fetch("http://127.0.0.1:5000/cleanGrammar")
     const file = upFile.files[0]
 
     // Cria um objeto FormData
@@ -254,6 +256,7 @@ upFile.addEventListener('change', ()=>{
 
 enviar.addEventListener('click', ()=>{
     clearErrors()
+    fetch("http://127.0.0.1:5000/cleanGrammar")
 
     let variables = variaveis.value.split(',').map(v => v.trim());
     let terminals = terminais.value.split(',').map(v => v.trim());
@@ -269,8 +272,13 @@ enviar.addEventListener('click', ()=>{
     let producoes = {}
 
     lines.forEach((el) => {
-        let variavel = el.innerHTML.split("  ")[0]
-        let producao = el.innerHTML.split("  ")[2].split(" | ")
+        let sep = el.innerHTML.split("  ")
+        let variavel = sep[0]
+        let producao = sep[2]
+        for (let i = 3; i < sep.length; i++){
+            producao += " " + sep[i]
+        }
+        producao = producao.split(" | ")
         producao = producao.map(p => p.trim())
         producoes[variavel] = producao
     })

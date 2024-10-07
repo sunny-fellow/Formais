@@ -6,6 +6,7 @@ const derivar       = document.getElementById('derivate')
 const retornaProd   = document.getElementById('button_return')
 const geraNova      = document.getElementById('button_plus')
 const recarrega     = document.getElementById('button_reload')
+const searchDeph    = document.getElementById('search_by_depth')
 
 // Divs e Textos:
 const prod_choice   = document.getElementById('prod_choice')
@@ -79,7 +80,7 @@ function message(content, time){
 
 retornar.addEventListener('click', ()=>{
     location.reload()
-    fetch("http://127.0.0.1:5000/cleanGrammar")
+
 })
 
 
@@ -87,6 +88,7 @@ recarrega.addEventListener('click', ()=>{
     if(mode == "detailed"){
         detailed_mode.click()
     }else{
+        fetch('http://127.0.0.1:5000/cleanChainTree')
         fast_mode.click()
     }
 })
@@ -320,11 +322,15 @@ geraNova.addEventListener('click', ()=>{
         let derivations = data['chain']
         if(derivations.length == 0){
             message("A gramática apresentada não tem mais produções válidas", 10000)
+            geraNova.setAttribute("disabled", true)
             return;
         }
 
         str = derivations[0]
-        for (let s of derivations){
+        for (let s of derivations.slice(1)){
+            if(s == ""){
+                s = "<b>epsilon</b>"
+            }
             str += "  &#8594;  " + s
         }
 
@@ -332,7 +338,43 @@ geraNova.addEventListener('click', ()=>{
         new_line.innerHTML = str
         new_line.setAttribute("class", "production_line")
         grammar_results.appendChild(new_line)
-        message("Nova cadeia gerada", 4000)
 
+    })
+})
+
+searchDeph.addEventListener('click', ()=>{
+    let depth = document.getElementById('depth').value
+
+    fetch("http://127.0.0.1:5000/generateByDepth", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({'depth': depth})
+    })
+    .then(response => response.json())
+    .then(data => {
+        let derivations = data['chain']
+        if(derivations.length == 0){
+            message("A gramática apresentada não tem mais produções válidas", 10000)
+            geraNova.setAttribute("disabled", true)
+            return;
+        }
+
+        // Recebe um array de arrays, onde cada array é uma progressão de derivações
+        for (let derivation of derivations){
+            str = derivation[0]
+            for (let s of derivation.slice(1)){
+                if(s == ""){
+                    s = "<b>epsilon</b>"
+                }
+                str += "  &#8594;  " + s
+            }
+
+            let new_line = document.createElement('p')
+            new_line.innerHTML = str
+            new_line.setAttribute("class", "production_line")
+            grammar_results.appendChild(new_line)
+        }
     })
 })

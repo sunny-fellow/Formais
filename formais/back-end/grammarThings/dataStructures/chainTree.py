@@ -77,33 +77,36 @@ class Tree:
     # prof1: [["S", "A"], ["S", "B"]]
     # prof2: [["S", "A", "epsilon"], ["S", "B", "b"], ["S", "B", "epsilon"]]
 
-    
-    # Versao Lael
-    # OBS: NAO TA FUNCIONANDO COMO ALI NO EXEMPLO ACIMA
-    # def getChainList(self) -> list:
-    #     chainList = []
-    #     for child in self.children:
-    #         if not child.children:
-    #             continue
-    #         childChains = child.getChainList()
-    #         for chain in childChains:
-    #             chainList.append(chain.insert(0, self.data))
-
-    #     return chainList
-
     def getChainList(self) -> list:
-        chainList = []
-        for child in self.children:
-            chainList.append(self.chainListAux(child))
-            chainList[-1].insert(0, self.data)
-        return chainList
+        result = []
 
-    def chainListAux(self, node):
-        if not node.children:
-            return [node.data]
+        if not self.children:
+            return [self.data]
         
-        returns = []
-        for child in node.children:
-            returns.append([node.data] + self.chainListAux(child))
+        elif len(self.children) == 1:
+            try:
+                print(self.children[1].data)
+            except:
+                pass
+            return [self.data] + [self.children[0].data]
         
-        return returns
+        else:
+            for child in self.children:
+                temp = child.getChainList()
+                # print("Temp: " + str(temp))
+
+                # Se for uma lista de listas, percorre-a
+                if type(temp[0]) == list:
+                    print("Case 1", temp)
+                    for t in temp:
+                        appd = [self.data]
+                        appd.extend(t)
+                        result.append(appd)
+                    
+                # Se for uma lista de strings, apenas adiciona o valor
+                else:
+                    print("Case 2", temp)
+                    appd = [self.data]
+                    appd.extend(temp)
+                    result.append(appd)
+            return result
