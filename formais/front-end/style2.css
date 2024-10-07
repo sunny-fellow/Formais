@@ -99,6 +99,54 @@
     gap: 10px;
 }
 
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs > label{
+    position: relative;
+    top: 30px;
+    right: auto;
+    padding: 0 8px;
+    font-size: 18px;
+    color: var(--off-white);
+    background-color: var(--deep-forest);
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs > #depth {
+    padding: 6px 10px 6px 10px;
+    width: 200px;
+    height: 30px;
+    border-radius: 10px;
+    border: 2px var(--light-green) solid;
+    font-size: medium;
+    outline: none;
+    background-color: var(--deep-forest);
+    color: var(--off-gray);
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs > button {
+    padding: 10px 20px;
+    width: 80px;
+    border-radius: 15px;
+    border: none;
+    background-color: var(--light-green);
+    color: var(--deep-forest);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs > button:hover {
+    transition: 0.2s;
+    transform: scale(1.1);
+    background-color: var(--off-white);
+    color: var(--deep-forest);
+}
+
 .page > .content > .grammar-creation > .prod-fast > #fast_mode_btn > button {
     padding: 10px 20px;
     width: 50px;

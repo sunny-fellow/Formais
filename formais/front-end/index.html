@@ -137,8 +137,16 @@
                         <label class="fast-gen" for="grammar-results" id="label_mode">Geração Rápida:</label>
                         <div class="g-hint-box" id="grammar-results"></div>
                     </div>
+
                     <p id="chain_msg"></p>
-                    <div id="fast_mode_btn">
+
+                    <div class="depth-inputs">
+                        <label class="fast-gen" for="depth" id="label_depth">Profundidade Máxima:</label>
+                        <input id="depth" type="number" min="1" max="100" placeholder="min. 1, máx. 100">
+                        <button id="generate_inputs">Gerar</button>
+                    </div>
+
+                    <div id="fast_mode_btn" style="display: none">
                         <button id="button_return"><i class="fa fa-arrow-left"></i></button>
                         <button id="button_plus"><i class="fa fa-plus"></i></button>
                         <button id="button_reload"><i class="fa fa-rotate-left"></i></button>
