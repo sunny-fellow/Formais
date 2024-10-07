@@ -335,12 +335,14 @@ def getFastChain():
             return jsonify({"chain": []})
 
     
-app.route('/generateByDepth')
+@app.route('/generateByDepth', methods=['POST'])
 def generateByDepth():
-    depth = request.args.get('depth')
+    depth = request.get_json()["depth"]
+    print("Profundidade: ", depth)
     
     chainTree = Tree(gram.initial, gram, int(depth))
     retorno = chainTree.getChainList()
+    print("Retorno: ", retorno)
 
     if type(retorno[0]) == str:
         retorno = [retorno]

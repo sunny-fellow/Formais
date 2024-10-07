@@ -345,6 +345,12 @@ geraNova.addEventListener('click', ()=>{
 searchDeph.addEventListener('click', ()=>{
     let depth = document.getElementById('depth').value
 
+    // Retira as producoes que ja estiverem na caixa
+    children = [... grammar_results.children]
+    children.forEach((el)=>{
+        el.parentNode.removeChild(el)
+    })
+
     fetch("http://127.0.0.1:5000/generateByDepth", {
         method: 'POST',
         headers: {

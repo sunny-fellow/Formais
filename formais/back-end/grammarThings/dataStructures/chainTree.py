@@ -97,7 +97,6 @@ class Tree:
 
                 # Se for uma lista de listas, percorre-a
                 if type(temp[0]) == list:
-                    print("Case 1", temp)
                     for t in temp:
                         appd = [self.data]
                         appd.extend(t)
@@ -105,8 +104,9 @@ class Tree:
                     
                 # Se for uma lista de strings, apenas adiciona o valor
                 else:
-                    print("Case 2", temp)
                     appd = [self.data]
                     appd.extend(temp)
                     result.append(appd)
             return result
+        
+    def 
