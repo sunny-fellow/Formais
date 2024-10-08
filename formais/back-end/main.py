@@ -5,11 +5,11 @@ from grammarThings.gram import Grammar
 from grammarThings.dataStructures.chainTree import Tree
 
 
-app = Flask(__name__)
-CORS(app)  # Isso permite CORS para todas as rotas
-gram = Grammar()
 chainTree = None
+gram = Grammar()
 
+app = Flask(__name__)
+CORS(app)
 
 @app.route("/verifyInput", methods=["POST"])
 def verifyInput():
@@ -94,7 +94,6 @@ def archive_validation(content:str) -> bool:
         for char in lines[0]:
             print("caracter", char)
         return (False, {"Error": "Variaveis não formatadas corretamente"})
-    
     # Validacao da variavel inicial
     elif not re.fullmatch(ini_pattern, lines[1].strip()):
         print(lines[1])
@@ -150,7 +149,7 @@ def verifyFormat(data):
 
     if not re.fullmatch(pattern_variables, variaveis):
         return {"valid": False, "message": "Formato de variaveis invalido ou não preenchido"}
-    elif not re.fullmatch(pattern_terminal, terminais):
+    elif terminais != "" and not re.fullmatch(pattern_terminal, terminais):
         return {"valid": False, "message": "Formato de terminais invalido ou não preenchido"}
     elif not re.fullmatch(pattern_inicial, data["inicial"]):
         return {"valid": False, "message": "Formato de inicial invalido ou não preenchido"}
@@ -304,7 +303,7 @@ def getFastChain():
 
         if type(retorno[0]) == str:
             print("Primeiro Caso: ", retorno)
-            return jsonify({"chain": retorno})
+            return jsonify({"chain": retorno, "continue": False})
 
         queue = retorno
 
@@ -337,16 +336,19 @@ def getFastChain():
     
 @app.route('/generateByDepth', methods=['POST'])
 def generateByDepth():
-    depth = request.get_json()["depth"]
-    print("Profundidade: ", depth)
+    depth = int(request.get_json()["depth"])
+    print("Profundidade: ", str(depth))
     
     chainTree = Tree(gram.initial, gram, int(depth))
-    retorno = chainTree.getChainList()
-    print("Retorno: ", retorno)
+    retorno = chainTree.get_limited_chainList(depth)
 
-    if type(retorno[0]) == str:
-        retorno = [retorno]
+    if retorno:
+        # Se for um array de strings, converte-o em array de arrays. Isso eh necessario para o front-end
+        if type(retorno[0]) == str:
+            retorno = [retorno]
+        
 
+    print("Retorno tratado: ", retorno)
     return jsonify({"chain": retorno})
     
 

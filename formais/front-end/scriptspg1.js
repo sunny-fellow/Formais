@@ -322,6 +322,7 @@ enviar.addEventListener('click', ()=>{
                 grammar_import.appendChild(line)
             })
 
+            document.getElementsByClassName("depth-inputs")[0].style.display = "flex"
         }
     })
 })

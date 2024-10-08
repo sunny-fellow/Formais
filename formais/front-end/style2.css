@@ -68,10 +68,12 @@
 #generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > .g-hint-box{
     border: 2px solid var(--light-green);
     width: 100%;  
-    height: auto;
     min-height: 250px;  
+    max-height: 450px;  
     border-radius: 15px;
     padding: 25px;
+
+    overflow: auto;
 }
 
 #generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > .g-hint-box > p{
@@ -368,3 +370,45 @@
     cursor: pointer;
     background-color: var(--off-white);
 }
+
+#grammar-results > .production_line{
+    margin-bottom: 20px;
+}
+
+.spinner {
+    border: 8px solid var(--light-green);
+    border-top: 5px solid var(--off-gray);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+  
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+  /* Personalização para navegadores WebKit (Chrome, Safari) */
+  .scrollable::-webkit-scrollbar {
+    
+    width: 14px;  /* Largura da barra de rolagem vertical */
+    height: 10px; /* Altura da barra de rolagem horizontal */
+  }
+  
+  .scrollable::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0); /* Fundo preto da barra de rolagem */
+  }
+  
+  .scrollable::-webkit-scrollbar-thumb {
+    background-color: var(--light-green); /* Cor da barra de rolagem (verde) */
+    border-radius: 5px;        /* Arredondamento */
+    border: 3px solid var(--deep-forest); /* Borda preta ao redor da barra */
+  }
+  
+  .scrollable::-webkit-scrollbar-thumb:hover {
+    background: var(--off-white); /* Cor verde mais escura ao passar o mouse */
+  }
+  

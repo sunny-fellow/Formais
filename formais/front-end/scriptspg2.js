@@ -9,10 +9,12 @@ const recarrega     = document.getElementById('button_reload')
 const searchDeph    = document.getElementById('search_by_depth')
 
 // Divs e Textos:
-const prod_choice   = document.getElementById('prod_choice')
-const fast_buttons  = document.getElementById('fast_mode_btn')
-const label_mode    = document.getElementById('label_mode') 
+const prod_choice     = document.getElementById('prod_choice')
+const fast_buttons    = document.getElementById('fast_mode_btn')
+const label_mode      = document.getElementById('label_mode') 
 const grammar_results = document.getElementById('grammar-results')
+const depth_inputs    = document.getElementsByClassName('depth-inputs')[0]
+const spinner         = document.getElementById('loading-spinner')
 
 mode = "fast"
 
@@ -80,17 +82,27 @@ function message(content, time){
 
 retornar.addEventListener('click', ()=>{
     location.reload()
-
+    fetch("http://127.0.0.1:5000/cleanGrammar")
+    geraNova.removeAttribute("disabled")
 })
 
 
 recarrega.addEventListener('click', ()=>{
-    if(mode == "detailed"){
-        detailed_mode.click()
-    }else{
-        fetch('http://127.0.0.1:5000/cleanChainTree')
-        fast_mode.click()
-    }
+    let lines = [... grammar_results.children]
+    lines.forEach((el)=>{
+        el.parentNode.removeChild(el)
+    })
+
+    
+    fetch('http://127.0.0.1:5000/cleanChainTree')
+    .then(()=>{
+        geraNova.removeAttribute("disabled")
+        if(mode == "detailed"){
+            detailed_mode.click()
+        }else{
+            fast_mode.click()
+        }
+    })
 })
 
 retornaProd.addEventListener('click', ()=>{
@@ -140,6 +152,8 @@ retornaProd.addEventListener('click', ()=>{
 })
 
 fast_mode.addEventListener('click', ()=>{
+    depth_inputs.style.display = "flex"
+    geraNova.removeAttribute("disabled")
 
     fetch("http://127.0.0.1:5000/setFastMode")
     .then(response => response.json())
@@ -168,6 +182,8 @@ fast_mode.addEventListener('click', ()=>{
 })
 
 detailed_mode.addEventListener('click', ()=>{
+    depth_inputs.style.display = "none"
+    geraNova.removeAttribute("disabled")
 
     fetch("http://127.0.0.1:5000/setDetailedMode")
     .then(response => response.json())
@@ -318,10 +334,10 @@ geraNova.addEventListener('click', ()=>{
     fetch("http://127.0.0.1:5000/generateFastChain")
     .then(response => response.json())
     .then(data => {
-        console.log(data)
         let derivations = data['chain']
         if(derivations.length == 0){
             message("A gramática apresentada não tem mais produções válidas", 10000)
+            alert("A gramática apresentada não tem mais produções válidas")
             geraNova.setAttribute("disabled", true)
             return;
         }
@@ -339,11 +355,32 @@ geraNova.addEventListener('click', ()=>{
         new_line.setAttribute("class", "production_line")
         grammar_results.appendChild(new_line)
 
+        if(data['continue'] == false){
+            v = data['continue']
+            console.log(v)
+            message("A gramática apresentada não tem mais produções válidas<br>Botão '+' desligado", 10000)
+            alert("A gramática apresentada não tem mais produções válidas")
+            // geraNova.setAttribute("disabled", true)
+        }
+        
     })
 })
 
 searchDeph.addEventListener('click', ()=>{
     let depth = document.getElementById('depth').value
+    
+    if(depth == ""){
+        message("É necessário informar a profundidade desejada", 10000)
+        return;
+    } else if (depth < 1) {
+        message("A profundidade deve estar entre [0 - 15]", 10000)
+        depth = 1;
+        return;
+    } else if(depth > 15){
+        message("A profundidade deve estar entre [0 - 15]", 10000)
+        depth = 15;
+        return;
+    }
 
     // Retira as producoes que ja estiverem na caixa
     children = [... grammar_results.children]
@@ -351,6 +388,8 @@ searchDeph.addEventListener('click', ()=>{
         el.parentNode.removeChild(el)
     })
 
+    spinner.style.display = "block"
+    geraNova.setAttribute("disabled", true)
     fetch("http://127.0.0.1:5000/generateByDepth", {
         method: 'POST',
         headers: {
@@ -361,9 +400,9 @@ searchDeph.addEventListener('click', ()=>{
     .then(response => response.json())
     .then(data => {
         let derivations = data['chain']
+        spinner.style.display = "none"
         if(derivations.length == 0){
-            message("A gramática apresentada não tem mais produções válidas", 10000)
-            geraNova.setAttribute("disabled", true)
+            message("A gramática apresentada não tem produções nessa profundidade", 10000)
             return;
         }
 
@@ -381,6 +420,11 @@ searchDeph.addEventListener('click', ()=>{
             new_line.innerHTML = str
             new_line.setAttribute("class", "production_line")
             grammar_results.appendChild(new_line)
+            
+            
         }
+
+        let lines = [... grammar_results.children]
+        message("Foram geradas " + lines.length + " cadeias com profundidade " + depth, 10000)
     })
 })

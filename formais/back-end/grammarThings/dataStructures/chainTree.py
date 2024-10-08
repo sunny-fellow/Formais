@@ -22,20 +22,20 @@ from queue import Queue
 
 class Tree:
     def __init__(self, data:str, gram:Grammar, depth:int):
-        self.data = data                    # guardar a info do no
-        self.gram = gram                    # gramatica para basear as informacoes
-        self.depth = depth
-        self.children:list[Tree] = []       # lista de filhos do no (subcadeias produzidas)
-        self.var_check = self.checkVar_fromProd(self.data) 
-        if self.var_check["hasVar"] and depth > 0:       # se tiver subcadeias e a altura nao tiver sido reduzida a 0 ainda
-            self.fillChildren()             # preenche os filhos com as subcadeias geradas pelas producoes do campo data
+        self.data = data                                            # guardar a info do no
+        self.gram = gram                                            # gramatica para basear as informacoes
+        self.depth = depth                                          # Guarda o nivel do no em relacao a raiz
+        self.children:list[Tree] = []                               # lista de filhos do no (subcadeias produzidas)
+        self.var_check = self.checkVar_fromProd(self.data)          # Checa se a cadeia contem variaveis e se eh armadilha
+        if self.var_check["hasVar"] and depth > 0:                  # se tiver subcadeias e a altura nao tiver sido reduzida a 0 ainda
+            self.fillChildren()                                     # preenche os filhos com as subcadeias geradas pelas producoes do campo data
             
 
     def fillChildren(self):
         # var_check guarda informacoes sobre a producao atual, tais como:
-            # bool: tem variavel
-            # bool: eh armadilha
-            # str: variavel contida na cadeia
+        #     bool: tem variavel
+        #     bool: eh armadilha
+        #     str: variavel contida na cadeia
 
         # se nao tiver variavel ou caso a variavel que existir for armadilha 
         if self.var_check["isTrap"]:
@@ -84,10 +84,7 @@ class Tree:
             return [self.data]
         
         elif len(self.children) == 1:
-            try:
-                print(self.children[1].data)
-            except:
-                pass
+                        
             return [self.data] + [self.children[0].data]
         
         else:
@@ -108,5 +105,32 @@ class Tree:
                     appd.extend(temp)
                     result.append(appd)
             return result
-        
-    def 
+    
+    def get_limited_chainList(self, n):
+        result = []
+
+        for child in self.children:
+            if n > 1:
+                if child.var_check["hasVar"] and not child.var_check["isTrap"]:
+                    temp = child.get_limited_chainList(n-1)
+
+                    # Se for uma lista de listas, percorre-a
+                    if temp and type(temp[0]) == list:
+                        for t in temp:
+                            appd = [self.data]
+                            appd.extend(t)
+                            result.append(appd)
+                        
+                    # Se for uma lista de strings, apenas adiciona o valor
+                    elif temp:
+                        appd = [self.data]
+                        appd.extend(temp)
+                        result.append(appd)
+                
+            elif not child.var_check["hasVar"]:
+                temp = [child.data]
+                appd = [self.data]
+                appd.extend(temp)
+                result.append(appd)
+
+        return result

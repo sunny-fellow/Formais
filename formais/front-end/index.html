@@ -111,20 +111,7 @@
                 <div class="prod-choice" style="display: none;" id="prod_choice">
                     <div class="form">
                         <legend id="choice_title">Derivar a variável S em:</legend>
-                        <div class="options" id="options_box">
-                            <!-- <div class="prod">
-                                <input type="radio" id="production_1" name="production" value="EDITAR" />
-                                <label class="prod-lbl" for="production_1">produção 1</label>
-                            </div>
-                            <div class="prod">
-                                <input type="radio" id="production_2" name="production" value="EDITAR" />
-                                <label class="prod-lbl trap" for="production_2">produção 2</label>
-                            </div>
-                            <div class="prod">
-                                <input type="radio" id="production_3" name="production" value="EDITAR" />
-                                <label class="prod-lbl" for="production_3">produção 3</label>
-                            </div> -->
-                        </div>
+                        <div class="options" id="options_box"></div>
                         <div class="btn">
                             <button type="submit" id="derivate">Derivar</button>
                         </div>
@@ -135,21 +122,23 @@
                 <div class="prod-fast">
                     <div id="grammar_exibition_box">
                         <label class="fast-gen" for="grammar-results" id="label_mode">Geração Rápida:</label>
-                        <div class="g-hint-box" id="grammar-results"></div>
+                        <div class="g-hint-box scrollable" id="grammar-results"></div>
+                        
                     </div>
 
+                    <div id="loading-spinner" class="spinner" style="display: none;"></div>
                     <p id="chain_msg"></p>
 
-                    <div class="depth-inputs">
-                        <label class="fast-gen" for="depth" id="label_depth">Profundidade Máxima:</label>
-                        <input id="depth" type="number" min="1" max="100" placeholder="min. 1, máx. 100">
-                        <button id="search_by_depth">Gerar</button>
-                    </div>
-
-                    <div id="fast_mode_btn" style="display: none">
+                    
+                    <div id="fast_mode_btn">
                         <button id="button_return"><i class="fa fa-arrow-left"></i></button>
                         <button id="button_plus"><i class="fa fa-plus"></i></button>
                         <button id="button_reload"><i class="fa fa-rotate-left"></i></button>
+                    </div>
+                    <div class="depth-inputs">
+                        <label class="fast-gen" for="depth" id="label_depth">Profundidade:</label>
+                        <input id="depth" type="number" min="1" max="15" placeholder="min. 1, máx. 15">
+                        <button id="search_by_depth">Gerar</button>
                     </div>
                 </div>
             </div>
