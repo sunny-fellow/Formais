@@ -47,14 +47,6 @@ O projeto oferece duas maneiras de trabalhar com a gramática inserida:
 
 - **Back-end**:
   - Python
- 
-## Uso das Tecnologias
-
-| Tecnologia     | Uso (%)   |
-|----------------|-----------|
-| ![OTHER](https://img.shields.io/badge/HTML-1.3%25-green)       | ████████████████ 1.3% |
-| ![JavaScript](https://img.shields.io/badge/JavaScript-1.1%25-yellow) | ████ 1.1%          |
-| ![Python](https://img.shields.io/badge/Python-97.6%25-orange) | ████ 97.6%          |
 
 ---
 
