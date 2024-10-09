@@ -1,0 +1,415 @@
+:root {
+    --deep-forest: #2F3E46;
+    --forest-green: #354F52;
+    --grass-green: #52796F;
+    --light-green: #84A98C;
+    --off-gray: #CAD2C5;
+    --off-white: #EDEDED;
+
+    --error-color: rgb(252, 101, 101);
+}
+
+.content > .title{
+    padding: 50px;
+    text-align: center;
+    font-size: large;
+    color: var(--off-white);
+}
+
+#generationPage > .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ********** CRIAÇÃO DE GRAMÁTICA ************ */
+.page > .content > .grammar-creation {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    width: 90%;
+}
+
+/* ********** BOX DA GRAMÁTICA ************ */
+.content > .subtitle {
+    padding: 20px 50px;
+}
+
+.content > .subtitle > h3{
+    text-align: center;
+    font-size: 20px;
+    color: var(--off-white);
+}
+
+#generationPage > .content > .grammar-creation > .prod-fast {
+    width: 100%;
+}
+
+
+#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box {
+    position: relative;
+    background-color: var(--deep-forest);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > label{
+    position: absolute;
+    top: 7px;
+    right: auto;
+    padding: 0 8px;
+    font-size: 18px;
+    color: var(--off-white);
+    background-color: var(--deep-forest);
+}
+
+#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > .g-hint-box{
+    border: 2px solid var(--light-green);
+    width: 100%;  
+    min-height: 250px;  
+    max-height: 450px;  
+    border-radius: 15px;
+    padding: 25px;
+
+    overflow: auto;
+}
+
+#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > .g-hint-box > p{
+    line-height: 1.5;
+    font-size: 18px;
+    color: var(--off-gray);
+}
+
+#generationPage > .content > .grammar-creation > .prod-fast > #grammar_exibition_box > .g-hint-box > p > span{
+    line-height: 1.5;
+    font-size: 18px;
+    color: var(--off-white);
+    font-weight: 600;
+}
+
+/* ********** MODO RÁPIDO ************ */
+.page > .content > .grammar-creation > .prod-fast {
+    display: flex;
+    flex-direction: column;
+}
+
+.page > .content > .grammar-creation > .prod-fast > #fast_mode_btn {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs > label{
+    position: relative;
+    top: 30px;
+    right: auto;
+    padding: 0 8px;
+    font-size: 18px;
+    color: var(--off-white);
+    background-color: var(--deep-forest);
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs > #depth {
+    padding: 6px 10px 6px 10px;
+    width: 200px;
+    height: 30px;
+    border-radius: 10px;
+    border: 2px var(--light-green) solid;
+    font-size: medium;
+    outline: none;
+    background-color: var(--deep-forest);
+    color: var(--off-gray);
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs > button {
+    padding: 10px 20px;
+    width: 80px;
+    border-radius: 15px;
+    border: none;
+    background-color: var(--light-green);
+    color: var(--deep-forest);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.page > .content > .grammar-creation > .prod-fast > .depth-inputs > button:hover {
+    transition: 0.2s;
+    transform: scale(1.1);
+    background-color: var(--off-white);
+    color: var(--deep-forest);
+}
+
+.page > .content > .grammar-creation > .prod-fast > #fast_mode_btn > button {
+    padding: 10px 20px;
+    width: 50px;
+    border-radius: 15px;
+    border: none;
+    background-color: var(--light-green);
+    color: var(--deep-forest);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.page > .content > .grammar-creation > .prod-fast > #fast_mode_btn > button:hover {
+    transition: 0.2s;
+    transform: scale(1.1);
+    background-color: var(--off-white);
+    color: var(--deep-forest);
+}
+
+/* ********** MENU DAS PRODUCOES ************ */
+
+.page > .content > .grammar-creation > .prod-choice {
+    color: var(--light-green);
+    width: 300px;
+    height: 100%;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 5px;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > legend {
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--off-white);
+    margin-bottom: 10px;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > label {
+    font-weight: 500;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > .trap {
+    color: var(--error-color);
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > .trap::after {
+    content: " ↺";
+    color: var(--error-color);
+    font-weight: 550;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > input {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px var(--off-white) solid;
+    transition: 120ms transform ease-in-out;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > input:hover {
+    border: 3px var(--light-green) solid;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .options > .prod > input:checked {
+    border: 2px var(--deep-forest) solid;
+    outline: 1px var(--light-green) solid;
+    background-color: var(--light-green);
+}
+
+.page > .content > .grammar-creation > .prod-fast > #chain_msg {
+    text-align: center;
+    font-weight: 400;
+    font-size: 19px;
+    color: var(--off-white);
+    margin-bottom: 10px;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .btn > button {
+    margin: 25px;
+    padding: 10px 20px;
+    border-radius: 15px;
+    border: none;
+    background-color: var(--light-green);
+    color: var(--deep-forest);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.page > .content > .grammar-creation > .prod-choice > .form > .btn > button:hover {
+    transition: 0.2s;
+    transform: scale(1.1);
+    background-color: var(--off-white);
+    color: var(--deep-forest);
+}
+
+/* ********* BUTOES *********** */
+
+.page > .content > .divisor{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 100px auto;
+    align-items: center;
+    border-bottom: 2px solid var(--light-green);
+}
+.page > .content > .divisor > label{
+    position: absolute;
+    top: -12px;
+    left: auto;
+    background-color: var(--deep-forest);
+    color: var(--off-white);
+    font-size: 17px;
+    padding: 0 15px;
+}
+
+.page > .content > #posterior-opt{
+    display: flex;
+    gap: 200px;
+    justify-items: center;
+    align-items: center;
+    margin: 0 auto;
+
+}
+
+.page > .content > #posterior-opt > .modes{
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+}
+.page > .content > #posterior-opt > .modes > .title{
+    font-size: medium;
+    color: var(--off-white);
+    margin: 15px 0;
+    text-align: center;
+}
+.page > .content > #posterior-opt > .modes > #modes_box {
+    display: flex;   
+    width: 250px;
+}
+
+
+.page > .content > #posterior-opt > .modes > #modes_box > .unselected {
+    background-color: var(--light-green);
+    color: var(--deep-forest);
+}
+
+.page > .content > #posterior-opt > .modes > #modes_box > .selected {
+    background-color: var(--grass-green);
+    color: var(--off-white);
+}
+
+.page > .content > #posterior-opt > .modes > #modes_box > #fast_mode{
+    /* margin: 25px; */
+    padding: 12px 15px;
+    border-radius: 15px 0 0 15px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    width: 50%;
+    cursor: pointer;
+}
+.page > .content > #posterior-opt > .modes > #modes_box > #detailed_mode{
+    /* margin: 25px; */
+    padding: 12px 15px;
+    border-radius: 0 15px 15px 0;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    width: 50%;
+    cursor: pointer;
+}
+
+
+.page > .content > #posterior-opt > .modes > #modes_box > #detailed_mode:hover,
+.page > .content > #posterior-opt > .modes > #modes_box > #fast_mode:hover{
+    transition: .2s;
+    background-color: var(--off-white);
+    color: var(--deep-forest);
+}
+
+
+.page > .content > #posterior-opt > #return_button_box {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    align-items: center;
+}
+.page > .content > #posterior-opt > #return_button_box > p{
+    font-size: medium;
+    color: var(--off-white);
+    margin: 15px 0;
+    text-align: center;
+}
+
+.page > .content > #posterior-opt > #return_button_box > button {
+    padding: 12px 15px;
+    border-radius: 15px;
+    background-color: var(--light-green);
+    border: none;
+    color: var(--deep-forest);
+    font-size: 15px;
+    font-weight: 600;
+    width: 50%;
+}
+
+.page > .content > #posterior-opt > #return_button_box > button:hover {
+    transition: 0.2s;
+    cursor: pointer;
+    background-color: var(--off-white);
+}
+
+#grammar-results > .production_line{
+    margin-bottom: 20px;
+}
+
+.spinner {
+    /* padding: 10px 10px; */
+    border: 4px solid var(--light-green);
+    border-top: 4px solid var(--off-gray);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+  
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+  /* Personalização para navegadores WebKit (Chrome, Safari) */
+  .scrollable::-webkit-scrollbar {
+    
+    width: 14px;  /* Largura da barra de rolagem vertical */
+    height: 10px; /* Altura da barra de rolagem horizontal */
+  }
+  
+  .scrollable::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0); /* Fundo preto da barra de rolagem */
+  }
+  
+  .scrollable::-webkit-scrollbar-thumb {
+    background-color: var(--light-green); /* Cor da barra de rolagem (verde) */
+    border-radius: 5px;        /* Arredondamento */
+    border: 3px solid var(--deep-forest); /* Borda preta ao redor da barra */
+  }
+  
+  .scrollable::-webkit-scrollbar-thumb:hover {
+    background: var(--off-white); /* Cor verde mais escura ao passar o mouse */
+  }
+  
