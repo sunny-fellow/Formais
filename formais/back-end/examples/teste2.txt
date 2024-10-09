@@ -1,0 +1,19 @@
+variaveis:S,A,B
+inicial:S
+terminais:a,b,c,!,/,-,+,*,@,#,?,$
+producoes
+S: aSb
+S: aSc
+S: bSa
+S: bSc
+S: cSa
+S: cSb
+S: A
+A: ?
+A: !
+A: -
+A: +
+A: #
+A: $
+A: @
+A: *

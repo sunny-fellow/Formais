@@ -1,23 +1,32 @@
+/*
+    Este script é responsável por controlar a interação do usuário com a página de derivação de cadeias.
+    Ele é responsável por enviar requisições ao servidor, que por sua vez, irá processar as informações
+    e retornar as respostas necessárias para a derivação da cadeia.
+
+*/
+
 // Botões: 
-const retornar      = document.getElementById('return_button')
-const fast_mode     = document.getElementById('fast_mode')
-const detailed_mode = document.getElementById('detailed_mode')
-const derivar       = document.getElementById('derivate')
-const retornaProd   = document.getElementById('button_return')
-const geraNova      = document.getElementById('button_plus')
-const recarrega     = document.getElementById('button_reload')
-const searchDeph    = document.getElementById('search_by_depth')
+const retornar      = document.getElementById('return_button')                  // Botão de retornar para a pagina inicial
+const fast_mode     = document.getElementById('fast_mode')                      // Botão de modo rápido
+const detailed_mode = document.getElementById('detailed_mode')                  // Botão de modo detalhado
+const derivar       = document.getElementById('derivate')                       // Botão de derivação
+const retornaProd   = document.getElementById('button_return')                  // Botão de retornar a produção
+const geraNova      = document.getElementById('button_plus')                    // Botão de gerar nova cadeia
+const recarrega     = document.getElementById('button_reload')                  // Botão de recarregar a geracao de cadeias
+const searchDeph    = document.getElementById('search_by_depth')                // Botão de buscar por profundidade
 
 // Divs e Textos:
-const prod_choice     = document.getElementById('prod_choice')
-const fast_buttons    = document.getElementById('fast_mode_btn')
-const label_mode      = document.getElementById('label_mode') 
-const grammar_results = document.getElementById('grammar-results')
-const depth_inputs    = document.getElementsByClassName('depth-inputs')[0]
-const spinner         = document.getElementById('loading-spinner')
+const prod_choice     = document.getElementById('prod_choice')                  // Div de escolha de produção   
+const fast_buttons    = document.getElementById('fast_mode_btn')                // Div de botões do modo rápido
+const label_mode      = document.getElementById('label_mode')                   // Texto de modo de geração
+const grammar_results = document.getElementById('grammar-results')              // Div de resultados
+const depth_inputs    = document.getElementsByClassName('depth-inputs')[0]      // Div de inputs de profundidade
+const spinner         = document.getElementById('loading-spinner')              // Spinner de carregamento
 
+// Variavel que guarda o modo de geracao atual, util para botoes que dependem do modo
 mode = "fast"
 
+// Função que seta as opções de produção para a variável passada
 function setOptionsFor(variable){
     fetch("http://127.0.0.1:5000/getProductionsOf", {
         method: 'POST',
@@ -27,7 +36,7 @@ function setOptionsFor(variable){
         body: JSON.stringify({'variavel': variable})
     })
     .then(response => response.json())
-    .then(data => {
+    .then(data => { 
         let options = data['productions']
 
         // Remove as opcoes anteriores
@@ -70,42 +79,57 @@ function setOptionsFor(variable){
     })
 }
 
-function message(content, time){
+// Função que exibe uma mensagem na tela por um tempo determinado
+function message(content){
     let msg = document.getElementById("chain_msg")
     msg.innerHTML = content
     msg.style.display = "block"
-
-    setTimeout(()=>{
-        msg.style.display = "none"
-    }, time)
 }
 
+function removeMessage(){
+    let msg = document.getElementById("chain_msg")
+    if(msg != null)
+        msg.style.display = "none"
+}
+
+
+/* Eventos dos botões */
+
+
+// Evento de clique no botão de retornar
 retornar.addEventListener('click', ()=>{
+    removeMessage()
     location.reload()
     fetch("http://127.0.0.1:5000/cleanGrammar")
     geraNova.removeAttribute("disabled")
 })
 
 
+// Evento de clique no botão de recarregar
 recarrega.addEventListener('click', ()=>{
+    removeMessage()
     let lines = [... grammar_results.children]
     lines.forEach((el)=>{
         el.parentNode.removeChild(el)
     })
 
-    
+    // Limpa a arvore de derivação
     fetch('http://127.0.0.1:5000/cleanChainTree')
     .then(()=>{
         geraNova.removeAttribute("disabled")
         if(mode == "detailed"){
+            // Se estiver no modo detalhado, recarrega as opções
             detailed_mode.click()
         }else{
+            // Se estiver no modo rápido, recarrega a cadeia
             fast_mode.click()
         }
     })
 })
 
+// Evento de clique no botão de retornar a produção
 retornaProd.addEventListener('click', ()=>{
+    // Pega os dois primeiros elementos da arvore de derivação
     let firstElement = null
     let secondElement = null
 
@@ -134,10 +158,12 @@ retornaProd.addEventListener('click', ()=>{
     firstElement.parentNode.removeChild(firstElement)
     secondElement.innerHTML += "<br><br>"
 
+    // pega a ultima producao da arvore
     last_prod_arr = secondElement.innerHTML.split(" ")
     last_prod     = last_prod_arr[last_prod_arr.length - 1]
     
 
+    // pergunta para o back qual a variavel que deveria ser derivada
     fetch("http://127.0.0.1:5000/getVariableToDerivate", {
         'method': 'POST',
         headers: {
@@ -147,18 +173,32 @@ retornaProd.addEventListener('click', ()=>{
     })
     .then(response => response.json())
     .then(data => {
+        // Define as opcoes para a variavel retornada
         setOptionsFor(data['variable'])
+        prod_choice.style.display = "flex"
     })
 })
 
+// Evento de clique no botão de modo rápido
 fast_mode.addEventListener('click', ()=>{
+    removeMessage()
+    fetch("http://127.0.0.1:5000/cleanChainTree")
+    
+    // Remove acesso a funcionalidades apenas do modo detalhado, e ativa as do modo rápido
     depth_inputs.style.display = "flex"
     geraNova.removeAttribute("disabled")
 
+    let lines = [... grammar_results.children]
+    lines.forEach((el)=>{
+        el.parentNode.removeChild(el)
+    })
+
+    // Manda para o back que o modo rápido foi ativado
     fetch("http://127.0.0.1:5000/setFastMode")
     .then(response => response.json())
     .then(data => {
         
+        // Formata os estilos dos botoes, conforme qual estiver selecionado
         retornaProd.style.display = "none"
         if(fast_mode.classList.contains("unselected")){
             fast_mode.classList.remove("unselected")
@@ -167,12 +207,16 @@ fast_mode.addEventListener('click', ()=>{
             detailed_mode.classList.add("unselected")
         }
 
+        // Ativa a caixa de Selecoes
         mode = "fast"
         prod_choice.style.display = "none"
         if(data["allTrap"]){
+            // Se a gramatica nao tiver producoes validas, informa o usuario
             alert("A gramática apresentada não pode gerar produções válidas")
-            message("A gramática apresentada não pode gerar produções válidas", 10000)
+            message("A gramática apresentada não pode gerar produções válidas<br>Botão '+' desabilitado")
+            geraNova.setAttribute("disabled", true)
         }else{
+            // Formata o titulo adequado a caixa de producoes
             label_mode.innerHTML = "Geração Rápida:"
             geraNova.style.display = "inline"
 
@@ -181,10 +225,14 @@ fast_mode.addEventListener('click', ()=>{
     })
 })
 
+// Evento de clique no botão de modo detalhado
 detailed_mode.addEventListener('click', ()=>{
+    removeMessage()
+    // Remove acesso a funcionalidades apenas do modo rápido, e ativa as do modo detalhado
     depth_inputs.style.display = "none"
     geraNova.removeAttribute("disabled")
 
+    // Manda para o back que o modo detalhado foi ativado
     fetch("http://127.0.0.1:5000/setDetailedMode")
     .then(response => response.json())
     .then(data => {
@@ -204,7 +252,7 @@ detailed_mode.addEventListener('click', ()=>{
             el.parentNode.removeChild(el)
         })
         if(data["allTrap"]){
-            message("A gramática apresentada não pode gerar produções válidas", 10000)
+            message("A gramática apresentada não pode gerar produções válidas")
         }else{
             // Ativa a caixa de Selecoes
             prod_choice.style.display = "block"
@@ -222,10 +270,12 @@ detailed_mode.addEventListener('click', ()=>{
     })
 })
 
+// Evento de clique no botão de derivação
 derivar.addEventListener('click', ()=>{
     //Captura qual radio foi selecionado
     let resposta_usuario = null
 
+    // Tenta pegar o valor do radio selecionado
     try{
         resposta_usuario = document.querySelector('input[name="production"]:checked').value
     }catch(e){
@@ -234,7 +284,7 @@ derivar.addEventListener('click', ()=>{
         return;
     }
     
-
+    // Pega a ultima palavra da ultima linha da arvore de derivação
     let last_word = ""
     if(grammar_results.firstChild != null){
         let penultimate_line    = grammar_results.firstChild.innerHTML
@@ -246,6 +296,7 @@ derivar.addEventListener('click', ()=>{
         last_word = document.getElementById("choice_title").innerHTML.split(" ")[3]
     }
 
+    // Manda para o back a palavra a ser derivada, a variavel que deveria ser derivada e a producao escolhida
     fetch("http://127.0.0.1:5000/derivate", {
         method: 'POST',
         headers: {
@@ -270,7 +321,7 @@ derivar.addEventListener('click', ()=>{
             penultimate_line = penultimate_line.replace("</b>", "")
         }
 
-
+        // Se a derivação foi concluída, exibe a mensagem de fim e desativa a caixa de opções
         if(data['finished'] == true){
             document.getElementById("options_box").style.display = "none"
             
@@ -283,8 +334,9 @@ derivar.addEventListener('click', ()=>{
             first_line.append(result)
             first_line.innerHTML += "<br><br>"
 
-            message("FIM - Cadeia Encerrada", 4000)
+            message("FIM - Cadeia Encerrada")
 
+            // Insere sempre em formato de pilha, no inicio
             if(grammar_results.firstChild!=null){
                 grammar_results.insertBefore(first_line, grammar_results.firstChild)          
             }else{
@@ -293,6 +345,7 @@ derivar.addEventListener('click', ()=>{
             document.getElementById("prod_choice").style.display = "none"
             
         }else{
+            // Se a derivação não foi concluída, exibe a mensagem de derivação e atualiza as opções
             let new_line = document.createElement('p')
 
             const arrow = "  &#8594;  "
@@ -313,11 +366,12 @@ derivar.addEventListener('click', ()=>{
             setOptionsFor(data['toDerivate'])
         }
 
+        // Se a cadeia é uma armadilha, exibe a mensagem de armadilha
         if(data['isTrap'] == true){
             if (grammar_results) {
                 let last_line = document.createElement('p');
                 let result = data['result'] || "resultado desconhecido";
-                message(`<b>A cadeia ${result} é uma armadilha, não é possível uma derivação conclusiva.</b>`, 10000)
+                message(`<b>A cadeia ${result} é uma armadilha, não é possível uma derivação conclusiva.</b>`)
                 
                 // Inserindo o novo parágrafo no início ou no final, dependendo do estado atual do elemento
                 if (grammar_results.firstChild) {
@@ -330,18 +384,25 @@ derivar.addEventListener('click', ()=>{
     })
 })
 
+// Evento de clique no botão de gerar nova cadeia
 geraNova.addEventListener('click', ()=>{
+    removeMessage()
+    // Requisita ao back uma nova cadeia
     fetch("http://127.0.0.1:5000/generateFastChain")
     .then(response => response.json())
     .then(data => {
         let derivations = data['chain']
+
+        // Se nao houve nenhuma producao valida, significa que a gramatica nao tem mais producoes validas.
+        // Pois ela sempre tenta gerar uma nova cadeia, e se nao consegue, significa que nao ha mais producoes validas
         if(derivations.length == 0){
-            message("A gramática apresentada não tem mais produções válidas", 10000)
+            message("A gramática apresentada não tem mais produções válidas")
             alert("A gramática apresentada não tem mais produções válidas")
             geraNova.setAttribute("disabled", true)
             return;
         }
 
+        // Recebe um array de arrays, onde cada um deles é uma progressão de derivações
         str = derivations[0]
         for (let s of derivations.slice(1)){
             if(s == ""){
@@ -350,47 +411,32 @@ geraNova.addEventListener('click', ()=>{
             str += "  &#8594;  " + s
         }
 
+        // Insere a nova linha na div de resultados
         let new_line = document.createElement('p')
         new_line.innerHTML = str
         new_line.setAttribute("class", "production_line")
         grammar_results.appendChild(new_line)
 
+        // Se a cadeia gerada é uma armadilha, exibe a mensagem de armadilha
         if(data['continue'] == false){
             v = data['continue']
             console.log(v)
-            message("A gramática apresentada não tem mais produções válidas<br>Botão '+' desligado", 10000)
+            message("A gramática apresentada não tem mais produções válidas<br>Botão '+' desligado")
             alert("A gramática apresentada não tem mais produções válidas")
-            // geraNova.setAttribute("disabled", true)
+            geraNova.setAttribute("disabled", true)
         }
         
     })
 })
 
+// Evento de clique no botão de buscar por profundidade
 searchDeph.addEventListener('click', ()=>{
+    removeMessage()
+    // Captura a profundidade desejada
     let depth = document.getElementById('depth').value
     
-    if(depth == ""){
-        message("É necessário informar a profundidade desejada", 10000)
-        return;
-    } else if (depth < 1) {
-        message("A profundidade deve estar entre [0 - 15]", 10000)
-        depth = 1;
-        return;
-    } else if(depth > 15){
-        message("A profundidade deve estar entre [0 - 15]", 10000)
-        depth = 15;
-        return;
-    }
-
-    // Retira as producoes que ja estiverem na caixa
-    children = [... grammar_results.children]
-    children.forEach((el)=>{
-        el.parentNode.removeChild(el)
-    })
-
-    spinner.style.display = "block"
-    geraNova.setAttribute("disabled", true)
-    fetch("http://127.0.0.1:5000/generateByDepth", {
+    // Trata o input de profundidade
+    fetch("http://127.0.0.1:5000/verifyDepth", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -398,33 +444,64 @@ searchDeph.addEventListener('click', ()=>{
         body: JSON.stringify({'depth': depth})
     })
     .then(response => response.json())
-    .then(data => {
-        let derivations = data['chain']
-        spinner.style.display = "none"
-        if(derivations.length == 0){
-            message("A gramática apresentada não tem produções nessa profundidade", 10000)
+    .then(data =>
+    {
+        if(data['valid'] == false){
+            message(data["message"])
             return;
         }
 
-        // Recebe um array de arrays, onde cada array é uma progressão de derivações
-        for (let derivation of derivations){
-            str = derivation[0]
-            for (let s of derivation.slice(1)){
-                if(s == ""){
-                    s = "<b>epsilon</b>"
-                }
-                str += "  &#8594;  " + s
+        // Retira as producoes que ja estiverem na caixa
+        children = [... grammar_results.children]
+        children.forEach((el)=>{
+            el.parentNode.removeChild(el)
+        })
+
+        // Manda para o back a profundidade desejada
+        spinner.style.display = "block"
+        geraNova.setAttribute("disabled", true)
+        fetch("http://127.0.0.1:5000/generateByDepth", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({'depth': depth})
+        })
+        .then(response => response.json())
+        .then(data => {
+            let derivations = data['chain']
+            spinner.style.display = "none"
+
+            // Se nao houve nenhuma producao valida, significa que para aquele nivel de profundidade, nao ha producoes
+            if(derivations.length == 0){
+                message("A gramática apresentada não tem produções nessa profundidade")
+                return;
             }
 
-            let new_line = document.createElement('p')
-            new_line.innerHTML = str
-            new_line.setAttribute("class", "production_line")
-            grammar_results.appendChild(new_line)
-            
-            
-        }
+            // Recebe um array de arrays, onde cada array é uma progressão de derivações
+            for (let derivation of derivations){
+                str = derivation[0]
+                for (let s of derivation.slice(1)){
+                    if(s == ""){
+                        s = "<b>epsilon</b>"
+                    }
+                    str += "  &#8594;  " + s
+                }
 
-        let lines = [... grammar_results.children]
-        message("Foram geradas " + lines.length + " cadeias com profundidade " + depth, 10000)
-    })
+                // Insere a nova linha na div de resultados
+                let new_line = document.createElement('p')
+                new_line.innerHTML = str
+                new_line.setAttribute("class", "production_line")
+                grammar_results.appendChild(new_line)
+            }
+
+            // Exibe a mensagem de quantas cadeias foram geradas
+            let lines = [... grammar_results.children]
+            tam = lines.length
+            if(tam != 150000)
+                message("Foram geradas " + lines.length + " cadeias com profundidade " + depth)
+            else
+                message("O limite de geração foi atingido, retornamos o máximo possível")
+        })
+    })  
 })

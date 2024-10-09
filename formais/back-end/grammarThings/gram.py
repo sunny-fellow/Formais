@@ -12,11 +12,12 @@ class Grammar:
 
     def __init__(self):
         """
-        Apos instanciar a gramatica, eh necessario escolher a forma de criacao da gramatica.
+        Apos instanciar a gramatica, eh necessario escolher a forma de criacao dela.
         Dadas as possibilidades, escolha entre:
 
         GRAMATICA INTEIRA
-            - archive_to_grammar(path:str) 
+
+            - archive_to_grammar(path: str) 
                 limpa a gramatica 
                 recebe o caminho do arquivo que contem a gramatica e reescreve esta gramatica
             - str_to_grammar(info:str)
@@ -26,7 +27,9 @@ class Grammar:
                 limpa a gramatica
                 recebe um dicionario no modelo gramatica e reescreve esta gramatica
             
+                
             ADICIONANDO PARTE POR PARTE:
+
             - add_to_grammar(value:str|list, key:str = None)
                 * Recebe uma Key que deve ter um dentre os valores que se quer adicionar:
                     + key: [variaveis = 1, inicial = 2, terminais = 3, producoes = 4] onde, caso nao receba a key, 
@@ -53,7 +56,28 @@ class Grammar:
 
         return
 
+#####################################################################
+
+    # adicionar partes individuais da gramatica 
     def add_to_grammar(self, value:str|list|dict, key:Key = None):
+
+        """
+            - add_to_grammar(value:str | list | dict, key:str = None)
+                * Recebe uma Key que deve ter um dentre os valores que se quer adicionar:
+                    + key: [variaveis = 1, inicial = 2, terminais = 3, producoes = 4] onde, caso nao receba a key, 
+                    por padrao adiciona nas producoes
+
+                * E recebe um valor que, dependendo da chave, pode assumir tipos diferentes
+                    + value:
+                        - variaveis: str | list[str]
+                        - terminais: str | list[str]
+                        - producoes | None: dict {variavel: producao} 
+
+            
+            - Retorno:
+            
+        """
+
         if key == Key.variaveis:
             if type(value) == list:
                     for val in value:
@@ -89,16 +113,22 @@ class Grammar:
 
         return self.check_grammar()
 
+#####################################################################
+
+    # recebe o caminho de um arquivo e converte-o a gramatica
     def archive_to_grammar(self, path:str):
         """
             Preenche as variaveis da classe Grammar com os valores lidos no arquivo cujo caminho eh passado como parametro
+
+            retorno: dict da funcao check_grammar() para a gramatica inserida
+            
         """
         #garante que as variaveis estarao vazias
         self.clean_grammar()
 
         file = open(path, 'r')
         if not file:
-            print("Nao foi possivel abrir o arquivo da gramatica!\n");
+            print("Nao foi possivel abrir o arquivo da gramatica!\n")
             return
 
         # preenchendo os nao-terminais
@@ -131,17 +161,33 @@ class Grammar:
             self.productions.setdefault(production[0], []).append(production[1])
     
             line = file.readline()
+
         return self.check_grammar()
+
+#####################################################################
 
     def check_grammar(self) -> dict:
         """
-            Responsavel por verificar se a gramatica e valida (Retorna True se for valida, False caso contrario).
+            Responsavel por verificar se a gramatica eh valida.
             Algumas verificacoes a serem feitas:
 
                 a. simbolo inicial esta contido na lista de nao-terminais
                 b. verifica se todas as variaveis tem apenas 1 simbolo
                 c. verifica as producoes e guarda quais sao armadilha, se houver armadilhas
                 d. verifica se alguma producao nao eh armadilha. Se todas forem, o conjunto de cadeias geradas pela gramatica eh vazio 
+
+            - Retorno:
+
+            {
+
+                dict
+
+                "valid": bool,        # indica se a gramatica eh valida ou nao
+
+                "message": str,       # mensagem indicando o erro, caso a gramatica nao seja valida
+
+                "allTrap": bool      # indica se todas as producoes da gramatica sao armadilhas
+            }
         """
 
         if not self.initial in self.nonTermSymbols:
@@ -178,6 +224,8 @@ class Grammar:
         # caso todos os casos acima nao ocorram, a gramatica eh valida
         return {"valid": True, "message": "Gramatica valida!", "allTrap": False}
 
+#####################################################################
+
     def clean_grammar(self):
         """
             Reseta os valores de todas as variaveis da gramatica
@@ -192,7 +240,16 @@ class Grammar:
 
         return
     
+#####################################################################
+
     def dict_to_grammar(self, gram:dict):
+        """
+            Preenche as variaveis da classe Grammar com os valores recebinos no dicionario gram
+
+            retorno: dict da funcao check_grammar() para a gramatica inserida
+            
+        """
+
         self.clean_grammar()
 
         self.nonTermSymbols = gram["variaveis"]
@@ -204,7 +261,14 @@ class Grammar:
 
         return self.check_grammar()
 
+#####################################################################
+
     def grammar_to_dict(self, grammar = None):
+        """
+            Recebe como parametro uma Grammar e retorna um dicionario dos valores 
+            dessa gramatica organizados por chave.
+        """
+
         if grammar == None:
             grammar = self
 
@@ -225,7 +289,14 @@ class Grammar:
 
         return gram
 
+#####################################################################
+
     def grammar_to_str(self, gram = None) -> str:
+        """
+            Recebe como parametro uma Grammar e retorna uma str formatada de forma
+            organizada, simulando a representacao de uma gramatica no papel.
+        """
+
         if gram == None:
             gram = self.grammar_to_dict()   # dicionario com as informações da gramtica
         else: 
@@ -250,6 +321,7 @@ class Grammar:
         
         return gram_str
 
+#####################################################################
 
     def str_to_grammar(self, content:str):
         """ 
@@ -264,6 +336,11 @@ class Grammar:
                 A: epsilon
                 B: cS
                 B: dS
+
+            Preenche as variaveis da classe Grammar com os valores da string passada como parametro
+
+            retorno: dict da funcao check_grammar() para a gramatica inserida
+   
         """
 
         #garante que as variaveis estarao vazias
@@ -297,44 +374,50 @@ class Grammar:
 
         return self.check_grammar()
 
+#####################################################################
 
     def setFastMode(self):
         self.mode = "fast"
         return
     
+#####################################################################
+
     def setDetailedMode(self):
         self.mode = "detailed"
         return
-    
-    #####################################################
-    #####################################################
-    #####################################################
+
+#####################################################################
 
     def show_grammar(self):
+
+        """
+            Printa a gramatica no estilo de arquivo no terminal
+        """
+
         print("Gramatica: \n")
 
         # mostrando os simbolos nao-terminais
         line = ""
         for symbol in self.nonTermSymbols:
             line += symbol
-            line += ", "
-        line = line.removesuffix(", ")
-        print(f"Simbolos nao-terminais: {line}")
+            line += ","
+        line = line.removesuffix(",")
+        print(f"variaveis: {line}")
 
         # mostrando o simbolo inicial
-        print(f"Simbolo inicial: {self.initial}")
+        print(f"inicial: {self.initial}")
 
         # mostrando os simbolos terminais
         line = ""
         for symbol in self.termSymbols:
             line += symbol
-            line += ", "
-        line = line.removesuffix(", ")
-        print(f"Simbolos terminais: {line}")
+            line += ","
+        line = line.removesuffix(",")
+        print(f"terminais: {line}")
         print()
 
         # mostrando as producoes
-        print("Producoes:")
+        print("producoes:")
         for var in self.productions.keys():
             print(f"{var}  ->  {self.productions[var]}")
 

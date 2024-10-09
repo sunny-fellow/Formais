@@ -1,5 +1,4 @@
 from grammarThings.gram import Grammar
-from queue import Queue
 """
     gram : {
         S : ['aA', 'bB', 'epsilon'],
@@ -31,11 +30,7 @@ class Tree:
             self.fillChildren()                                     # preenche os filhos com as subcadeias geradas pelas producoes do campo data
             
 
-    def fillChildren(self):
-        # var_check guarda informacoes sobre a producao atual, tais como:
-        #     bool: tem variavel
-        #     bool: eh armadilha
-        #     str: variavel contida na cadeia
+    def fillChildren(self):        
 
         # se nao tiver variavel ou caso a variavel que existir for armadilha 
         if self.var_check["isTrap"]:
@@ -54,6 +49,23 @@ class Tree:
 
 
     def checkVar_fromProd(self, prod:str) -> dict:
+        """
+            #### checkVar_fromProd verifica a producao atual, a fim de chegar a um diagnóstico sobre a producao dada:
+            
+                retorno:
+
+                {
+
+                    dict
+
+                    "hasVar": bool  #  tem variavel
+
+                    "isTrap": bool  #  eh armadilha
+
+                    "variable": str #  variavel contida na cadeia
+
+                }
+        """
         # para cada caractere na producao
         for c in prod:
             # se esse caracter estiver contido nas variaveis
@@ -78,21 +90,36 @@ class Tree:
     # prof2: [["S", "A", "epsilon"], ["S", "B", "b"], ["S", "B", "epsilon"]]
 
     def getChainList(self) -> list:
+        """
+            Retorna uma lista com todas as sequencias de producoes possiveis a partir do no inicial
+
+            Parâmetros:
+            
+                self (Tree)                  # No inicial
+            
+            Retorno:
+
+                result (list)                 # lista das cadeias desejadas
+        """
         result = []
 
+    # se o no nao possuir filhos, ele apenas retorna seu proprio valor 
         if not self.children:
             return [self.data]
         
+    # se o no possuir apenas um filho, ele retorna uma lista com sua propria cadeia seguida pela de seu filho   
         elif len(self.children) == 1:
-                        
             return [self.data] + [self.children[0].data]
         
+    # havendo multiplos filhos, a lista completa dos mesmos sera percorrida    
         else:
             for child in self.children:
+                # recebe a lista equivalente do filho
                 temp = child.getChainList()
                 # print("Temp: " + str(temp))
 
                 # Se for uma lista de listas, percorre-a
+                # o que ocorreria dado que o no filho atual tenha multiplos filhos
                 if type(temp[0]) == list:
                     for t in temp:
                         appd = [self.data]
@@ -100,15 +127,34 @@ class Tree:
                         result.append(appd)
                     
                 # Se for uma lista de strings, apenas adiciona o valor
+                # pois sabe-se que possui apenas um elemento (a cadeia do filho)
                 else:
                     appd = [self.data]
                     appd.extend(temp)
                     result.append(appd)
             return result
     
+    
     def get_limited_chainList(self, n):
+        """
+            Retorna uma lista com todas as sequencias de producoes possiveis a partir do no inicial,
+            no nível da profundidade limitada
+
+            Parâmetros:
+            
+                self (Tree)                  # No inicial
+                n    (int)                   # Profundidade (limite da busca)
+            
+            Retorno:
+
+                result (list)                 # lista das cadeias desejadas
+        """
+
         result = []
 
+        # percorre os filhos do no, apenas retornando diretamente a lista de producoes
+        # no caso em que a profundidade desejada seja 1
+        # se nao, a funcao eh chamada recursivamente para cada filho
         for child in self.children:
             if n > 1:
                 if child.var_check["hasVar"] and not child.var_check["isTrap"]:
@@ -116,6 +162,9 @@ class Tree:
 
                     # Se for uma lista de listas, percorre-a
                     if temp and type(temp[0]) == list:
+                        # Se a lista de producoes for muito grande, retorna o que tem
+                        if len(result) > 150000:
+                            return result
                         for t in temp:
                             appd = [self.data]
                             appd.extend(t)
