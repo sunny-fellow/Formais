@@ -47,7 +47,7 @@ addProd.addEventListener('click', ()=>{
     clearErrors()
 
     // Verifica se a producao foi inserida no formato correto
-    fetch("http://127.0.0.1:5000/verifyInput", {
+    fetch("http://127.0.0.1:5001/verifyInput", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ addProd.addEventListener('click', ()=>{
 
 
             // Pede pro back verificar se a producao utiliza apenas variaveis e terminais
-            fetch("http://127.0.0.1:5000/verifyProduction", {
+            fetch("http://127.0.0.1:5001/verifyProduction", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ popProd.addEventListener('click', ()=>{
     clearErrors()
 
     // Verifica se a producao foi inserida no formato correto
-    fetch("http://127.0.0.1:5000/verifyInput", {
+    fetch("http://127.0.0.1:5001/verifyInput", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ popProd.addEventListener('click', ()=>{
 // Evento de clique no botao de limpar formulario
 limpar.addEventListener('click', ()=>{
     // Limpa a gramatica armazenada no back-end
-    fetch("http://127.0.0.1:5000/cleanGrammar")
+    fetch("http://127.0.0.1:5001/cleanGrammar")
     clearErrors()
 
     // Limpa os campos do formulario
@@ -235,7 +235,7 @@ upFile.addEventListener('change', ()=>{
 
 
     // Envia o arquivo para o back-end
-    fetch("http://127.0.0.1:5000/uploadFile", {
+    fetch("http://127.0.0.1:5001/uploadFile", {
         method: 'POST',
         body: formData
     })
@@ -309,7 +309,7 @@ enviar.addEventListener('click', ()=>{
     clearErrors()
 
     // Antes de enviar os dados para o back-end, limpa a gramatica armazenada
-    fetch("http://127.0.0.1:5000/cleanGrammar")
+    fetch("http://127.0.0.1:5001/cleanGrammar")
 
     // Recebe os dados inseridos pelo usuario
     let variables = variaveis.value.split(',').map(v => v.trim());
@@ -342,7 +342,7 @@ enviar.addEventListener('click', ()=>{
     })
 
     // Envia os dados para o back-end
-    fetch("http://127.0.0.1:5000/receiveInputs", {
+    fetch("http://127.0.0.1:5001/receiveInputs", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

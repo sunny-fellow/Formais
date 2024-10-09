@@ -379,37 +379,40 @@ def derivate():
 
     if opt != gram.E:
         # percorrendo os caracteres da cadeia a derivar  
-        for i in range(len(chain)):
-            # se o caractere for igual ao simbolo 
-            if chain[i] == var:
-                # no caso da variavel nao estar no fim da cadeia
-                if i < len(chain)-1:
-                    chain = chain[0:i-1] + opt + chain[i+1:len(chain)]
-                    # # # # # print(chain)
-                else:
-                    chain = chain[0:i] + opt
+        chain = chain.replace(var, opt, 1)
+        # for i in range(len(chain)):
+        #     # se o caractere for igual ao simbolo 
+        #     if chain[i] == var:
+        #         # no caso da variavel nao estar no fim da cadeia
+        #         if i < len(chain)-1:
+        #             chain = chain.replace(var, opt, 1)  
+        #             # chain = chain[0:i-1] + opt + chain[i+1:len(chain)]
+        #             # # # # # print(chain)
+        #         else:
+        #             chain = chain.replace(var, opt, 1)
+        #             # chain = chain[0:i] + opt
                 
-                break
+        #         break
     else:
-        chain = chain.replace(var, "")
+        chain = chain.replace(var, "", 1)
 
     finished = True
     isTrap = False
     toDerivate = ''
     
-    if opt != gram.E:
-        for c in chain:
-            # print(f"{chain}: {c}")
-            if c in gram.nonTermSymbols:
-                finished = False
-                toDerivate = c
-                break
-            
-        for c in chain:
-            if c in gram.traps:
-                isTrap = True
-                break
+    # if opt != gram.E:
+    for c in chain:
+        # print(f"{chain}: {c}")
+        if c in gram.nonTermSymbols:
+            finished = False
+            toDerivate = c
+            break
         
+    for c in chain:
+        if c in gram.traps:
+            isTrap = True
+            break
+            
         
     
     return jsonify({"variable": var,
@@ -605,7 +608,8 @@ def generateByDepth():
     # print("Profundidade: ", str(depth))
     
     chainTree = Tree(gram.initial, gram, int(depth))
-    retorno = chainTree.get_limited_chainList(depth)
+    retorno = chainTree.get_limited_chainList(depth, 2**15)
+    # 2^17 = 131072
 
     if retorno:
         # Se for um array de strings, converte-o em array de arrays. Isso eh necessario para o front-end
@@ -644,4 +648,4 @@ def verifyDepth():
 
 # Roda o servidor
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

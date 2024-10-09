@@ -28,7 +28,7 @@ mode = "fast"
 
 // Função que seta as opções de produção para a variável passada
 function setOptionsFor(variable){
-    fetch("http://127.0.0.1:5000/getProductionsOf", {
+    fetch("http://127.0.0.1:5001/getProductionsOf", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ function removeMessage(){
 retornar.addEventListener('click', ()=>{
     removeMessage()
     location.reload()
-    fetch("http://127.0.0.1:5000/cleanGrammar")
+    fetch("http://127.0.0.1:5001/cleanGrammar")
     geraNova.removeAttribute("disabled")
 })
 
@@ -114,7 +114,7 @@ recarrega.addEventListener('click', ()=>{
     })
 
     // Limpa a arvore de derivação
-    fetch('http://127.0.0.1:5000/cleanChainTree')
+    fetch('http://127.0.0.1:5001/cleanChainTree')
     .then(()=>{
         geraNova.removeAttribute("disabled")
         if(mode == "detailed"){
@@ -164,7 +164,7 @@ retornaProd.addEventListener('click', ()=>{
     
 
     // pergunta para o back qual a variavel que deveria ser derivada
-    fetch("http://127.0.0.1:5000/getVariableToDerivate", {
+    fetch("http://127.0.0.1:5001/getVariableToDerivate", {
         'method': 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -182,7 +182,7 @@ retornaProd.addEventListener('click', ()=>{
 // Evento de clique no botão de modo rápido
 fast_mode.addEventListener('click', ()=>{
     removeMessage()
-    fetch("http://127.0.0.1:5000/cleanChainTree")
+    fetch("http://127.0.0.1:5001/cleanChainTree")
     
     // Remove acesso a funcionalidades apenas do modo detalhado, e ativa as do modo rápido
     depth_inputs.style.display = "flex"
@@ -194,7 +194,7 @@ fast_mode.addEventListener('click', ()=>{
     })
 
     // Manda para o back que o modo rápido foi ativado
-    fetch("http://127.0.0.1:5000/setFastMode")
+    fetch("http://127.0.0.1:5001/setFastMode")
     .then(response => response.json())
     .then(data => {
         
@@ -233,7 +233,7 @@ detailed_mode.addEventListener('click', ()=>{
     geraNova.removeAttribute("disabled")
 
     // Manda para o back que o modo detalhado foi ativado
-    fetch("http://127.0.0.1:5000/setDetailedMode")
+    fetch("http://127.0.0.1:5001/setDetailedMode")
     .then(response => response.json())
     .then(data => {
         
@@ -297,7 +297,7 @@ derivar.addEventListener('click', ()=>{
     }
 
     // Manda para o back a palavra a ser derivada, a variavel que deveria ser derivada e a producao escolhida
-    fetch("http://127.0.0.1:5000/derivate", {
+    fetch("http://127.0.0.1:5001/derivate", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -388,7 +388,7 @@ derivar.addEventListener('click', ()=>{
 geraNova.addEventListener('click', ()=>{
     removeMessage()
     // Requisita ao back uma nova cadeia
-    fetch("http://127.0.0.1:5000/generateFastChain")
+    fetch("http://127.0.0.1:5001/generateFastChain")
     .then(response => response.json())
     .then(data => {
         let derivations = data['chain']
@@ -436,7 +436,7 @@ searchDeph.addEventListener('click', ()=>{
     let depth = document.getElementById('depth').value
     
     // Trata o input de profundidade
-    fetch("http://127.0.0.1:5000/verifyDepth", {
+    fetch("http://127.0.0.1:5001/verifyDepth", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -460,7 +460,7 @@ searchDeph.addEventListener('click', ()=>{
         // Manda para o back a profundidade desejada
         spinner.style.display = "block"
         geraNova.setAttribute("disabled", true)
-        fetch("http://127.0.0.1:5000/generateByDepth", {
+        fetch("http://127.0.0.1:5001/generateByDepth", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -498,7 +498,7 @@ searchDeph.addEventListener('click', ()=>{
             // Exibe a mensagem de quantas cadeias foram geradas
             let lines = [... grammar_results.children]
             tam = lines.length
-            if(tam != 150000)
+            if(tam != 150010)
                 message("Foram geradas " + lines.length + " cadeias com profundidade " + depth)
             else
                 message("O limite de geração foi atingido, retornamos o máximo possível")

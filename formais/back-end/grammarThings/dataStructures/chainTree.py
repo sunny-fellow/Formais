@@ -134,11 +134,10 @@ class Tree:
                     result.append(appd)
             return result
     
-    
-    def get_limited_chainList(self, n):
+    alreadyEnvited = []
+    def get_limited_chainList(self, n, max):
         """
-            Retorna uma lista com todas as sequencias de producoes possiveis a partir do no inicial,
-            no nível da profundidade limitada
+            Retorna uma lista com uma producao de profundidade n
 
             Parâmetros:
             
@@ -151,35 +150,40 @@ class Tree:
         """
 
         result = []
+        for child in self.children:
+            if n>1:
 
+
+        # print("depth: ", n, ";    max: ", max)
+        
         # percorre os filhos do no, apenas retornando diretamente a lista de producoes
         # no caso em que a profundidade desejada seja 1
         # se nao, a funcao eh chamada recursivamente para cada filho
-        for child in self.children:
-            if n > 1:
-                if child.var_check["hasVar"] and not child.var_check["isTrap"]:
-                    temp = child.get_limited_chainList(n-1)
+        # for child in self.children:
+        #     if n > 1:
+        #         if child.var_check["hasVar"] and not child.var_check["isTrap"]:
+        #             temp = child.get_limited_chainList(n-1, int(max/2))
 
-                    # Se for uma lista de listas, percorre-a
-                    if temp and type(temp[0]) == list:
-                        # Se a lista de producoes for muito grande, retorna o que tem
-                        if len(result) > 150000:
-                            return result
-                        for t in temp:
-                            appd = [self.data]
-                            appd.extend(t)
-                            result.append(appd)
+        #             # Se for uma lista de listas, percorre-a
+        #             if temp and type(temp[0]) == list:
+        #                 # Se a lista de producoes for muito grande, retorna o que tem
+        #                 if len(result) > max:
+        #                     return result
+        #                 for t in temp:
+        #                     appd = [self.data]
+        #                     appd.extend(t)
+        #                     result.append(appd)
                         
-                    # Se for uma lista de strings, apenas adiciona o valor
-                    elif temp:
-                        appd = [self.data]
-                        appd.extend(temp)
-                        result.append(appd)
+        #             # Se for uma lista de strings, apenas adiciona o valor
+        #             elif temp:
+        #                 appd = [self.data]
+        #                 appd.extend(temp)
+        #                 result.append(appd)
                 
-            elif not child.var_check["hasVar"]:
-                temp = [child.data]
-                appd = [self.data]
-                appd.extend(temp)
-                result.append(appd)
+        #     elif not child.var_check["hasVar"]:
+        #         temp = [child.data]
+        #         appd = [self.data]
+        #         appd.extend(temp)
+        #         result.append(appd)
 
         return result
