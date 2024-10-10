@@ -209,7 +209,7 @@ class Grammar:
         #     "notTraps": ['S', 'B']
         # }
         t = GramTree(self.initial, self.productions.get(self.initial))
-        verification = t.check_variables(self.productions)
+        verification = t.check_variables(self.productions, self.nonTermSymbols)
 
         # atualiza esses valores na gramatica
         self.traps = (verification.get("traps"))

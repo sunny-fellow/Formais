@@ -32,7 +32,7 @@ class GramTree:
 
 
     # checar quais variaveis podem chegar a algum ponto final
-    def check_variables(self, productions:dict) -> dict:
+    def check_variables(self, productions:dict, variables:list) -> dict:
         self.traps = []
         self.notTraps = []
 
@@ -45,6 +45,17 @@ class GramTree:
             # se for armadilha
             else:
                 self.traps.append(var)
+
+        for var in variables:
+            if var not in productions.keys():
+                # limpa as variaveis checadas
+                self.checked_vars.clear()
+                # se a variavel nao for armadilha
+                if self.check_tree(var, productions):
+                    self.notTraps.append(var)
+                # se for armadilha
+                else:
+                    self.traps.append(var)
 
         # retorna um dicionario para previnir o acesso a armadilha na geracao de cadeias futuras
         return {"traps": self.traps, "notTraps": self.notTraps}
@@ -64,7 +75,7 @@ class GramTree:
             self.checked_vars.append(initial)
 
             # se nenhuma producao derivar dessa variavel, ela eh armadilha
-            if initial not in productions.keys():
+            if not initial in productions.keys():
                 return False
 
             # Verifica se ha transicao sem variaveis, ou seja, terminal

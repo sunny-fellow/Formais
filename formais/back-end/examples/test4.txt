@@ -1,5 +1,5 @@
 variaveis:S,A
-inicial:A
+inicial:S
 terminais:
 producoes
 S: A

@@ -1,0 +1,149 @@
+"""
+    Neste arquivo, colocaremos funções que já utilizamos antes, mas foram descontinuadas, a fim de
+    não perdê-las, caso sejam necessárias no futuro.
+    Mas manter o código limpo e organizado é importante, então, ao invés de deixar funções que não
+    são mais utilizadas em seus arquivos originais, as colocaremos aqui.
+"""
+
+ARQUIVO MAIN.PY
+@app.route('/generateFastChain')
+def getFastChain():
+
+    """
+    Gera cadeias rapidamente a partir da gramática.
+
+    
+    Retorno:
+    {
+    
+        JSON
+
+        "chain": list | []  # Cadeia gerada ou lista vazia se não houver mais cadeias disponíveis
+    }
+
+    Se houver apenas um retorno possível:
+    {
+    
+        JSON
+
+        "chain": list | []      # Cadeia gerada ou lista vazia se não houver mais cadeias disponíveis
+        "continue": bool        # Informa que não haverá mais cadeias possíveis de serem produzidas
+    }
+    """
+
+    global chainTree, depth, alreadysent, queue
+
+    # Se ja tiver algo a espera de ser enviado, envia, tirando-a da fila
+    if len(queue) > 0:
+        # print("Enviando cadeia: ", queue[0])
+        return jsonify({"chain": queue.pop(0)})
+    
+    # Se nao tiver nada a espera de ser enviado, cria a arvore
+    else:
+        chainTree = Tree(gram.initial, gram, depth)
+        
+        # Pega a lista de cadeias
+        retorno = chainTree.getChainList()
+        depth += 1
+
+        canContinue = False
+        # Para cada sequencia de producoes, verifica se a cadeia gerada eh valida, ou seja, se nao contem variaveis
+        # print("NonTermSymbols: ", gram.nonTermSymbols)
+        print("Retorno: ", retorno) 
+
+
+        queue = retorno
+        print("Queue: ", queue)
+        print("Traps: ", gram.traps)
+
+        if queue != [] and type(queue[0]) == str:
+            for char in queue[-1]:
+                if char in gram.nonTermSymbols and char not in gram.traps:
+                    canContinue = True
+                    queue = []
+                    break
+        else:
+            for elem in queue[:]:
+                if type(elem) == list:
+                    for char in elem[len(elem)-1]:
+                        if char in gram.nonTermSymbols and char not in gram.traps:
+                            canContinue = True
+                            queue.remove(elem)
+                            break
+        
+        # print("Queue: ", queue)
+        
+        
+        # Agora, a queue contem sequencias de producoes que geram cadeias validas, mas precisamos verificar se ja nao enviamos essas cadeias
+        if queue != [] and type(queue[0]) == str:
+            if queue[-1] in alreadysent:
+                queue = []
+        else:
+            for elem in queue[:]:
+                if elem[-1] in alreadysent:
+                    queue.remove(elem)
+                else:
+                    alreadysent.append(elem[-1])
+
+        print("Queue: ", queue)
+        print("Tamanho da queue: ", len(queue))
+
+        # Se houver apenas um retorno possivel
+        if queue != [] and type(queue[0]) == str:
+            return jsonify({"chain": queue, "continue": canContinue})
+        # Se ainda houver algo a ser enviado, envia
+        elif len(queue) >= 1:
+            return jsonify({"chain": queue.pop(0)})
+        # Se nao houver mais nada a ser enviado, volta a tentar gerar
+        elif canContinue:
+            return getFastChain()
+        # Se nao houver mais nada a ser enviado e nao houver mais nada a ser gerado, retorna uma mensagem de erro
+        else:
+            # print("Nao ha mais cadeias a serem geradas")
+            return jsonify({"chain": []})
+
+tree = None
+@app.route('/generateByDepth', methods=['POST'])
+def generateByDepth():
+    """
+        Cria um objeto Tree e gera uma cadeia limitada por profundidade a partir da gramática.
+
+        Retorno  JSON:
+
+            "chain": list  # Lista de cadeias geradas
+
+    """
+    global tree
+    depth = int(request.get_json()["depth"])
+
+    tree = Tree(gram.initial, gram, depth)
+    # print("numero de nos: ", tree.nNodes)
+    tree.clearSent()
+    result = tree.get_limited_chainList(depth)        
+
+    if result == []:
+        tree = None
+    
+
+    if tree != None:
+        return jsonify({"chain": result, "qtdNodes": tree.nNodes})
+    else:
+        return jsonify({"chain": result, "qtdNodes": 0})
+
+
+@app.route("/getChainByDepth")
+def getChainByDepth():
+    """
+        Retorna a cadeia gerada pela árvore de cadeias limitada por profundidade.
+
+        Retorno JSON:
+
+            "chain": list  # Lista de cadeias geradas
+    """
+    global tree
+
+    result = tree.get_limited_chainList(tree.depth)
+    if result == []:
+        tree = None
+    
+    return jsonify({"chain": result})

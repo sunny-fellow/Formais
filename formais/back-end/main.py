@@ -2,11 +2,10 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 import re # Importa os metodos de regex
 from grammarThings.gram import Grammar
-from grammarThings.dataStructures.chainTree import Tree
+from grammarThings.dataStructures.chainStack import ChainStack
 
 
 # Inicialização de variáveis globais
-chainTree = None
 gram = Grammar()
 
 # Criação da aplicação Flask
@@ -98,21 +97,15 @@ def upload_file():
         return jsonify({'valid': False, 'message': "Nenhum arquivo enviado."})
     
     archive = request.files['file']
-    # print(archive)
+    print(archive)
     
     content = ""
     for line in archive.read().decode("utf-8").split("\n"):
         if line.strip():
             content += line + "\n"
     content = content.strip()
-    print(content)
+    # print(content)
             
-    # for i in range(len(content)):
-    #     if content[i] == "":
-    #         content.pop(i)
-    
-    # content = content.split("\n")
-    # content = content[0:2].append(content[4:])
     validation = archive_validation(content)
 
     if not validation[0]:
@@ -341,7 +334,9 @@ def getProductionsOf():
     # print("Solicitou producoes para a variavel: " + data['variavel'])
 
     # salva as producoes para a variavel recebida como parametro
-    prods = gram.productions[data['variavel']]
+    print(gram.productions.get(data['variavel']))
+    # print(f"data prods: {data['variavel']},      gram.productions: {gram.productions[data['variavel']]}")
+    prods = gram.productions.get(data['variavel'])
     traps = []
     
     # para cada producao nessa lista de producoes
@@ -441,14 +436,14 @@ def cleanGrammar():
     }
     """
 
-    cleanChainTree()
+    cleanStack()
     gram.clean_grammar()
     return jsonify({"valid": True, "message": "Gramática limpa"})
 
 
 # Rota para limpar a árvore de cadeias
-@app.route('/cleanChainTree')
-def cleanChainTree():
+@app.route('/cleanStack')
+def cleanStack():
 
     """
     Limpa a árvore de cadeias atual.
@@ -465,12 +460,9 @@ def cleanChainTree():
     }
     """
 
-    global chainTree, depth, alreadysent, queue
-    chainTree = None
+    global depth, stack
     depth = 1
-    alreadysent.clear()
-    queue.clear()
-    tree = None
+    stack = None
     return jsonify({"valid": True, "message": "Árvore de cadeias limpa"})
 
 
@@ -503,21 +495,16 @@ def getVariablesToDerivate():
 
 
 # Variaveis utilizadas para a funcao getFastChain:
-chainTree:Tree = None
 depth = 1
-alreadysent = []
-queue = []
 
-
-# Rota para gerar uma cadeia rapidamente
 @app.route('/generateFastChain')
 def getFastChain():
-
     """
     Gera cadeias rapidamente a partir da gramática.
 
     
     Retorno:
+
     {
     
         JSON
@@ -530,120 +517,30 @@ def getFastChain():
     
         JSON
 
-        "chain": list | []      # Cadeia gerada ou lista vazia se não houver mais cadeias disponíveis
-        "continue": bool        # Informa que não haverá mais cadeias possíveis de serem produzidas
+        "chain": list | []
+        "continue": bool
+
     }
     """
+    global stack, depth
 
-    global chainTree, depth, alreadysent, queue
-
-    # Se ja tiver algo a espera de ser enviado, envia, tirando-a da fila
-    if len(queue) > 0:
-        # print("Enviando cadeia: ", queue[0])
-        return jsonify({"chain": queue.pop(0)})
+    if stack == None:
+        stack = ChainStack(gram)
     
-    # Se nao tiver nada a espera de ser enviado, cria a arvore
-    else:
-        chainTree = Tree(gram.initial, gram, depth)
-        
-        # Pega a lista de cadeias
-        retorno = chainTree.getChainList()
-        depth += 1
+    result = stack.get_chainStack(depth, "S")
 
-        canContinue = False
-        # Para cada sequencia de producoes, verifica se a cadeia gerada eh valida, ou seja, se nao contem variaveis
-        # print("NonTermSymbols: ", gram.nonTermSymbols)
-        print("Retorno: ", retorno) 
-
-
-        queue = retorno
-        print("Queue: ", queue)
-        print("Traps: ", gram.traps)
-
-        if queue != [] and type(queue[0]) == str:
-            for char in queue[-1]:
-                if char in gram.nonTermSymbols and char not in gram.traps:
-                    canContinue = True
-                    queue = []
-                    break
-        else:
-            for elem in queue[:]:
-                if type(elem) == list:
-                    for char in elem[len(elem)-1]:
-                        if char in gram.nonTermSymbols and char not in gram.traps:
-                            canContinue = True
-                            queue.remove(elem)
-                            break
-        
-        # print("Queue: ", queue)
-        
-        
-        # Agora, a queue contem sequencias de producoes que geram cadeias validas, mas precisamos verificar se ja nao enviamos essas cadeias
-        if queue != [] and type(queue[0]) == str:
-            if queue[-1] in alreadysent:
-                queue = []
-        else:
-            for elem in queue[:]:
-                if elem[-1] in alreadysent:
-                    queue.remove(elem)
-                else:
-                    alreadysent.append(elem[-1])
-
-        print("Queue: ", queue)
-        print("Tamanho da queue: ", len(queue))
-
-        # Se houver apenas um retorno possivel
-        if queue != [] and type(queue[0]) == str:
-            print("Caso 1")
-            return jsonify({"chain": queue, "continue": canContinue})
-        # Se ainda houver algo a ser enviado, envia
-        elif len(queue) >= 1:
-            print("Caso 2")
-            return jsonify({"chain": queue.pop(0)})
-        # Se nao houver mais nada a ser enviado, volta a tentar gerar
-        elif canContinue:
-            print("Caso 3")
+    # Se o retorno for vazio, verifica se a pilha pode continuar
+    if result == []:
+        if stack.canContinue:
+            depth += 1
             return getFastChain()
-        # Se nao houver mais nada a ser enviado e nao houver mais nada a ser gerado, retorna uma mensagem de erro
-        else:
-            # print("Nao ha mais cadeias a serem geradas")
-            print("Caso 4")
-            return jsonify({"chain": []})
-
-    
-# # Rota para gerar cadeias por profundidade
-# @app.route('/generateByDepth', methods=['POST'])
-# def generateByDepth():
-
-#     """
-#     Gera cadeias limitadas por profundidade a partir da gramática.
-
-#     Retorno:
-    
-#     {
-
-#         JSON
-    
-#         "chain": list  # Lista de cadeias geradas
-
-#     }
-#     """
-
-#     depth = int(request.get_json()["depth"])
-#     # print("Profundidade: ", str(depth))
-    
-#     chainTree = Tree(gram.initial, gram, int(depth))
-#     retorno = chainTree.get_limited_chainList(depth, 2**15)
-#     # 2^17 = 131072
-
-#     if retorno:
-#         # Se for um array de strings, converte-o em array de arrays. Isso eh necessario para o front-end
-#         if type(retorno[0]) == str:
-#             retorno = [retorno]
         
+        # Caso nao possa continuar, implica que nao ha mais cadeias a serem geradas
+        else:
+            stack = None
+            return jsonify({"chain": result, "continue": False})
 
-#     # print("Retorno tratado: ", retorno)
-#     return jsonify({"chain": retorno})
+    return jsonify({"chain": result})
     
 
 @app.route('/verifyDepth', methods=['POST'])
@@ -664,53 +561,48 @@ def verifyDepth():
     if depth == "":
         return jsonify({"valid": False, "message": "É necessário informar a profundidade desejada"})
     elif int(depth) < 1:
-        return jsonify({"valid": False, "message": "A profundidade deve estar entre [0 - 15]"})
-    elif int(depth) > 15:
-        return jsonify({"valid": False, "message": "A profundidade deve estar entre [0 - 15]"})
+        return jsonify({"valid": False, "message": "A profundidade deve estar entre [1 - 100]"})
+    elif int(depth) > 100:
+        return jsonify({"valid": False, "message": "A profundidade deve estar entre [1 - 100]"})
     else:
         return jsonify({"valid": True, "message": ""})
 
 
-tree = None
-@app.route('/generateByDepth', methods=['POST'])
-def generateByDepth():
-    """
-        Cria um objeto Tree e gera uma cadeia limitada por profundidade a partir da gramática.
-
-        Retorno  JSON:
-
-            "chain": list  # Lista de cadeias geradas
-
-    """
-    global tree
-    depth = int(request.get_json()["depth"])
-
-    tree = Tree(gram.initial, gram, depth)
-    # print("numero de nos: ", tree.nNodes)
-    tree.clearSent()
-    result = tree.get_limited_chainList(depth)        
-
-    if result == []:
-        tree = None
-    
-    return jsonify({"chain": result, "qtdNodes": tree.nNodes})
-
-@app.route("/getChainByDepth")
+@app.route("/generateByDepth", methods=["POST"])
 def getChainByDepth():
     """
-        Retorna a cadeia gerada pela árvore de cadeias limitada por profundidade.
+        Recebe a profundidade desejada e gera uma cadeia limitada por essa profundidade.
+        Usando a pilha de cadeia, atraves da classe ChainStack.
+
+        Retorno JSON:
+            
+            "chain": list  # Lista de cadeias geradas
+    """
+
+    global stack
+    depth = int(request.get_json()["depth"])
+
+    stack = ChainStack(gram)
+    result = stack.get_chainStack(depth, "S")
+
+    return jsonify({"chain": result})
+
+@app.route('/getChainByDepth', methods=['POST'])
+def generateByDepth():
+    """
+        Cria um objeto Stack e gera uma cadeia limitada por profundidade a partir da gramática.
 
         Retorno JSON:
 
             "chain": list  # Lista de cadeias geradas
     """
-    global tree
 
-    result = tree.get_limited_chainList(tree.depth)
-    if result == []:
-        tree = None
-    
+    global stack
+    depth = int(request.get_json()["depth"])
+
+    result = stack.get_chainStack(depth, "S")
     return jsonify({"chain": result})
+
 
 # Roda o servidor
 if __name__ == '__main__':

@@ -115,7 +115,7 @@ recarrega.addEventListener('click', ()=>{
     })
 
     // Limpa a arvore de derivação
-    fetch('http://127.0.0.1:5001/cleanChainTree')
+    fetch('http://127.0.0.1:5001/cleanStack')
     .then(()=>{
         geraNova.removeAttribute("disabled")
         if(mode == "detailed"){
@@ -183,7 +183,7 @@ retornaProd.addEventListener('click', ()=>{
 // Evento de clique no botão de modo rápido
 fast_mode.addEventListener('click', ()=>{
     removeMessage()
-    fetch("http://127.0.0.1:5001/cleanChainTree")
+    fetch("http://127.0.0.1:5001/cleanStack")
     
     // Remove acesso a funcionalidades apenas do modo detalhado, e ativa as do modo rápido
     depth_inputs.style.display = "flex"
@@ -373,6 +373,8 @@ derivar.addEventListener('click', ()=>{
                 let last_line = document.createElement('p');
                 let result = data['result'] || "resultado desconhecido";
                 message(`<b>A cadeia ${result} é uma armadilha, não é possível uma derivação conclusiva.</b>`)
+
+                prod_choice.style.display = "none"
                 
                 // Inserindo o novo parágrafo no início ou no final, dependendo do estado atual do elemento
                 if (grammar_results.firstChild) {
@@ -390,10 +392,15 @@ geraNova.addEventListener('click', ()=>{
     removeMessage()
     
     if(mode == "fast_depth"){
-        fetch("http://127.0.0.1:5001/getChainByDepth")
+        fetch("http://127.0.0.1:5001/getChainByDepth", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({'depth': document.getElementById('depth').value})
+        })
         .then(response => response.json())
         .then(data => {
-            console.log(data)
             spinner.style.display = "none"
             let derivation = data['chain']
             if(derivation.length == 0){
@@ -426,7 +433,6 @@ geraNova.addEventListener('click', ()=>{
     .then(response => response.json())
     .then(data => {
         let derivations = data['chain']
-        console.log("Data: ", data)
 
         // Se nao houve nenhuma producao valida, significa que a gramatica nao tem mais producoes validas.
         // Pois ela sempre tenta gerar uma nova cadeia, e se nao consegue, significa que nao ha mais producoes validas
@@ -446,7 +452,6 @@ geraNova.addEventListener('click', ()=>{
             str += "  &#8594;  " + s
         }
 
-        console.log(str)
         // Insere a nova linha na div de resultados
         let new_line = document.createElement('p')
         new_line.innerHTML = str
@@ -456,7 +461,6 @@ geraNova.addEventListener('click', ()=>{
         // Se a cadeia gerada é uma armadilha, exibe a mensagem de armadilha
         if(data['continue'] == false){
             v = data['continue']
-            console.log(v)
             message("A gramática apresentada não tem mais produções válidas<br>Botão '+' desligado")
             alert("A gramática apresentada não tem mais produções válidas")
             geraNova.setAttribute("disabled", true)
@@ -506,7 +510,6 @@ searchDeph.addEventListener('click', ()=>{
         .then(response => response.json())
         .then(data => {
             spinner.style.display = "none"
-            console.log(data)
             let derivation = data['chain']
             if(derivation.length == 0){
                 message("A gramática apresentada não tem mais produções nessa profundidade")
@@ -522,7 +525,6 @@ searchDeph.addEventListener('click', ()=>{
                 str += "  &#8594;  " + s
             }
 
-            message(`A arvóre de derivação gerou ${data['qtdNodes']} nós`)
             // Insere a nova linha na div de resultados
             let new_line = document.createElement('p')
             new_line.innerHTML = str

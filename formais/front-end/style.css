@@ -314,6 +314,7 @@ footer {
 footer > .project-info {
     /* background-color: rgba(255, 0, 0, 0.2); */
     display: flex;
+    justify-content: space-between;
     margin: 0 auto;
     max-width: 80%;
 }
