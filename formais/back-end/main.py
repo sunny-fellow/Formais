@@ -558,10 +558,11 @@ def getFastChain():
 
         queue = retorno
         print("Queue: ", queue)
+        print("Traps: ", gram.traps)
 
         if queue != [] and type(queue[0]) == str:
             for char in queue[-1]:
-                if char in gram.nonTermSymbols:
+                if char in gram.nonTermSymbols and char not in gram.traps:
                     canContinue = True
                     queue = []
                     break
@@ -569,7 +570,7 @@ def getFastChain():
             for elem in queue[:]:
                 if type(elem) == list:
                     for char in elem[len(elem)-1]:
-                        if char in gram.nonTermSymbols:
+                        if char in gram.nonTermSymbols and char not in gram.traps:
                             canContinue = True
                             queue.remove(elem)
                             break
