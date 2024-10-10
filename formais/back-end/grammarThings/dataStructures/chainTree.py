@@ -1,4 +1,5 @@
 from grammarThings.gram import Grammar
+
 """
     gram : {
         S : ['aA', 'bB', 'epsilon'],
@@ -26,15 +27,17 @@ class Tree:
         self.depth = depth                                          # Guarda o nivel do no em relacao a raiz
         self.children:list[Tree] = []                               # lista de filhos do no (subcadeias produzidas)
         self.var_check = self.checkVar_fromProd(self.data)          # Checa se a cadeia contem variaveis e se eh armadilha
+        self.nNodes = 1
         if self.var_check["hasVar"] and depth > 0:                  # se tiver subcadeias e a altura nao tiver sido reduzida a 0 ainda
-            self.fillChildren()                                     # preenche os filhos com as subcadeias geradas pelas producoes do campo data
-            
+            self.nNodes += self.fillChildren()                      # preenche os filhos com as subcadeias geradas pelas producoes do campo data
 
-    def fillChildren(self):        
-
+    def fillChildren(self) -> int:        
+        n = 0
         # se nao tiver variavel ou caso a variavel que existir for armadilha 
-        if self.var_check["isTrap"]:
-            return
+        # ou a variavel nao contem producoes
+        if self.var_check["isTrap"] or self.var_check["variable"] not in self.gram.productions.keys():
+            return 1
+
 
         # para cada producao da variavel checada
         for prod in self.gram.productions[self.var_check["variable"]]:
@@ -46,7 +49,11 @@ class Tree:
             # adiciona na lista dos filhos dessa arvore uma arvore com cada subcadeia gerada pelas producoes
             # informa a gramatica, altura-1, se eh armadilha e se tem filhos (se tem uma variavel contida)
             self.children.append(Tree(nextChain, self.gram, self.depth - 1))
+        
+        for child in self.children:
+            n += child.nNodes
 
+        return n
 
     def checkVar_fromProd(self, prod:str) -> dict:
         """
@@ -103,13 +110,20 @@ class Tree:
         """
         result = []
 
+
     # se o no nao possuir filhos, ele apenas retorna seu proprio valor 
         if not self.children:
             return [self.data]
         
     # se o no possuir apenas um filho, ele retorna uma lista com sua propria cadeia seguida pela de seu filho   
         elif len(self.children) == 1:
-            return [self.data] + [self.children[0].data]
+            appd = [self.data]
+            if self.children[0].children != []:
+                lista = self.children[0].getChainList()
+                return appd + lista
+            else:
+                return appd + [self.children[0].data]
+        
         
     # havendo multiplos filhos, a lista completa dos mesmos sera percorrida    
         else:
@@ -134,56 +148,104 @@ class Tree:
                     result.append(appd)
             return result
     
-    alreadyEnvited = []
-    def get_limited_chainList(self, n, max):
+    alreadySent = []
+
+    def clearSent(self):
+        self.alreadySent.clear()
+        # print("depois de limpar: ", self.alreadySent)
+
+    def get_limited_chainList(self, n):
+
         """
-            Retorna uma lista com uma producao de profundidade n
-
-            Parâmetros:
-            
-                self (Tree)                  # No inicial
-                n    (int)                   # Profundidade (limite da busca)
-            
-            Retorno:
-
-                result (list)                 # lista das cadeias desejadas
+            Retorna uma lista com uma producao de profundidade n,
+            verificando se esta producao ja nao foi enviada anteriormente
         """
 
         result = []
+        # para cada derivacao da cadeia desse no
         for child in self.children:
-            if n>1:
+            # se a profundidade nao tiver sido alcancada ainda
+            if n > 1:
+                # se esse filho nao for uma cadeia finalizada e nao for armadilha
+                if child.var_check["hasVar"] and not child.var_check["isTrap"]:
+                    # continuo a recursao no filho em questao e adiciono o retorno no resultado
+                    temp = child.get_limited_chainList(n-1)
+                    if temp == []:
+                        continue
+                    
+                    appd = [self.data]
+                    appd.extend(temp)
+                    return appd
 
-
-        # print("depth: ", n, ";    max: ", max)
-        
-        # percorre os filhos do no, apenas retornando diretamente a lista de producoes
-        # no caso em que a profundidade desejada seja 1
-        # se nao, a funcao eh chamada recursivamente para cada filho
-        # for child in self.children:
-        #     if n > 1:
-        #         if child.var_check["hasVar"] and not child.var_check["isTrap"]:
-        #             temp = child.get_limited_chainList(n-1, int(max/2))
-
-        #             # Se for uma lista de listas, percorre-a
-        #             if temp and type(temp[0]) == list:
-        #                 # Se a lista de producoes for muito grande, retorna o que tem
-        #                 if len(result) > max:
-        #                     return result
-        #                 for t in temp:
-        #                     appd = [self.data]
-        #                     appd.extend(t)
-        #                     result.append(appd)
-                        
-        #             # Se for uma lista de strings, apenas adiciona o valor
-        #             elif temp:
-        #                 appd = [self.data]
-        #                 appd.extend(temp)
-        #                 result.append(appd)
+            # ["S", "aA"]
+            
+            # se 
+            elif not child.var_check["hasVar"]:
+                temp = child.data
+                if temp in self.alreadySent:
+                    continue
+                else:
+                    self.alreadySent.append(temp)
+                    appd = [self.data]
+                    appd.extend([temp])
+                    return appd
                 
-        #     elif not child.var_check["hasVar"]:
-        #         temp = [child.data]
-        #         appd = [self.data]
-        #         appd.extend(temp)
-        #         result.append(appd)
-
         return result
+                    
+
+    """
+        Anteriormente, tinhamos feito uma funcao que retornava uma lista de listas de producoes,
+        mas isso acabava sendo um pouco ineficiente, pois a lista de producoes poderia ser muito grande
+        o que exigia um grande uso de memoria. A funcao abaixo retorna uma lista de producoes de profundidade n.
+    """
+    # def get_limited_chainList(self, n, max):
+    #     """
+    #         Retorna uma lista com uma producao de profundidade n
+
+    #         Parâmetros:
+            
+    #             self (Tree)                  # No inicial
+    #             n    (int)                   # Profundidade (limite da busca)
+            
+    #         Retorno:
+
+    #             result (list)                 # lista das cadeias desejadas
+    #     """
+
+    #     result = []
+
+
+    #     print("depth: ", n, ";    max: ", max)
+        
+    #     percorre os filhos do no, apenas retornando diretamente a lista de producoes
+    #     no caso em que a profundidade desejada seja 1
+    #     se nao, a funcao eh chamada recursivamente para cada filho
+    #     for child in self.children:
+    #         if n > 1:
+    #             if child.var_check["hasVar"] and not child.var_check["isTrap"]:
+    #                 temp = child.get_limited_chainList(n-1, int(max/2))
+
+    #                 # Se for uma lista de listas, percorre-a
+    #                 if temp and type(temp[0]) == list:
+    #                     # Se a lista de producoes for muito grande, retorna o que tem
+    #                     if len(result) > max:
+    #                         return result
+    #                     for t in temp:
+    #                         appd = [self.data]
+    #                         appd.extend(t)
+    #                         result.append(appd)
+                        
+    #                 # Se for uma lista de strings, apenas adiciona o valor
+    #                 elif temp:
+    #                     appd = [self.data]
+    #                     appd.extend(temp)
+    #                     result.append(appd)
+                
+    #         elif not child.var_check["hasVar"]:
+    #             temp = [child.data]
+    #             appd = [self.data]
+    #             appd.extend(temp)
+    #             result.append(appd)
+    # return result
+
+        

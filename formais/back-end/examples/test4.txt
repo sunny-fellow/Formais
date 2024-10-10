@@ -1,0 +1,6 @@
+variaveis:S,A
+inicial:A
+terminais:
+producoes
+S: A
+S: epsilon

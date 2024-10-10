@@ -303,6 +303,10 @@ upFile.addEventListener('change', ()=>{
             
         }
     })
+    .catch((error) => {
+        // Caso haja erro no envio do arquivo, exibe mensagem de erro
+        error_message("Erro ao enviar o arquivo<br>Confira a formatação do arquivo<br>Por favor, tente novamente.")
+    })
 })
 
 enviar.addEventListener('click', ()=>{

@@ -100,7 +100,19 @@ def upload_file():
     archive = request.files['file']
     # print(archive)
     
-    content = archive.read().decode("utf-8")
+    content = ""
+    for line in archive.read().decode("utf-8").split("\n"):
+        if line.strip():
+            content += line + "\n"
+    content = content.strip()
+    print(content)
+            
+    # for i in range(len(content)):
+    #     if content[i] == "":
+    #         content.pop(i)
+    
+    # content = content.split("\n")
+    # content = content[0:2].append(content[4:])
     validation = archive_validation(content)
 
     if not validation[0]:
@@ -151,7 +163,7 @@ def archive_validation(content:str) -> bool:
     
     vars_pattern = r'variaveis:([A-Z],)*[A-Z]'
     ini_pattern = r'inicial:[A-Z]'
-    term_pattern = r'terminais:([a-z0-9%$&@#\*\+\-/!?],)*[a-z0-9%$&@#\*\+\-/!?]'
+    term_pattern = r'terminais:([a-z0-9%$&@#\*\+\-/!?],)*[a-z0-9%$&@#\*\+\-/!?]*'
     prod_pattern = r'[A-Z]: [a-zA-Z0-9%$&@#\*\+\-\/!?]*'
 
     # Validacao das variaveis
@@ -216,6 +228,7 @@ def receive_inputs():
         return jsonify(validation)
     
     gram.dict_to_grammar(data)
+    print(gram.traps)
     return jsonify({"valid": True, "message": "Gramática recebida com sucesso", "allTrap": gram.check_grammar()["allTrap"]})
 
 
@@ -378,21 +391,9 @@ def derivate():
     opt = data["opcao"]
 
     if opt != gram.E:
-        # percorrendo os caracteres da cadeia a derivar  
+        # substitui a primeira aparicao da variavel pela opcao 
         chain = chain.replace(var, opt, 1)
-        # for i in range(len(chain)):
-        #     # se o caractere for igual ao simbolo 
-        #     if chain[i] == var:
-        #         # no caso da variavel nao estar no fim da cadeia
-        #         if i < len(chain)-1:
-        #             chain = chain.replace(var, opt, 1)  
-        #             # chain = chain[0:i-1] + opt + chain[i+1:len(chain)]
-        #             # # # # # print(chain)
-        #         else:
-        #             chain = chain.replace(var, opt, 1)
-        #             # chain = chain[0:i] + opt
-                
-        #         break
+     
     else:
         chain = chain.replace(var, "", 1)
 
@@ -469,6 +470,7 @@ def cleanChainTree():
     depth = 1
     alreadysent.clear()
     queue.clear()
+    tree = None
     return jsonify({"valid": True, "message": "Árvore de cadeias limpa"})
 
 
@@ -551,74 +553,96 @@ def getFastChain():
         canContinue = False
         # Para cada sequencia de producoes, verifica se a cadeia gerada eh valida, ou seja, se nao contem variaveis
         # print("NonTermSymbols: ", gram.nonTermSymbols)
-        # print("Retorno: ", retorno) 
+        print("Retorno: ", retorno) 
 
-        if type(retorno[0]) == str:
-            # print("Primeiro Caso: ", retorno)
-            return jsonify({"chain": retorno, "continue": False})
 
         queue = retorno
+        print("Queue: ", queue)
 
-        for elem in queue[:]:
-            for car in elem[len(elem)-1]:
-                if car in gram.nonTermSymbols:
+        if queue != [] and type(queue[0]) == str:
+            for char in queue[-1]:
+                if char in gram.nonTermSymbols:
                     canContinue = True
-                    queue.remove(elem)
+                    queue = []
                     break
+        else:
+            for elem in queue[:]:
+                if type(elem) == list:
+                    for char in elem[len(elem)-1]:
+                        if char in gram.nonTermSymbols:
+                            canContinue = True
+                            queue.remove(elem)
+                            break
+        
+        # print("Queue: ", queue)
+        
         
         # Agora, a queue contem sequencias de producoes que geram cadeias validas, mas precisamos verificar se ja nao enviamos essas cadeias
-        for elem in queue[:]:
-            if elem in alreadysent:
-                queue.remove(elem)
-            else:
-                alreadysent.append(elem)
+        if queue != [] and type(queue[0]) == str:
+            if queue[-1] in alreadysent:
+                queue = []
+        else:
+            for elem in queue[:]:
+                if elem[-1] in alreadysent:
+                    queue.remove(elem)
+                else:
+                    alreadysent.append(elem[-1])
 
+        print("Queue: ", queue)
+        print("Tamanho da queue: ", len(queue))
 
+        # Se houver apenas um retorno possivel
+        if queue != [] and type(queue[0]) == str:
+            print("Caso 1")
+            return jsonify({"chain": queue, "continue": canContinue})
         # Se ainda houver algo a ser enviado, envia
-        if len(queue) > 1:
+        elif len(queue) >= 1:
+            print("Caso 2")
             return jsonify({"chain": queue.pop(0)})
         # Se nao houver mais nada a ser enviado, volta a tentar gerar
         elif canContinue:
+            print("Caso 3")
             return getFastChain()
         # Se nao houver mais nada a ser enviado e nao houver mais nada a ser gerado, retorna uma mensagem de erro
         else:
             # print("Nao ha mais cadeias a serem geradas")
+            print("Caso 4")
             return jsonify({"chain": []})
 
     
-# Rota para gerar cadeias por profundidade
-@app.route('/generateByDepth', methods=['POST'])
-def generateByDepth():
+# # Rota para gerar cadeias por profundidade
+# @app.route('/generateByDepth', methods=['POST'])
+# def generateByDepth():
 
-    """
-    Gera cadeias limitadas por profundidade a partir da gramática.
+#     """
+#     Gera cadeias limitadas por profundidade a partir da gramática.
 
-    Retorno:
+#     Retorno:
     
-    {
+#     {
 
-        JSON
+#         JSON
     
-        "chain": list  # Lista de cadeias geradas
+#         "chain": list  # Lista de cadeias geradas
 
-    }
-    """
+#     }
+#     """
 
-    depth = int(request.get_json()["depth"])
-    # print("Profundidade: ", str(depth))
+#     depth = int(request.get_json()["depth"])
+#     # print("Profundidade: ", str(depth))
     
-    chainTree = Tree(gram.initial, gram, int(depth))
-    retorno = chainTree.get_limited_chainList(depth, 2**15)
-    # 2^17 = 131072
+#     chainTree = Tree(gram.initial, gram, int(depth))
+#     retorno = chainTree.get_limited_chainList(depth, 2**15)
+#     # 2^17 = 131072
 
-    if retorno:
-        # Se for um array de strings, converte-o em array de arrays. Isso eh necessario para o front-end
-        if type(retorno[0]) == str:
-            retorno = [retorno]
+#     if retorno:
+#         # Se for um array de strings, converte-o em array de arrays. Isso eh necessario para o front-end
+#         if type(retorno[0]) == str:
+#             retorno = [retorno]
         
 
-    # print("Retorno tratado: ", retorno)
-    return jsonify({"chain": retorno})
+#     # print("Retorno tratado: ", retorno)
+#     return jsonify({"chain": retorno})
     
 
 @app.route('/verifyDepth', methods=['POST'])
@@ -645,6 +669,47 @@ def verifyDepth():
     else:
         return jsonify({"valid": True, "message": ""})
 
+
+tree = None
+@app.route('/generateByDepth', methods=['POST'])
+def generateByDepth():
+    """
+        Cria um objeto Tree e gera uma cadeia limitada por profundidade a partir da gramática.
+
+        Retorno  JSON:
+
+            "chain": list  # Lista de cadeias geradas
+
+    """
+    global tree
+    depth = int(request.get_json()["depth"])
+
+    tree = Tree(gram.initial, gram, depth)
+    # print("numero de nos: ", tree.nNodes)
+    tree.clearSent()
+    result = tree.get_limited_chainList(depth)        
+
+    if result == []:
+        tree = None
+    
+    return jsonify({"chain": result, "qtdNodes": tree.nNodes})
+
+@app.route("/getChainByDepth")
+def getChainByDepth():
+    """
+        Retorna a cadeia gerada pela árvore de cadeias limitada por profundidade.
+
+        Retorno JSON:
+
+            "chain": list  # Lista de cadeias geradas
+    """
+    global tree
+
+    result = tree.get_limited_chainList(tree.depth)
+    if result == []:
+        tree = None
+    
+    return jsonify({"chain": result})
 
 # Roda o servidor
 if __name__ == '__main__':

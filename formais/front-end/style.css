@@ -168,21 +168,30 @@ header > h1{
 }
 
 /* ERROR MESSAGE */
-.page > .content > .form > #error_message-area{
-    display: none;
+.warning_message {
     color: var(--error-color);
     border: 2px var(--error-color) solid;
     border-radius: 8px;
-    padding: 5px;
-    width: 200px;
+    padding: 5px 5px 10px;
+    margin-top: 20px;
+    width: 400px;
     height: auto;
     word-break: break-word;
-} 
-.page > .content > .form > #error_message-area > h3{
+}
+
+#error_message-area {
+    display: none;
+    width: 200px;
+}
+
+.warning_message > h3{
     font-size: 15px;
+    text-align: center;
+    line-height: 2em;
 } 
-.page > .content > .form > #error_message-area > p{
+.warning_message > p{
     font-size: 12px;
+    text-align: center;
 } 
 
 

@@ -26,6 +26,7 @@ const spinner         = document.getElementById('loading-spinner')              
 // Variavel que guarda o modo de geracao atual, util para botoes que dependem do modo
 mode = "fast"
 
+
 // Função que seta as opções de produção para a variável passada
 function setOptionsFor(variable){
     fetch("http://127.0.0.1:5001/getProductionsOf", {
@@ -212,7 +213,7 @@ fast_mode.addEventListener('click', ()=>{
         prod_choice.style.display = "none"
         if(data["allTrap"]){
             // Se a gramatica nao tiver producoes validas, informa o usuario
-            alert("A gramática apresentada não pode gerar produções válidas")
+            alert("A gramática apresentada não pode gerar produções válidas, todas as variáveis são armadilhas")
             message("A gramática apresentada não pode gerar produções válidas<br>Botão '+' desabilitado")
             geraNova.setAttribute("disabled", true)
         }else{
@@ -327,7 +328,7 @@ derivar.addEventListener('click', ()=>{
             
             let first_line = document.createElement('p')
             let result = document.createElement('b')
-            result.innerHTML = data["result"]
+            result.innerHTML = data["result"] || "epsilon"
             const arrow = "  &#8594;  "
             first_line.innerHTML = penultimate_line
             first_line.innerHTML += arrow
@@ -387,16 +388,50 @@ derivar.addEventListener('click', ()=>{
 // Evento de clique no botão de gerar nova cadeia
 geraNova.addEventListener('click', ()=>{
     removeMessage()
+    
+    if(mode == "fast_depth"){
+        fetch("http://127.0.0.1:5001/getChainByDepth")
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            spinner.style.display = "none"
+            let derivation = data['chain']
+            if(derivation.length == 0){
+                message("A gramática apresentada não tem mais produções nessa profundidade")
+                geraNova.setAttribute("disabled", true)
+                mode = "fast"
+                return;
+            }
+
+            str = derivation[0]
+            for (let s of derivation.slice(1)){
+                if(s == ""){
+                    s = "<b>epsilon</b>"
+                }
+                str += "  &#8594;  " + s
+            }
+
+            // Insere a nova linha na div de resultados
+            let new_line = document.createElement('p')
+            new_line.innerHTML = str
+            new_line.setAttribute("class", "production_line")
+            grammar_results.appendChild(new_line)
+        })
+
+        return;
+    }
+
     // Requisita ao back uma nova cadeia
     fetch("http://127.0.0.1:5001/generateFastChain")
     .then(response => response.json())
     .then(data => {
         let derivations = data['chain']
+        console.log("Data: ", data)
 
         // Se nao houve nenhuma producao valida, significa que a gramatica nao tem mais producoes validas.
         // Pois ela sempre tenta gerar uma nova cadeia, e se nao consegue, significa que nao ha mais producoes validas
         if(derivations.length == 0){
-            message("A gramática apresentada não tem mais produções válidas")
+            message("A gramática apresentada não tem mais produções válidas<br>Botão '+' desligado")
             alert("A gramática apresentada não tem mais produções válidas")
             geraNova.setAttribute("disabled", true)
             return;
@@ -411,6 +446,7 @@ geraNova.addEventListener('click', ()=>{
             str += "  &#8594;  " + s
         }
 
+        console.log(str)
         // Insere a nova linha na div de resultados
         let new_line = document.createElement('p')
         new_line.innerHTML = str
@@ -432,6 +468,7 @@ geraNova.addEventListener('click', ()=>{
 // Evento de clique no botão de buscar por profundidade
 searchDeph.addEventListener('click', ()=>{
     removeMessage()
+    geraNova.removeAttribute("disabled")
     // Captura a profundidade desejada
     let depth = document.getElementById('depth').value
     
@@ -459,7 +496,6 @@ searchDeph.addEventListener('click', ()=>{
 
         // Manda para o back a profundidade desejada
         spinner.style.display = "block"
-        geraNova.setAttribute("disabled", true)
         fetch("http://127.0.0.1:5001/generateByDepth", {
             method: 'POST',
             headers: {
@@ -469,39 +505,30 @@ searchDeph.addEventListener('click', ()=>{
         })
         .then(response => response.json())
         .then(data => {
-            let derivations = data['chain']
             spinner.style.display = "none"
-
-            // Se nao houve nenhuma producao valida, significa que para aquele nivel de profundidade, nao ha producoes
-            if(derivations.length == 0){
-                message("A gramática apresentada não tem produções nessa profundidade")
+            console.log(data)
+            let derivation = data['chain']
+            if(derivation.length == 0){
+                message("A gramática apresentada não tem mais produções nessa profundidade")
+                geraNova.setAttribute("disabled", true)
                 return;
             }
 
-            // Recebe um array de arrays, onde cada array é uma progressão de derivações
-            for (let derivation of derivations){
-                str = derivation[0]
-                for (let s of derivation.slice(1)){
-                    if(s == ""){
-                        s = "<b>epsilon</b>"
-                    }
-                    str += "  &#8594;  " + s
+            str = derivation[0]
+            for (let s of derivation.slice(1)){
+                if(s == ""){
+                    s = "<b>epsilon</b>"
                 }
-
-                // Insere a nova linha na div de resultados
-                let new_line = document.createElement('p')
-                new_line.innerHTML = str
-                new_line.setAttribute("class", "production_line")
-                grammar_results.appendChild(new_line)
+                str += "  &#8594;  " + s
             }
 
-            // Exibe a mensagem de quantas cadeias foram geradas
-            let lines = [... grammar_results.children]
-            tam = lines.length
-            if(tam != 150010)
-                message("Foram geradas " + lines.length + " cadeias com profundidade " + depth)
-            else
-                message("O limite de geração foi atingido, retornamos o máximo possível")
+            message(`A arvóre de derivação gerou ${data['qtdNodes']} nós`)
+            // Insere a nova linha na div de resultados
+            let new_line = document.createElement('p')
+            new_line.innerHTML = str
+            new_line.setAttribute("class", "production_line")
+            grammar_results.appendChild(new_line)
+            mode = "fast_depth"
         })
     })  
 })

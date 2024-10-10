@@ -63,6 +63,10 @@ class GramTree:
             # adiciona a variavel na lista de variaveis checadas, para evitar loop
             self.checked_vars.append(initial)
 
+            # se nenhuma producao derivar dessa variavel, ela eh armadilha
+            if initial not in productions.keys():
+                return False
+
             # Verifica se ha transicao sem variaveis, ou seja, terminal
             for prod in productions.get(initial):
     

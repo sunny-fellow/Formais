@@ -327,12 +327,13 @@ class Grammar:
         """ 
             Espera-se uma string content do tipo:
 
-                variaveis:S,A,B
-                inicial:S
-                terminais:a,b,c,d
-                producoes
-                S: aA
-                S: bB
+                variaveis:S,A,B             # linha 0
+                inicial:S                   # linha 1
+                terminais:a,b,c,d           # linha 2
+                (linha vazia opcional)      # linha (3)
+                producoes                   # linha 3(4)
+                S: aA                       # linha 4(5)
+                S: bB                       # ...
                 A: epsilon
                 B: cS
                 B: dS
@@ -363,8 +364,12 @@ class Grammar:
             #retira o '\n' do fim da string, se houver, e insere na lista de variaveis
             self.termSymbols.append(var.removesuffix('\n'))
 
+        i = 4
+        # caso haja uma linha em braco na string
+        if values[i-1] == "":
+            i = 5
         # adiciona a chave ao dicionario se nao existir e, caso exista, atualiza seus valores
-        for i in range(4, len(values)):
+        for i in range(i, len(values)):
             prod = values[i].split(": ")
             # se a chave da producao ja existir:
                 # Adiciona um novo valor (sem quebra de linha so final) a lista dessa chave
