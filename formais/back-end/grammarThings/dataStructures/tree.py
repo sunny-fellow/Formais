@@ -7,7 +7,6 @@ class Node:
             for child in children:
                 self.node_Children.append(Node(child))
 
-            
     
 class GramTree:    
     checked_vars = []

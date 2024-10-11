@@ -529,7 +529,7 @@ def getFastChain():
     if stack == None:
         stack = ChainStack(gram)
     
-    result = stack.get_chainStack(depth, "S")
+    result = stack.get_chainStack(depth, gram.initial)
 
     # Se o retorno for vazio, verifica se a pilha pode continuar
     if result == []:
@@ -585,7 +585,7 @@ def getChainByDepth():
     depth = int(request.get_json()["depth"])
 
     stack = ChainStack(gram)
-    result = stack.get_chainStack(depth, "S")
+    result = stack.get_chainStack(depth, gram.initial)
 
     return jsonify({"chain": result})
 
@@ -602,7 +602,7 @@ def generateByDepth():
     global stack
     depth = int(request.get_json()["depth"])
 
-    result = stack.get_chainStack(depth, "S")
+    result = stack.get_chainStack(depth, gram.initial)
     return jsonify({"chain": result})
 
 
