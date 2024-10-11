@@ -49,7 +49,10 @@ class ChainStack:
         children = []
         for option in self.grammar.productions[var_to_derivate]:
             if option not in self.alreadySent and option not in self.grammar.traps:
-                children.append(prod.replace(var_to_derivate, option, 1))
+                if option != self.grammar.E:
+                    children.append(prod.replace(var_to_derivate, option, 1))
+                else:
+                    children.append(prod.replace(var_to_derivate, "", 1))
 
         for child in children:
             # Se a profundidade for maior que 1, chama a funcao recursivamente

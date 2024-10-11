@@ -1,7 +1,7 @@
 /*
 
     O arquivo scriptspg1.js é responsável por controlar a página de inserção de gramáticas.
-    Ele é responsável por enviar os dados inseridos pelo usuário para o back-end, e por receber
+    Sua atribuição consiste em enviar os dados inseridos pelo usuário para o back-end, e por receber
     as respostas do back-end, exibindo-as na tela.
     Também contém elementos comuns as duas páginas, como o footer contendo informações sobre o grupo e o header,
     que entitula o nosso trabalho.
@@ -9,10 +9,10 @@
 */
 
 // Campos do formulario:
-const variaveis = document.getElementById('variables')          // Campo de input de variaveis   
-const terminais = document.getElementById('end_symbols')        // Campo de input de terminais
-const inicial   = document.getElementById('first_symbol')       // Campo de input do simbolo inicial
-const producao  = document.getElementById('productions')        // Campo de input de producao
+const variaveis = document.getElementById('variables')              // Campo de input de variaveis   
+const terminais = document.getElementById('end_symbols')            // Campo de input de terminais
+const inicial   = document.getElementById('first_symbol')           // Campo de input do simbolo inicial
+const producao  = document.getElementById('productions')            // Campo de input de producao
 
 // Botoes:
 const addProd   = document.getElementById('add_production')         // Botao de adicionar producao

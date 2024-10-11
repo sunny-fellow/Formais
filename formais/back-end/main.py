@@ -1,5 +1,7 @@
 from flask_cors import CORS
 from flask import Flask, jsonify, request
+
+# Imports dos módulos
 import re # Importa os metodos de regex
 from grammarThings.gram import Grammar
 from grammarThings.dataStructures.chainStack import ChainStack
