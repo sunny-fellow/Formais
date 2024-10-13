@@ -29,7 +29,7 @@ O projeto oferece duas maneiras de trabalhar com a gramática inserida:
 
 - **Modo Rápido**:
   - O usuário pode solicitar cadeias geradas 1 a 1, e o servidor fornecerá as cadeias conforme forem solicitadas.
-  - É possível determinar uma profundidade de derivação específica, o que retornará (quase) todas as cadeias com essa quantidade de derivações. Caso o número de cadeias cresça exponencialmente, a geração será interrompida e apenas as cadeias geradas até o momento serão retornadas.
+  - É possível determinar uma profundidade de derivação específica, o que retornará todas as cadeias com essa quantidade de derivações.
 
 - **Modo Detalhado**:
   - Neste modo, o usuário tem controle total sobre a geração da cadeia. Ele pode escolher manualmente, para cada variável, qual produção será derivada. Isso oferece a liberdade de gerar cadeias passo a passo, com total controle sobre o processo.
