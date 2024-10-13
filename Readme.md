@@ -50,12 +50,6 @@ O projeto oferece duas maneiras de trabalhar com a gramática inserida:
 
 ---
 
-## Como acessar o site
-
-*(Esta seção será atualizada assim que o link do site estiver disponível)*
-
----
-
 ### **OBS: Para rodar localmente**
 
 1. **Instalar o Live Server**  
